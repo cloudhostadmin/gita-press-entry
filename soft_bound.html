@@ -574,6 +574,26 @@ tr:hover td { background: #eaf5e9; cursor: pointer; }
 
   </div><!-- /entrySection -->
 
+  <!-- DOWNLOAD DATE-WISE SHEET -->
+  <div class="card">
+    <div class="section-title" style="background:#843c0c;">📥 Download Date-wise Sheet</div>
+    <div class="form-body">
+      <div class="field-row">
+        <label>From Date</label>
+        <input type="date" id="dlFrom">
+      </div>
+      <div class="field-row">
+        <label>To Date</label>
+        <input type="date" id="dlTo">
+      </div>
+      <div class="btn-row" style="padding:10px 0 0; flex-wrap:wrap; gap:10px;">
+        <button class="btn-save"   onclick="downloadSheet('Perfect Binding')">📥 Download Perfect Binding</button>
+        <button class="btn-export" onclick="downloadSheet('Center Pinning')">📥 Download Center Pinning</button>
+      </div>
+      <div id="dlStatus" style="display:none;font-size:0.85rem;font-weight:600;margin-top:10px;"></div>
+    </div>
+  </div>
+
   <!-- RECORDS TABLE -->
   <div class="card">
     <div class="section-title green">📋 Saved Records This Session</div>
@@ -1108,6 +1128,96 @@ async function exportToExcel() {
   URL.revokeObjectURL(url);
 
   document.getElementById('statusBar').textContent = `📥 Exported ${records.length} record(s).`;
+}
+
+// ── DOWNLOAD DATE-WISE SHEET ─────────────────────────────────────
+async function downloadSheet(sheetName) {
+  const fromVal  = document.getElementById('dlFrom').value;
+  const toVal    = document.getElementById('dlTo').value;
+  const dlStatus = document.getElementById('dlStatus');
+
+  if (!fromVal || !toVal) { alert('Please select both From Date and To Date.'); return; }
+
+  const fromFmt = fromVal.split('-').reverse().join('/');
+  const toFmt   = toVal.split('-').reverse().join('/');
+
+  dlStatus.style.display = 'block';
+  dlStatus.style.color   = '#2e75b6';
+  dlStatus.textContent   = `📡 Loading "${sheetName}" records (${fromFmt} – ${toFmt})...`;
+
+  try {
+    const url  = `${SHEET_URL}?sheet=${encodeURIComponent(sheetName)}&from=${encodeURIComponent(fromFmt)}&to=${encodeURIComponent(toFmt)}`;
+    const res  = await fetch(url);
+    const data = await res.json();
+
+    if (data.status !== 'success') {
+      dlStatus.style.color = '#bf360c';
+      dlStatus.textContent = `⚠️ Error: ${data.message}`; return;
+    }
+    const recs = data.records || [];
+    if (!recs.length) {
+      dlStatus.style.color = '#bf360c';
+      dlStatus.textContent = `⚠️ No records found in "${sheetName}" for selected dates.`; return;
+    }
+
+    const isPB     = sheetName === 'Perfect Binding';
+    const bgColor  = isPB ? 'FF1F4E79' : 'FF375623';
+    const rowBg    = isPB ? 'FFDEEAF1' : 'FFEAF5E4';
+
+    const headers = isPB
+      ? ['S.N.','Exit Date','Book Code','Name','Juje','Edition','Size',
+         'Bundling','Bundling Wages','Bundling Contractor',
+         'Gathering','Gathering Wages','Gathering Contractor',
+         'Muller','Muller Wages','Muller Contractor',
+         'Perfect Binding','Binding Wages','Binding Contractor',
+         '3 Side Cutting','3 Side Cut Wages','3 Side Cut Contractor',
+         'Center Cutting','Center Cut Wages','Center Cut Contractor',
+         'Shrink Pack','Shrink Wages','Shrink Contractor',
+         'Rate','Total Qty','Entry Date']
+      : ['S.N.','Exit Date','Book Code','Name','Juje','Edition','Size',
+         'Bundling','Bundling Wages','Bundling Contractor',
+         'Pinning/Flowline','Pinning Wages','Pinning Contractor',
+         'Shrink Pack','Shrink Wages','Shrink Contractor',
+         'Carton Pack','Carton Wages','Carton Contractor',
+         'Rate','Total Qty','Entry Date'];
+
+    const wb = new ExcelJS.Workbook();
+    const ws = wb.addWorksheet(sheetName, { views:[{ state:'frozen', ySplit:1 }] });
+    ws.columns = headers.map(h => ({ header:h, key:h, width: h.length < 10 ? 10 : h.length + 3 }));
+
+    const hRow = ws.getRow(1); hRow.height = 22;
+    hRow.eachCell(cell => {
+      cell.font      = { bold:true, color:{ argb:'FFFFFFFF' }, size:10, name:'Arial' };
+      cell.fill      = { type:'pattern', pattern:'solid', fgColor:{ argb: bgColor } };
+      cell.alignment = { horizontal:'center', vertical:'middle', wrapText:true };
+    });
+
+    recs.forEach((r, idx) => {
+      const hMap = {}; headers.forEach(h => hMap[h] = r[h] || '');
+      const rowData = headers.map(h => hMap[h]);
+      const row = ws.addRow(rowData);
+      row.height = 16;
+      if (idx % 2 === 0) row.eachCell({ includeEmpty:true }, c => {
+        c.fill = { type:'pattern', pattern:'solid', fgColor:{ argb: rowBg } };
+        c.font = { name:'Arial', size:9 };
+      });
+    });
+
+    ws.autoFilter = { from:'A1', to:{ letter: String.fromCharCode(64 + headers.length), number:1 } };
+
+    const buf  = await wb.xlsx.writeBuffer();
+    const blob = new Blob([buf], { type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const url2 = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url2; a.download = `${sheetName.replace(/ /g,'_')}_${fromVal}_to_${toVal}.xlsx`;
+    a.click(); URL.revokeObjectURL(url2);
+
+    dlStatus.style.color = '#1b5e20';
+    dlStatus.textContent = `✅ Downloaded "${sheetName}" — ${recs.length} record(s) (${fromFmt} – ${toFmt})`;
+  } catch(err) {
+    dlStatus.style.color = '#bf360c';
+    dlStatus.textContent = `⚠️ Failed: ${err.message}`;
+  }
 }
 
 // ── AUTO CONNECT ──────────────────────────────────────────────────

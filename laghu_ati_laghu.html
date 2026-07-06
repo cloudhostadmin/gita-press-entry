@@ -363,6 +363,25 @@ tr:hover td { background: #f3eaff; cursor: pointer; }
 
   </div><!-- /entrySection -->
 
+  <!-- DOWNLOAD DATE-WISE SHEET -->
+  <div class="card">
+    <div class="section-title" style="background:#843c0c;">📥 Download Date-wise Sheet</div>
+    <div class="form-body">
+      <div class="field-row">
+        <label>From Date</label>
+        <input type="date" id="dlFrom">
+      </div>
+      <div class="field-row">
+        <label>To Date</label>
+        <input type="date" id="dlTo">
+      </div>
+      <div class="btn-row" style="padding:10px 0 0;">
+        <button class="btn-save" onclick="downloadSheet('Laghu Ati Laghu')">📥 Download Laghu Ati Laghu Sheet</button>
+      </div>
+      <div id="dlStatus" style="display:none;font-size:0.85rem;font-weight:600;margin-top:10px;"></div>
+    </div>
+  </div>
+
   <!-- RECORDS TABLE -->
   <div class="card">
     <div class="section-title purple">📋 Saved Records This Session</div>
@@ -629,6 +648,79 @@ async function exportToExcel() {
   a.click(); URL.revokeObjectURL(url);
 
   document.getElementById('statusBar').textContent = `📥 Exported ${records.length} record(s).`;
+}
+
+// ── DOWNLOAD DATE-WISE SHEET ─────────────────────────────────────
+async function downloadSheet(sheetName) {
+  const fromVal  = document.getElementById('dlFrom').value;
+  const toVal    = document.getElementById('dlTo').value;
+  const dlStatus = document.getElementById('dlStatus');
+
+  if (!fromVal || !toVal) { alert('Please select both From Date and To Date.'); return; }
+
+  const fromFmt = fromVal.split('-').reverse().join('/');
+  const toFmt   = toVal.split('-').reverse().join('/');
+
+  dlStatus.style.display = 'block';
+  dlStatus.style.color   = '#2e75b6';
+  dlStatus.textContent   = `📡 Loading "${sheetName}" records (${fromFmt} – ${toFmt})...`;
+
+  try {
+    const url  = `${SHEET_URL}?sheet=${encodeURIComponent(sheetName)}&from=${encodeURIComponent(fromFmt)}&to=${encodeURIComponent(toFmt)}`;
+    const res  = await fetch(url);
+    const data = await res.json();
+
+    if (data.status !== 'success') {
+      dlStatus.style.color = '#bf360c';
+      dlStatus.textContent = `⚠️ Error: ${data.message}`; return;
+    }
+    const recs = data.records || [];
+    if (!recs.length) {
+      dlStatus.style.color = '#bf360c';
+      dlStatus.textContent = `⚠️ No records found for selected dates.`; return;
+    }
+
+    const headers = ['S.N.','Exit Date','Size','Book Code','Name','Juje',
+                     'Edition','Contractor',
+                     'Folding','Pinning','Cutting','Packaging',
+                     'Rate','Total Qty','Entry Date'];
+
+    const wb = new ExcelJS.Workbook();
+    const ws = wb.addWorksheet(sheetName, { views:[{ state:'frozen', ySplit:1 }] });
+    ws.columns = headers.map(h => ({ header:h, key:h, width: h.length < 10 ? 10 : h.length + 3 }));
+
+    const hRow = ws.getRow(1); hRow.height = 22;
+    hRow.eachCell(cell => {
+      cell.font      = { bold:true, color:{ argb:'FFFFFFFF' }, size:10, name:'Arial' };
+      cell.fill      = { type:'pattern', pattern:'solid', fgColor:{ argb:'FF6A3D9A' } };
+      cell.alignment = { horizontal:'center', vertical:'middle', wrapText:true };
+    });
+
+    recs.forEach((r, idx) => {
+      const hMap = {}; headers.forEach(h => hMap[h] = r[h] || '');
+      const row = ws.addRow(headers.map(h => hMap[h]));
+      row.height = 16;
+      if (idx % 2 === 0) row.eachCell({ includeEmpty:true }, c => {
+        c.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:'FFF3EAFF' } };
+        c.font = { name:'Arial', size:9 };
+      });
+    });
+
+    ws.autoFilter = { from:'A1', to:'O1' };
+
+    const buf  = await wb.xlsx.writeBuffer();
+    const blob = new Blob([buf], { type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const url2 = URL.createObjectURL(blob);
+    const a    = document.createElement('a'); 
+    a.href = url2; a.download = `LaghuAtiLaghu_${fromVal}_to_${toVal}.xlsx`;
+    a.click(); URL.revokeObjectURL(url2);
+
+    dlStatus.style.color = '#1b5e20';
+    dlStatus.textContent = `✅ Downloaded — ${recs.length} record(s) (${fromFmt} – ${toFmt})`;
+  } catch(err) {
+    dlStatus.style.color = '#bf360c';
+    dlStatus.textContent = `⚠️ Failed: ${err.message}`;
+  }
 }
 
 // ── AUTO CONNECT ─────────────────────────────────────────────────
