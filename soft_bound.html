@@ -277,6 +277,9 @@ tr:hover td { background: #eaf5e9; cursor: pointer; }
     <div id="lockOverlay" class="lock-overlay">
       🔒 Google Sheet से connect होने के बाद entry unlock होगी।
     </div>
+    <div id="bindingLockOverlay" class="lock-overlay" style="display:none;">
+      📌 पहले ऊपर <strong>Binding Type</strong> select करें — Perfect Binding या Center Pinning।
+    </div>
 
   <!-- STEP 2: BOOK CODE LOOKUP -->
   <div class="card">
@@ -627,6 +630,7 @@ const PANNI_CODES  = new Set(["1563", "1544", "2271", "2318", "2295", "1617", "2
 let SHEET_URL = 'https://script.google.com/macros/s/AKfycbziKE4qTt1HpyCDkj8dYrCNpxf3WpT0dq8SZJ8o2F_hk_GdRM-oWLlo5HeRfAHk1UR0EQ/exec';
 let records   = [];
 let editIndex = -1;
+let sheetConnected = false;  // tracks if Google Sheet is connected
 
 // Juje values that enable conditional fields
 const GATHERING_JUJE = new Set(['13','14','15','16']);
@@ -650,9 +654,17 @@ async function connectSheet() {
     const res  = await fetch(SHEET_URL);
     const data = await res.json();
     if (data.status === 'success') {
-      setSyncStatus('synced', `Connected! Ready for entry.`);
-      document.getElementById('entrySection').classList.remove('locked');
-      document.getElementById('bookCode').disabled = false;
+      setSyncStatus('synced', `Connected! Select Binding Type to begin.`);
+      sheetConnected = true;
+      // Keep entry locked — binding type must be selected first
+      document.getElementById('lockOverlay').style.display = 'none';
+      document.getElementById('bindingLockOverlay').style.display = '';
+      // If binding type already selected, unlock immediately
+      if (document.querySelector('input[name="bindingType"]:checked')) {
+        document.getElementById('entrySection').classList.remove('locked');
+        document.getElementById('bindingLockOverlay').style.display = 'none';
+        document.getElementById('bookCode').disabled = false;
+      }
     } else {
       setSyncStatus('error', data.message || 'Connection failed.');
     }
@@ -693,6 +705,14 @@ document.querySelectorAll('input[name="bindingType"]').forEach(r => {
     document.getElementById('processTitle').textContent =
       isPB ? '⚙️ Perfect Binding — Process Fields'
            : '⚙️ Center Pinning — Process Fields';
+
+    // Unlock entry section only if sheet is connected
+    if (sheetConnected) {
+      document.getElementById('entrySection').classList.remove('locked');
+      document.getElementById('bindingLockOverlay').style.display = 'none';
+      document.getElementById('bookCode').disabled = false;
+      document.getElementById('bookCode').focus();
+    }
     // Re-evaluate conditional fields
     applyConditionalFields();
   });
