@@ -1034,7 +1034,7 @@ async function exportToExcel() {
   const pbRecs = records.filter(r => r.bindingType === 'Perfect Binding');
   const cpRecs = records.filter(r => r.bindingType === 'Center Pinning');
 
-  const pbHeaders = ['S.N.','Book Code','Name','Juje','Exit Date','Edition','Size',
+  const pbHeaders = ['S.N.','Exit Date','Book Code','Name','Juje','Edition','Size',
     'Bundling','Bundling Wages','Bundling Contractor',
     'Gathering','Gathering Wages','Gathering Contractor',
     'Muller','Muller Wages','Muller Contractor',
@@ -1044,7 +1044,7 @@ async function exportToExcel() {
     'Shrink Pack','Shrink Wages','Shrink Contractor',
     'Rate','Total Qty','Entry Date'];
 
-  const cpHeaders = ['S.N.','Book Code','Name','Juje','Exit Date','Edition','Size',
+  const cpHeaders = ['S.N.','Exit Date','Book Code','Name','Juje','Edition','Size',
     'Bundling','Bundling Wages','Bundling Contractor',
     'Pinning/Flowline','Pinning Wages','Pinning Contractor',
     'Shrink Pack','Shrink Wages','Shrink Contractor',
@@ -1089,7 +1089,7 @@ async function exportToExcel() {
   if (cpRecs.length) {
     const ws = wb.addWorksheet('Center Pinning');
     addSheet(ws, cpHeaders, cpRecs.map(r => [
-      r.sn, r.code, r.name, r.juje, r.exitDate, r.edition, r.size,
+      r.sn, r.exitDate||'', r.code, r.name, r.juje, r.edition, r.size,
       r.bundling, r.ws_bundling, r.con_bundling || '',
       r.pinning,  r.ws_pinning,  r.con_pinning  || '',
       r.shrink,   r.ws_shrink,   r.con_shrink   || '',

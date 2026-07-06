@@ -587,8 +587,8 @@ function clearForm() {
 async function exportToExcel() {
   if (!records.length) { alert('No records to export.'); return; }
 
-  const headers = ['S.N.','Size','Book Code','Name','Juje',
-                   'Exit Date','Edition','Contractor',
+  const headers = ['S.N.','Exit Date','Size','Book Code','Name','Juje',
+                   'Edition','Contractor',
                    'Folding','Pinning','Cutting','Packaging',
                    'Rate','Total Qty','Entry Date'];
   const colW    = [6,12,14,38,8,14,12,16,10,10,10,12,10,12,14];
@@ -607,8 +607,8 @@ async function exportToExcel() {
 
   records.forEach((r,idx) => {
     const row = ws.addRow([
-      r.sn, r.sizeType, r.code, r.name, r.juje,
-      r.exitDate, r.edition, r.contractor,
+      r.sn, r.exitDate||'', r.sizeType, r.code, r.name, r.juje,
+      r.edition, r.contractor,
       r.folding, r.pinning, r.cutting, r.packaging,
       r.rate?Number(r.rate):'', r.totalQty?Number(r.totalQty):'', r.entryDate
     ]);
