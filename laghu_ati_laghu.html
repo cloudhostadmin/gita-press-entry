@@ -300,9 +300,9 @@ tr:hover td { background: #f3eaff; cursor: pointer; }
         </div>
       </div>
 
-      <!-- Contractor — always visible, after Folding -->
-      <div class="field-row">
-        <label>Contractor</label>
+      <!-- Contractor — shown when Folding = Contract Basis -->
+      <div class="field-row" id="contractorRow" style="display:none; background:#f8fbf5; border-left:3px solid #6a3d9a; border-radius:0 0 6px 6px; padding:8px 0 8px 0; margin-top:-6px; margin-bottom:10px;">
+        <label style="color:#6a3d9a; font-size:0.82rem; font-style:italic;">↳ Contractor</label>
         <select id="fContractor">
           <option value="">— Select Contractor Code —</option>
           <optgroup label="रवि प्रताप यादव (Ravi Pratap Yadav)">
@@ -518,6 +518,22 @@ document.querySelectorAll('input[name="folding"]').forEach(r => {
     } else {
       wsEl.classList.remove('active');
       document.querySelectorAll('input[name="ws_folding"]').forEach(w => w.checked = false);
+      // Hide contractor when Folding is No/NA
+      document.getElementById('contractorRow').style.display = 'none';
+      document.getElementById('fContractor').value = '';
+    }
+  });
+});
+
+// Show/hide contractor based on wages selection
+document.querySelectorAll('input[name="ws_folding"]').forEach(r => {
+  r.addEventListener('change', () => {
+    const conRow = document.getElementById('contractorRow');
+    if (r.value === 'Contract Basis') {
+      conRow.style.display = 'grid';
+    } else {
+      conRow.style.display = 'none';
+      document.getElementById('fContractor').value = '';
     }
   });
 });
@@ -624,7 +640,13 @@ function editRecord(i) {
   document.getElementById('fEdition').value   = r.edition    || '';
   document.getElementById('fContractor').value = r.contractor || '';
   setRadio('folding',   r.folding);
-  if (r.folding === 'Yes') { document.getElementById('ws_folding')?.classList.add('active'); setRadio('ws_folding', r.ws_folding || ''); }
+  if (r.folding === 'Yes') {
+    document.getElementById('ws_folding')?.classList.add('active');
+    setRadio('ws_folding', r.ws_folding || '');
+    if (r.ws_folding === 'Contract Basis') {
+      document.getElementById('contractorRow').style.display = 'grid';
+    }
+  }
   setRadio('pinning',   r.pinning);
   setRadio('cutting',   r.cutting);
   setRadio('packaging', r.packaging);
@@ -642,6 +664,7 @@ function clearForm() {
   ['bookCode','bookName','bookJuje','fExitDate','fEdition','fRate','fTotalQty']
     .forEach(id => document.getElementById(id).value = '');
   document.getElementById('fContractor').value = '';
+  document.getElementById('contractorRow').style.display = 'none';
   ['folding','pinning','cutting','packaging','ws_folding'].forEach(clearRadio);
   document.getElementById('ws_folding')?.classList.remove('active');
   const bar = document.getElementById('statusBar');
