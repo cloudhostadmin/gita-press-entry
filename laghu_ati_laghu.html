@@ -168,6 +168,31 @@ tr:hover td { background: #f3eaff; cursor: pointer; }
   margin: 14px 0;
 }
 
+/* Wages mini-seg */
+.wages-seg {
+  background: #f5f5f5; border-radius: 6px;
+  padding: 2px; display: inline-flex; gap: 2px;
+  width: 100%; min-width: 140px;
+  opacity: 0.4; pointer-events: none; transition: opacity 0.2s;
+}
+.wages-seg.active { opacity: 1; pointer-events: all; }
+.wages-seg input[type=radio] { display: none; }
+.wages-seg label {
+  flex: 1; text-align: center;
+  padding: 5px 6px; border-radius: 5px;
+  font-size: 0.75rem; font-weight: 600;
+  color: #888; cursor: pointer; transition: all 0.15s; margin: 0;
+}
+.wages-seg input[type=radio]:checked + label {
+  background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  color: #6a3d9a; font-weight: 700;
+}
+
+.field-row.wages-row {
+  display: grid; grid-template-columns: 170px 1fr 150px;
+  gap: 8px 12px; align-items: center; margin-bottom: 13px;
+}
+
 @media (max-width: 520px) {
   .field-row { grid-template-columns: 1fr; }
   label { text-align: left; }
@@ -254,6 +279,28 @@ tr:hover td { background: #f3eaff; cursor: pointer; }
         <input type="text" id="fEdition" placeholder="e.g. 1st, 2nd, revised...">
       </div>
 
+      <hr class="divider">
+
+      <!-- Folding with wages toggle -->
+      <div class="field-row wages-row">
+        <label>Folding</label>
+        <div class="seg-wrap">
+          <input type="radio" name="folding" id="fold_y" value="Yes">
+          <label class="yes-lbl" for="fold_y">Yes</label>
+          <input type="radio" name="folding" id="fold_n" value="No">
+          <label class="no-lbl" for="fold_n">No</label>
+          <input type="radio" name="folding" id="fold_na" value="NA">
+          <label class="na-lbl" for="fold_na">NA</label>
+        </div>
+        <div class="wages-seg" id="ws_folding">
+          <input type="radio" name="ws_folding" id="ws_fold_cb" value="Contract Basis">
+          <label for="ws_fold_cb">Contract</label>
+          <input type="radio" name="ws_folding" id="ws_fold_dw" value="Daily Wages">
+          <label for="ws_fold_dw">Daily Wages</label>
+        </div>
+      </div>
+
+      <!-- Contractor — always visible, after Folding -->
       <div class="field-row">
         <label>Contractor</label>
         <select id="fContractor">
@@ -284,25 +331,7 @@ tr:hover td { background: #f3eaff; cursor: pointer; }
             <option value="Narayan-02(Sudhir Kumar Gupta)">Narayan-02(Sudhir Kumar Gupta)</option>
             <option value="Narayan-03(Neeraj Kumar Singh)">Narayan-03(Neeraj Kumar Singh)</option>
           </optgroup>
-          <optgroup label="By Machine">
-            <option value="By Machine">By Machine</option>
-          </optgroup>
         </select>
-      </div>
-
-      <hr class="divider">
-
-      <!-- Process fields from screenshot -->
-      <div class="field-row">
-        <label>Folding</label>
-        <div class="seg-wrap">
-          <input type="radio" name="folding" id="fold_y" value="Yes">
-          <label class="yes-lbl" for="fold_y">Yes</label>
-          <input type="radio" name="folding" id="fold_n" value="No">
-          <label class="no-lbl" for="fold_n">No</label>
-          <input type="radio" name="folding" id="fold_na" value="NA">
-          <label class="na-lbl" for="fold_na">NA</label>
-        </div>
       </div>
 
       <div class="field-row">
@@ -392,12 +421,12 @@ tr:hover td { background: #f3eaff; cursor: pointer; }
           <tr>
             <th>S.N.</th><th>Size</th><th>Code</th><th>Name</th>
             <th>Exit Date</th><th>Edition</th><th>Contractor</th>
-            <th>Folding</th><th>Pinning</th><th>Cutting</th><th>Packaging</th>
+            <th>Folding</th><th>Folding Wages</th><th>Pinning</th><th>Cutting</th><th>Packaging</th>
             <th>Rate</th><th>Total Qty</th><th>Entry Date</th>
           </tr>
         </thead>
         <tbody id="recordsBody">
-          <tr><td colspan="14" style="text-align:center;color:#aaa;padding:20px;">
+          <tr><td colspan="15" style="text-align:center;color:#aaa;padding:20px;">
             No records yet. Fill the form and click Save.
           </td></tr>
         </tbody>
@@ -479,6 +508,20 @@ function clearRadio(name) {
   document.querySelectorAll(`input[name="${name}"]`).forEach(r => r.checked = false);
 }
 
+
+// ── WAGES TOGGLE (Folding only) ──────────────────────────────────
+document.querySelectorAll('input[name="folding"]').forEach(r => {
+  r.addEventListener('change', () => {
+    const wsEl = document.getElementById('ws_folding');
+    if (r.value === 'Yes') {
+      wsEl.classList.add('active');
+    } else {
+      wsEl.classList.remove('active');
+      document.querySelectorAll('input[name="ws_folding"]').forEach(w => w.checked = false);
+    }
+  });
+});
+
 // ── BOOK LOOKUP ──────────────────────────────────────────────────
 function lookupBook() {
   const code   = document.getElementById('bookCode').value.trim();
@@ -523,6 +566,7 @@ async function saveRecord() {
     edition:   document.getElementById('fEdition').value.trim(),
     contractor: document.getElementById('fContractor').value,
     folding:   getRadio('folding'),
+    ws_folding: getRadio('ws_folding'),
     pinning:   getRadio('pinning'),
     cutting:   getRadio('cutting'),
     packaging: getRadio('packaging'),
@@ -547,7 +591,7 @@ function renderTable() {
   document.getElementById('recordCount').textContent = `${records.length} record(s) saved`;
   const tbody = document.getElementById('recordsBody');
   if (!records.length) {
-    tbody.innerHTML = '<tr><td colspan="14" style="text-align:center;color:#aaa;padding:20px;">No records yet.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="15" style="text-align:center;color:#aaa;padding:20px;">No records yet.</td></tr>';
     return;
   }
   tbody.innerHTML = records.map((r,i) => `
@@ -559,6 +603,7 @@ function renderTable() {
       <td>${r.exitDate||'—'}</td>
       <td>${r.edition||'—'}</td>
       <td>${r.folding||'—'}</td>
+      <td>${r.ws_folding||'—'}</td>
       <td>${r.pinning||'—'}</td>
       <td>${r.cutting||'—'}</td>
       <td>${r.packaging||'—'}</td>
@@ -579,6 +624,7 @@ function editRecord(i) {
   document.getElementById('fEdition').value   = r.edition    || '';
   document.getElementById('fContractor').value = r.contractor || '';
   setRadio('folding',   r.folding);
+  if (r.folding === 'Yes') { document.getElementById('ws_folding')?.classList.add('active'); setRadio('ws_folding', r.ws_folding || ''); }
   setRadio('pinning',   r.pinning);
   setRadio('cutting',   r.cutting);
   setRadio('packaging', r.packaging);
@@ -596,7 +642,8 @@ function clearForm() {
   ['bookCode','bookName','bookJuje','fExitDate','fEdition','fRate','fTotalQty']
     .forEach(id => document.getElementById(id).value = '');
   document.getElementById('fContractor').value = '';
-  ['folding','pinning','cutting','packaging'].forEach(clearRadio);
+  ['folding','pinning','cutting','packaging','ws_folding'].forEach(clearRadio);
+  document.getElementById('ws_folding')?.classList.remove('active');
   const bar = document.getElementById('statusBar');
   bar.className = 'status-bar status-empty';
   bar.textContent = 'ℹ️ Form cleared. Enter a new Book Code.';
@@ -609,7 +656,7 @@ async function exportToExcel() {
 
   const headers = ['S.N.','Exit Date','Size','Book Code','Name','Juje',
                    'Edition','Contractor',
-                   'Folding','Pinning','Cutting','Packaging',
+                   'Folding','Folding Wages','Pinning','Cutting','Packaging',
                    'Rate','Total Qty','Entry Date'];
   const colW    = [6,12,14,38,8,14,12,16,10,10,10,12,10,12,14];
 
@@ -629,7 +676,7 @@ async function exportToExcel() {
     const row = ws.addRow([
       r.sn, r.exitDate||'', r.sizeType, r.code, r.name, r.juje,
       r.edition, r.contractor,
-      r.folding, r.pinning, r.cutting, r.packaging,
+      r.folding, r.ws_folding||'', r.pinning, r.cutting, r.packaging,
       r.rate?Number(r.rate):'', r.totalQty?Number(r.totalQty):'', r.entryDate
     ]);
     row.height = 16;
@@ -683,7 +730,7 @@ async function downloadSheet(sheetName) {
 
     const headers = ['S.N.','Exit Date','Size','Book Code','Name','Juje',
                      'Edition','Contractor',
-                     'Folding','Pinning','Cutting','Packaging',
+                     'Folding','Folding Wages','Pinning','Cutting','Packaging',
                      'Rate','Total Qty','Entry Date'];
 
     const wb = new ExcelJS.Workbook();
