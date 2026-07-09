@@ -554,11 +554,8 @@ tr:hover td { background: #eaf5e9; cursor: pointer; }
         <input type="date" id="dlTo">
       </div>
       <div class="btn-row" style="padding:10px 0 0; flex-wrap:wrap; gap:10px;">
-        <button style="padding:8px 14px;background:#1F4E79;color:white;border:none;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;" onclick="downloadSheet('Main')">📥 Main</button>
-        <button style="padding:8px 14px;background:#375623;color:white;border:none;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;" onclick="downloadSheet('By Machine')">📥 By Machine</button>
-        <button style="padding:8px 14px;background:#1F4E79;color:white;border:none;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;" onclick="downloadSheet('Perfect Binding')">📥 Perfect Binding</button>
-        <button style="padding:8px 14px;background:#375623;color:white;border:none;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;" onclick="downloadSheet('Center Pinning')">📥 Center Pinning</button>
-        <button style="padding:8px 14px;background:#6a3d9a;color:white;border:none;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;" onclick="downloadSheet('Laghu Ati Laghu')">📥 Laghu Ati Laghu</button>
+        <button class="btn-save"   onclick="downloadSheet('Perfect Binding')">📥 Download Perfect Binding</button>
+        <button class="btn-export" onclick="downloadSheet('Center Pinning')">📥 Download Center Pinning</button>
       </div>
       <div id="dlStatus" style="display:none;font-size:0.85rem;font-weight:600;margin-top:10px;"></div>
     </div>
