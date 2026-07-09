@@ -347,24 +347,6 @@ tr:hover td { background: #eaf5e9; cursor: pointer; }
       <!-- === PERFECT BINDING FIELDS === -->
       <div id="pbFields">
 
-        <div class="field-row wages-row">
-          <label>Bundling</label>
-          <div class="seg-wrap">
-            <input type="radio" name="pb_bundling" id="pb_bund_y" value="Yes">
-            <label class="yes-lbl" for="pb_bund_y">Yes</label>
-            <input type="radio" name="pb_bundling" id="pb_bund_n" value="No">
-            <label class="no-lbl" for="pb_bund_n">No</label>
-            <input type="radio" name="pb_bundling" id="pb_bund_na" value="NA">
-            <label class="na-lbl" for="pb_bund_na">NA</label>
-          </div>
-          <div class="wages-seg" id="ws_pb_bundling" data-proc="pb_bundling">
-            <input type="radio" name="ws_pb_bundling" id="ws_pb_bund_cb" value="Contract Basis">
-            <label class="cb-lbl" for="ws_pb_bund_cb">Contract</label>
-            <input type="radio" name="ws_pb_bundling" id="ws_pb_bund_dw" value="Daily Wages">
-            <label class="dw-lbl" for="ws_pb_bund_dw">Daily Wages</label>
-          </div>
-        </div>
-
         <!-- Gathering — enabled when Juje = 13,14,15,16 -->
         <div class="field-row wages-row" id="row_pb_gathering">
           <label>Gathering <span id="note_pb_gathering" class="disabled-note">(Juje 13-16 only)</span></label>
@@ -481,24 +463,6 @@ tr:hover td { background: #eaf5e9; cursor: pointer; }
       <div id="cpFields" style="display:none;">
 
         <div class="field-row wages-row">
-          <label>Bundling</label>
-          <div class="seg-wrap">
-            <input type="radio" name="cp_bundling" id="cp_bund_y" value="Yes">
-            <label class="yes-lbl" for="cp_bund_y">Yes</label>
-            <input type="radio" name="cp_bundling" id="cp_bund_n" value="No">
-            <label class="no-lbl" for="cp_bund_n">No</label>
-            <input type="radio" name="cp_bundling" id="cp_bund_na" value="NA">
-            <label class="na-lbl" for="cp_bund_na">NA</label>
-          </div>
-          <div class="wages-seg" id="ws_cp_bundling" data-proc="cp_bundling">
-            <input type="radio" name="ws_cp_bundling" id="ws_cp_bund_cb" value="Contract Basis">
-            <label class="cb-lbl" for="ws_cp_bund_cb">Contract</label>
-            <input type="radio" name="ws_cp_bundling" id="ws_cp_bund_dw" value="Daily Wages">
-            <label class="dw-lbl" for="ws_cp_bund_dw">Daily Wages</label>
-          </div>
-        </div>
-
-        <div class="field-row wages-row">
           <label>Pinning / Flowline</label>
           <div class="seg-wrap">
             <input type="radio" name="cp_pinning" id="cp_pin_y" value="Yes">
@@ -607,7 +571,7 @@ tr:hover td { background: #eaf5e9; cursor: pointer; }
           <tr>
             <th>S.N.</th><th>Type</th><th>Code</th><th>Name</th>
             <th>Exit Date</th><th>Edition</th><th>Size</th>
-            <th>Bundling</th><th>Process Fields</th>
+            <th>Process Fields</th>
             <th>Rate</th><th>Total Qty</th><th>Entry Date</th>
           </tr>
         </thead>
@@ -794,11 +758,11 @@ function bindWagesToggle(radioName, wagesId) {
 
 // Bind all wages toggles (called AFTER buildContractorSubRows in load handler)
 const wagesBindings = [
-  ['pb_bundling','ws_pb_bundling'], ['pb_gathering','ws_pb_gathering'],
+  ['pb_gathering','ws_pb_gathering'],
   ['pb_muller','ws_pb_muller'],     ['pb_binding','ws_pb_binding'],
   ['pb_3cut','ws_pb_3cut'],         ['pb_ccut','ws_pb_ccut'],
   ['pb_shrink','ws_pb_shrink'],
-  ['cp_bundling','ws_cp_bundling'], ['cp_pinning','ws_cp_pinning'],
+  ['cp_pinning','ws_cp_pinning'],
   ['cp_shrink','ws_cp_shrink'],     ['cp_carton','ws_cp_carton'],
 ];
 
@@ -904,7 +868,6 @@ function clearRadio(name) {
 
 function getPBFields() {
   return {
-    bundling:        getRadio('pb_bundling'),   ws_bundling:     getRadio('ws_pb_bundling'),   con_bundling:   getContractor('pb_bundling'),
     gathering:       getRadio('pb_gathering'),  ws_gathering:    getRadio('ws_pb_gathering'),  con_gathering:  getContractor('pb_gathering'),
     muller:          getRadio('pb_muller'),     ws_muller:       getRadio('ws_pb_muller'),      con_muller:     getContractor('pb_muller'),
     binding:         getRadio('pb_binding'),    ws_binding:      getRadio('ws_pb_binding'),     con_binding:    getContractor('pb_binding'),
@@ -916,7 +879,6 @@ function getPBFields() {
 
 function getCPFields() {
   return {
-    bundling:  getRadio('cp_bundling'),  ws_bundling:  getRadio('ws_cp_bundling'),  con_bundling:  getContractor('cp_bundling'),
     pinning:   getRadio('cp_pinning'),   ws_pinning:   getRadio('ws_cp_pinning'),   con_pinning:   getContractor('cp_pinning'),
     shrink:    getRadio('cp_shrink'),    ws_shrink:    getRadio('ws_cp_shrink'),    con_shrink:    getContractor('cp_shrink'),
     carton:    getRadio('cp_carton'),    ws_carton:    getRadio('ws_cp_carton'),    con_carton:    getContractor('cp_carton'),
@@ -971,7 +933,6 @@ function renderTable() {
     return;
   }
   tbody.innerHTML = records.map((r,i) => {
-    const bundling = r.bundling || '—';
     // Show key process fields summary
     let summary = '';
     if (r.bindingType === 'Perfect Binding') {
@@ -987,7 +948,6 @@ function renderTable() {
       <td>${r.exitDate||'—'}</td>
       <td>${r.edition||'—'}</td>
       <td>${r.size||'—'}</td>
-      <td>${bundling}</td>
       <td>${summary}</td>
       <td>${r.rate||'—'}</td>
       <td>${r.totalQty||'—'}</td>
@@ -1014,9 +974,9 @@ function editRecord(i) {
   document.getElementById('fTotalQty').value  = r.totalQty  || '';
 
   if (r.bindingType === 'Perfect Binding') {
-    const pbMap = { bundling:'pb_bundling', gathering:'pb_gathering', muller:'pb_muller',
+    const pbMap = { gathering:'pb_gathering', muller:'pb_muller',
                     binding:'pb_binding', cut3side:'pb_3cut', centerCut:'pb_ccut', shrink:'pb_shrink' };
-    const wsMap = { bundling:'ws_pb_bundling', gathering:'ws_pb_gathering', muller:'ws_pb_muller',
+    const wsMap = { gathering:'ws_pb_gathering', muller:'ws_pb_muller',
                     binding:'ws_pb_binding', cut3side:'ws_pb_3cut', centerCut:'ws_pb_ccut', shrink:'ws_pb_shrink' };
     Object.keys(pbMap).forEach(f => {
       setRadio(pbMap[f], r[f] || '');
@@ -1027,7 +987,7 @@ function editRecord(i) {
       }
     });
   } else {
-    const cpMap = { bundling:'cp_bundling', pinning:'cp_pinning', shrink:'cp_shrink', carton:'cp_carton' };
+    const cpMap = { pinning:'cp_pinning', shrink:'cp_shrink', carton:'cp_carton' };
     Object.keys(cpMap).forEach(f => {
       setRadio(cpMap[f], r[f] || '');
       if (r[f] === 'Yes') {
@@ -1051,10 +1011,10 @@ function clearForm() {
   ['bookCode','bookName','bookJuje','fExitDate','fEdition','fRate','fTotalQty']
     .forEach(id => document.getElementById(id).value = '');
   ['size',
-   'pb_bundling','pb_gathering','pb_muller','pb_binding','pb_3cut','pb_ccut','pb_shrink',
-   'ws_pb_bundling','ws_pb_gathering','ws_pb_muller','ws_pb_binding','ws_pb_3cut','ws_pb_ccut','ws_pb_shrink',
-   'cp_bundling','cp_pinning','cp_shrink','cp_carton',
-   'ws_cp_bundling','ws_cp_pinning','ws_cp_shrink','ws_cp_carton',
+   'pb_gathering','pb_muller','pb_binding','pb_3cut','pb_ccut','pb_shrink',
+   'ws_pb_gathering','ws_pb_muller','ws_pb_binding','ws_pb_3cut','ws_pb_ccut','ws_pb_shrink',
+   'cp_pinning','cp_shrink','cp_carton',
+   'ws_cp_pinning','ws_cp_shrink','ws_cp_carton',
   ].forEach(n => document.querySelectorAll(`input[name="${n}"]`).forEach(r => r.checked = false));
   // Deactivate all wages and clear per-process contractors
   document.querySelectorAll('.wages-seg').forEach(el => el.classList.remove('active'));
@@ -1116,7 +1076,6 @@ async function exportToExcel() {
     const ws = wb.addWorksheet('Perfect Binding');
     addSheet(ws, pbHeaders, pbRecs.map(r => [
       r.sn, r.code, r.name, r.juje, r.exitDate, r.edition, r.size,
-      r.bundling,  r.ws_bundling,  r.con_bundling  || '',
       r.gathering, r.ws_gathering, r.con_gathering || '',
       r.muller,    r.ws_muller,    r.con_muller    || '',
       r.binding,   r.ws_binding,   r.con_binding   || '',
@@ -1131,7 +1090,6 @@ async function exportToExcel() {
     const ws = wb.addWorksheet('Center Pinning');
     addSheet(ws, cpHeaders, cpRecs.map(r => [
       r.sn, r.exitDate||'', r.code, r.name, r.juje, r.edition, r.size,
-      r.bundling, r.ws_bundling, r.con_bundling || '',
       r.pinning,  r.ws_pinning,  r.con_pinning  || '',
       r.shrink,   r.ws_shrink,   r.con_shrink   || '',
       r.carton,   r.ws_carton,   r.con_carton   || '',
@@ -1187,7 +1145,6 @@ async function downloadSheet(sheetName) {
 
     const headers = isPB
       ? ['S.N.','Exit Date','Book Code','Name','Juje','Edition','Size',
-         'Bundling','Bundling Wages','Bundling Contractor',
          'Gathering','Gathering Wages','Gathering Contractor',
          'Muller','Muller Wages','Muller Contractor',
          'Perfect Binding','Binding Wages','Binding Contractor',
@@ -1196,7 +1153,6 @@ async function downloadSheet(sheetName) {
          'Shrink Pack','Shrink Wages','Shrink Contractor',
          'Rate','Total Qty','Entry Date']
       : ['S.N.','Exit Date','Book Code','Name','Juje','Edition','Size',
-         'Bundling','Bundling Wages','Bundling Contractor',
          'Pinning/Flowline','Pinning Wages','Pinning Contractor',
          'Shrink Pack','Shrink Wages','Shrink Contractor',
          'Carton Pack','Carton Wages','Carton Contractor',
