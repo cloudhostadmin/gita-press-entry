@@ -239,6 +239,17 @@ option   { font-weight: 400; color: #333; }
         <input type="text" id="bookJuje" class="auto-field" readonly
                placeholder="— auto from Juje sheet —">
       </div>
+      <div class="field-row">
+        <label>Size</label>
+        <div class="seg-wrap">
+          <input type="radio" name="size" id="sz_g" value="Granthakaar">
+          <label for="sz_g">Granthakaar</label>
+          <input type="radio" name="size" id="sz_p" value="Pustakakaar">
+          <label for="sz_p">Pustakakaar</label>
+          <input type="radio" name="size" id="sz_pk" value="Pocket">
+          <label for="sz_pk">Pocket</label>
+        </div>
+      </div>
     </div>
     <div class="status-bar status-empty" id="statusBar">
       ℹ️ Enter a Book Code above to begin
@@ -646,6 +657,7 @@ async function saveRecord() {
     code,
     name:       document.getElementById('bookName').value,
     juje:       document.getElementById('bookJuje').value,
+    size:       getRadio('size'),
     exitDate:   document.getElementById('fExitDate').value,
     edition:    document.getElementById('fEdition').value.trim(),
     contractor: document.getElementById('fContractor').value,
@@ -754,7 +766,7 @@ function loadExcelFile(event) {
 async function exportToExcel() {
   if (!records.length) { alert('No records to export.'); return; }
 
-  const headers = ['S.N.','Exit Date','Book Code','Name','Edition','Juje','Contractor',
+  const headers = ['S.N.','Exit Date','Book Code','Name','Edition','Juje','Size','Contractor'],
                    'Dhala','Head/Tail','Book Mark','Binding','Jacket','Panni','Box','Rate','Total Qty','Entry Date'];
   const colWidths = [6, 14, 14, 38, 12, 8, 16, 10, 14, 12, 24, 10, 10, 8, 10, 12, 14];
 
@@ -861,7 +873,7 @@ async function downloadSheet(sheetName) {
     }
 
     // Build Excel
-    const headers   = ['S.N.','Exit Date','Book Code','Name','Edition','Juje','Contractor',
+    const headers   = ['S.N.','Exit Date','Book Code','Name','Edition','Juje','Size','Contractor'],
                         'Dhala','Head/Tail','Book Mark','Binding','Jacket','Panni',
                         'Box','Rate','Total Qty','Entry Date'];
     const colWidths = [6,14,14,38,12,8,22,10,14,12,24,10,10,8,10,12,14];
