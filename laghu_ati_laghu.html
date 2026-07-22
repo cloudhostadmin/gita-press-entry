@@ -297,8 +297,6 @@ tr:hover td { background: #f3eaff; cursor: pointer; }
         <input type="text" id="fEdition" placeholder="e.g. 1st, 2nd, revised...">
       </div>
 
-      <hr class="divider">
-
       <!-- Folding with wages toggle -->
       <div class="field-row wages-row">
         <label>Folding</label>
@@ -317,7 +315,28 @@ tr:hover td { background: #f3eaff; cursor: pointer; }
           <label for="ws_fold_dw">Daily Wages</label>
         </div>
       </div>
-<div class="field-row">
+
+      <!-- Global Contractor -->
+      <div class="field-row" id="globalContractorRow">
+        <label>Contractor</label>
+        <select id="globalContractor">
+          <option value="">— Select Contractor —</option>
+          <option>Hari Om</option>
+          <option>Shiv Prasad</option>
+          <option>Ram Kishore</option>
+          <option>Mohan Lal</option>
+          <option>Suresh Kumar</option>
+          <option>Dinesh</option>
+          <option>Ramesh</option>
+          <option>Vijay</option>
+          <option>Sanjay</option>
+          <option>Pawan</option>
+        </select>
+      </div>
+
+      <hr class="divider">
+
+      <div class="field-row">
         <label>Pinning</label>
         <div class="seg-wrap">
           <input type="radio" name="pinning" id="pin_y" value="Yes">
@@ -501,22 +520,6 @@ document.querySelectorAll('input[name="folding"]').forEach(r => {
     } else {
       wsEl.classList.remove('active');
       document.querySelectorAll('input[name="ws_folding"]').forEach(w => w.checked = false);
-      // Hide contractor sub-row
-      document.getElementById('con_folding').classList.remove('visible');
-      document.getElementById('cs_folding').value = '';
-    }
-  });
-});
-
-// Show/hide contractor sub-row based on wages
-document.querySelectorAll('input[name="ws_folding"]').forEach(r => {
-  r.addEventListener('change', () => {
-    const conEl = document.getElementById('con_folding');
-    if (r.value === 'Contract Basis') {
-      conEl.classList.add('visible');
-    } else {
-      conEl.classList.remove('visible');
-      document.getElementById('cs_folding').value = '';
     }
   });
 });
@@ -563,7 +566,7 @@ async function saveRecord() {
     juje:      document.getElementById('bookJuje').value,
     exitDate:  document.getElementById('fExitDate').value,
     edition:   document.getElementById('fEdition').value.trim(),
-    contractor: document.getElementById('cs_folding').value,
+    contractor: document.getElementById('globalContractor').value,
     folding:   getRadio('folding'),
     ws_folding: getRadio('ws_folding'),
     pinning:   getRadio('pinning'),
@@ -626,11 +629,8 @@ function editRecord(i) {
   if (r.folding === 'Yes') {
     document.getElementById('ws_folding')?.classList.add('active');
     setRadio('ws_folding', r.ws_folding || '');
-    if (r.ws_folding === 'Contract Basis') {
-      document.getElementById('con_folding').classList.add('visible');
-      document.getElementById('cs_folding').value = r.contractor || '';
-    }
   }
+  document.getElementById('globalContractor').value = r.contractor || '';
   setRadio('pinning',   r.pinning);
   setRadio('cutting',   r.cutting);
   setRadio('packaging', r.packaging);
@@ -647,8 +647,7 @@ function clearForm() {
   editIndex = -1;
   ['bookCode','bookName','bookJuje','fExitDate','fEdition','fRate','fTotalQty']
     .forEach(id => document.getElementById(id).value = '');
-  document.getElementById('cs_folding').value = '';
-  document.getElementById('con_folding').classList.remove('visible');
+  document.getElementById('globalContractor').value = '';
   ['folding','pinning','cutting','packaging','ws_folding'].forEach(clearRadio);
   document.getElementById('ws_folding')?.classList.remove('active');
   const bar = document.getElementById('statusBar');
