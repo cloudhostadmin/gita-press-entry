@@ -229,13 +229,14 @@ tr:hover td { background: #f3eaff; cursor: pointer; }
   </div>
 </div>
 
-<div style="background:#1a3a5c; padding:8px 24px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-  <span style="color:#aac; font-size:0.78rem; font-weight:600; margin-right:4px;">GO TO →</span>
-  <a href="index.html" style="text-decoration:none;"><button style="padding:7px 16px; background:#1F4E79; color:white; border:2px solid #4a90c4; border-radius:7px; font-size:0.85rem; font-weight:700; cursor:pointer; opacity:0.75; transition:opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📚 Main Entry</button></a>
-  <a href="soft_bound.html" style="text-decoration:none;"><button style="padding:7px 16px; background:#375623; color:white; border:2px solid #6aaa3a; border-radius:7px; font-size:0.85rem; font-weight:700; cursor:pointer; opacity:0.75; transition:opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📗 Soft Bound</button></a>
-  <button style="padding:7px 16px; background:#6a3d9a; color:white; border:2px solid #b07edd; border-radius:7px; font-size:0.85rem; font-weight:700; cursor:default; opacity:1; box-shadow:0 0 0 2px white, 0 0 0 4px #b07edd;">📒 Laghu &amp; Ati Laghu ✓</button>
-</div>
 
+
+<div style="background:#1a3a5c;padding:8px 24px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+  <span style="color:#aac;font-size:0.78rem;font-weight:600;margin-right:4px;">GO TO →</span>
+  <a href="index.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#1F4E79;color:white;border:2px solid #4a90c4;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📚 Main Entry</button></a>
+  <a href="soft_bound.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#375623;color:white;border:2px solid #6aaa3a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📗 Soft Bound</button></a>
+  <button style="padding:7px 16px;background:#6a3d9a;color:white;border:2px solid #b07edd;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:default;box-shadow:0 0 0 2px white,0 0 0 4px #b07edd;">📒 Laghu &amp; Ati Laghu ✓</button>
+</div>
 <div class="container">
 
   <div id="syncStatus" style="display:none;font-size:0.85rem;font-weight:600;padding:10px 18px;border-radius:8px;margin-bottom:12px;"></div>
@@ -297,8 +298,6 @@ tr:hover td { background: #f3eaff; cursor: pointer; }
         <input type="text" id="fEdition" placeholder="e.g. 1st, 2nd, revised...">
       </div>
 
-      <hr class="divider">
-
       <!-- Folding with wages toggle -->
       <div class="field-row wages-row">
         <label>Folding</label>
@@ -317,7 +316,28 @@ tr:hover td { background: #f3eaff; cursor: pointer; }
           <label for="ws_fold_dw">Daily Wages</label>
         </div>
       </div>
-<div class="field-row">
+
+      <!-- Global Contractor -->
+      <div class="field-row" id="globalContractorRow">
+        <label>Contractor</label>
+        <select id="globalContractor">
+          <option value="">— Select Contractor —</option>
+          <option>Hari Om</option>
+          <option>Shiv Prasad</option>
+          <option>Ram Kishore</option>
+          <option>Mohan Lal</option>
+          <option>Suresh Kumar</option>
+          <option>Dinesh</option>
+          <option>Ramesh</option>
+          <option>Vijay</option>
+          <option>Sanjay</option>
+          <option>Pawan</option>
+        </select>
+      </div>
+
+      <hr class="divider">
+
+      <div class="field-row">
         <label>Pinning</label>
         <div class="seg-wrap">
           <input type="radio" name="pinning" id="pin_y" value="Yes">
@@ -501,22 +521,6 @@ document.querySelectorAll('input[name="folding"]').forEach(r => {
     } else {
       wsEl.classList.remove('active');
       document.querySelectorAll('input[name="ws_folding"]').forEach(w => w.checked = false);
-      // Hide contractor sub-row
-      document.getElementById('con_folding').classList.remove('visible');
-      document.getElementById('cs_folding').value = '';
-    }
-  });
-});
-
-// Show/hide contractor sub-row based on wages
-document.querySelectorAll('input[name="ws_folding"]').forEach(r => {
-  r.addEventListener('change', () => {
-    const conEl = document.getElementById('con_folding');
-    if (r.value === 'Contract Basis') {
-      conEl.classList.add('visible');
-    } else {
-      conEl.classList.remove('visible');
-      document.getElementById('cs_folding').value = '';
     }
   });
 });
@@ -563,7 +567,7 @@ async function saveRecord() {
     juje:      document.getElementById('bookJuje').value,
     exitDate:  document.getElementById('fExitDate').value,
     edition:   document.getElementById('fEdition').value.trim(),
-    contractor: document.getElementById('cs_folding').value,
+    contractor: document.getElementById('globalContractor').value,
     folding:   getRadio('folding'),
     ws_folding: getRadio('ws_folding'),
     pinning:   getRadio('pinning'),
@@ -626,11 +630,8 @@ function editRecord(i) {
   if (r.folding === 'Yes') {
     document.getElementById('ws_folding')?.classList.add('active');
     setRadio('ws_folding', r.ws_folding || '');
-    if (r.ws_folding === 'Contract Basis') {
-      document.getElementById('con_folding').classList.add('visible');
-      document.getElementById('cs_folding').value = r.contractor || '';
-    }
   }
+  document.getElementById('globalContractor').value = r.contractor || '';
   setRadio('pinning',   r.pinning);
   setRadio('cutting',   r.cutting);
   setRadio('packaging', r.packaging);
@@ -647,8 +648,7 @@ function clearForm() {
   editIndex = -1;
   ['bookCode','bookName','bookJuje','fExitDate','fEdition','fRate','fTotalQty']
     .forEach(id => document.getElementById(id).value = '');
-  document.getElementById('cs_folding').value = '';
-  document.getElementById('con_folding').classList.remove('visible');
+  document.getElementById('globalContractor').value = '';
   ['folding','pinning','cutting','packaging','ws_folding'].forEach(clearRadio);
   document.getElementById('ws_folding')?.classList.remove('active');
   const bar = document.getElementById('statusBar');
