@@ -318,20 +318,36 @@ tr:hover td { background: #f3eaff; cursor: pointer; }
       </div>
 
       <!-- Global Contractor -->
-      <div class="field-row" id="globalContractorRow">
+      <div class="field-row" id="contractorRow">
         <label>Contractor</label>
-        <select id="globalContractor">
-          <option value="">— Select Contractor —</option>
-          <option>Hari Om</option>
-          <option>Shiv Prasad</option>
-          <option>Ram Kishore</option>
-          <option>Mohan Lal</option>
-          <option>Suresh Kumar</option>
-          <option>Dinesh</option>
-          <option>Ramesh</option>
-          <option>Vijay</option>
-          <option>Sanjay</option>
-          <option>Pawan</option>
+        <select id="fContractor">
+          <option value="">— Select Contractor Code —</option>
+          <optgroup label="रवि प्रताप यादव (Ravi Pratap Yadav)">
+            <option value="Ravi-01(Avadh Bihari Chaturvedi)">Ravi-01(Avadh Bihari Chaturvedi)</option>
+            <option value="Ravi-02(Akhilesh Chaturvedi (RB))">Ravi-02(Akhilesh Chaturvedi (RB))</option>
+          </optgroup>
+          <optgroup label="कार्तिकेय पारीक (Kartikey Pareek)">
+            <option value="Kartikey-01(Gajendra Pratap singh)">Kartikey-01(Gajendra Pratap singh)</option>
+            <option value="Kartikey-02(Jogender Gour)">Kartikey-02(Jogender Gour)</option>
+            <option value="Kartikey-03(Jagdish Yadav (RB))">Kartikey-03(Jagdish Yadav (RB))</option>
+          </optgroup>
+          <optgroup label="वैभव शर्मा (Vaibhav Sharma)">
+            <option value="Vaibhav-01(Jai Prakash Prajapati)">Vaibhav-01(Jai Prakash Prajapati)</option>
+            <option value="Vaibhav-02(Arvind Kumar Tiwari)">Vaibhav-02(Arvind Kumar Tiwari)</option>
+            <option value="Vaibhav-03(Sanjay Kumar)">Vaibhav-03(Sanjay Kumar)</option>
+            <option value="Vaibhav-04(Virender Mishra)">Vaibhav-04(Virender Mishra)</option>
+          </optgroup>
+          <optgroup label="आनंद शुक्ला (Anand Shukla)">
+            <option value="Anand-01(Vikas)">Anand-01(Vikas)</option>
+            <option value="Anand-02(Kranti Kumar)">Anand-02(Kranti Kumar)</option>
+            <option value="Anand-03(Makkhan)">Anand-03(Makkhan)</option>
+            <option value="Anand-04(Manoj Kumar (RB))">Anand-04(Manoj Kumar (RB))</option>
+          </optgroup>
+          <optgroup label="नारायण प्रसाद पारीक (Narayan Prasad Pareek)">
+            <option value="Narayan-01(Ravinder Yadav)">Narayan-01(Ravinder Yadav)</option>
+            <option value="Narayan-02(Sudhir Kumar Gupta)">Narayan-02(Sudhir Kumar Gupta)</option>
+            <option value="Narayan-03(Neeraj Kumar Singh)">Narayan-03(Neeraj Kumar Singh)</option>
+          </optgroup>
         </select>
       </div>
 
@@ -567,7 +583,7 @@ async function saveRecord() {
     juje:      document.getElementById('bookJuje').value,
     exitDate:  document.getElementById('fExitDate').value,
     edition:   document.getElementById('fEdition').value.trim(),
-    contractor: document.getElementById('globalContractor').value,
+    contractor: document.getElementById('fContractor').value,
     folding:   getRadio('folding'),
     ws_folding: getRadio('ws_folding'),
     pinning:   getRadio('pinning'),
@@ -631,7 +647,7 @@ function editRecord(i) {
     document.getElementById('ws_folding')?.classList.add('active');
     setRadio('ws_folding', r.ws_folding || '');
   }
-  document.getElementById('globalContractor').value = r.contractor || '';
+  document.getElementById('fContractor').value = r.contractor || '';
   setRadio('pinning',   r.pinning);
   setRadio('cutting',   r.cutting);
   setRadio('packaging', r.packaging);
@@ -648,7 +664,7 @@ function clearForm() {
   editIndex = -1;
   ['bookCode','bookName','bookJuje','fExitDate','fEdition','fRate','fTotalQty']
     .forEach(id => document.getElementById(id).value = '');
-  document.getElementById('globalContractor').value = '';
+  document.getElementById('fContractor').value = '';
   ['folding','pinning','cutting','packaging','ws_folding'].forEach(clearRadio);
   document.getElementById('ws_folding')?.classList.remove('active');
   const bar = document.getElementById('statusBar');
