@@ -477,7 +477,7 @@ let loadedData = null;
 let editIndex  = -1;
 
 // ── GOOGLE SHEET CONNECTION ──────────────────────────────────────
-let SHEET_URL = 'https://script.google.com/macros/s/AKfycbwvCOCeZ6KT5nne8ZaSZ_ikWylHAkmzW3vVRyaTaJQ9XqbWsYpz1nvE30-0MepH9ymYdg/exec';
+let SHEET_URL = 'https://script.google.com/macros/s/AKfycbwHg0RV_Ak5j6qstbEJM39xxwL1BHU1Wb-s2IWZ8shGu77NGWEOCuxVEkeQGFf1xVN_Gg/exec';
 
 function setSyncStatus(state, msg) {
   const el = document.getElementById('syncStatus');
@@ -936,7 +936,37 @@ async function downloadSheet(sheetName) {
 }
 
 // ── AUTO-CONNECT ON PAGE LOAD ─────────────────────────────────
-window.addEventListener('load', () => connectSheet());
+// ── MASTER BOOK LIST (Google Sheet → merged over built-in list) ───
+// Add new books in the "Book List" tab of the Google Sheet:
+//   Book Code | Name | Juje | Size
+// They are merged on top of the built-in list, so a row here can also
+// correct an existing book. No need to re-upload the HTML files.
+let extraBookCount = 0;
+async function loadBookList() {
+  try {
+    const res  = await fetch(SHEET_URL + '?action=books');
+    const data = await res.json();
+    if (data.status !== 'success' || !Array.isArray(data.books)) return;
+    let n = 0;
+    data.books.forEach(b => {
+      const code = String(b.code || '').trim();
+      if (!code) return;
+      if (b.name) BOOKS[code]     = { name: b.name };
+      if (b.juje) JUJE[code]      = String(b.juje);
+      if (b.size) BOOK_SIZE[code] = b.size;
+      n++;
+    });
+    extraBookCount = n;
+  } catch (err) {
+    // Sheet unreachable — built-in book list still works
+    console.warn('Book List not loaded:', err);
+  }
+}
+
+window.addEventListener('load', async () => {
+  await loadBookList();   // merge new books from Google Sheet
+  connectSheet();
+});
 </script>
 </body>
 </html>
