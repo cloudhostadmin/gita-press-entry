@@ -136,6 +136,7 @@ button.big {
   <a href="soft_bound.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#375623;color:white;border:2px solid #6aaa3a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📗 Soft Bound</button></a>
   <a href="laghu_ati_laghu.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#6a3d9a;color:white;border:2px solid #b07edd;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📒 Laghu &amp; Ati Laghu</button></a>
   <a href="stm.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#843c0c;color:white;border:2px solid #e07a3a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📋 STM Entry</button></a>
+  <a href="process_entry.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#0f6e56;color:white;border:2px solid #3fb99a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">⚙️ Process Entry</button></a>
   <button style="padding:7px 16px;background:#0d3b52;color:white;border:2px solid #3f9dc4;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:default;box-shadow:0 0 0 2px white,0 0 0 4px #3f9dc4;">📊 Dashboard ✓</button>
 </div>
 <div class="container">
@@ -217,6 +218,13 @@ button.big {
         <span class="cnt" id="cnt-STM">—</span>
         <button class="mini" onclick="event.preventDefault();downloadOne('STM')">Excel</button>
       </label>
+      <label class="sheet-card" data-sheet="Process Entry">
+        <input type="checkbox" class="sheetChk" value="Process Entry" checked>
+        <span class="dot" style="background:#0f6e56"></span>
+        <span class="nm">⚙️ Process Entry</span>
+        <span class="cnt" id="cnt-Process_Entry">—</span>
+        <button class="mini" onclick="event.preventDefault();downloadOne('Process Entry')">Excel</button>
+      </label>
       <div class="quick" style="margin-top:12px;">
         <button onclick="selectAll(true)">सब चुनें</button>
         <button onclick="selectAll(false)">सब हटाएँ</button>
@@ -234,7 +242,7 @@ button.big {
 </div>
 
 <script>
-let SHEET_URL = 'https://script.google.com/macros/s/AKfycbwHg0RV_Ak5j6qstbEJM39xxwL1BHU1Wb-s2IWZ8shGu77NGWEOCuxVEkeQGFf1xVN_Gg/exec';
+let SHEET_URL = 'https://script.google.com/macros/s/AKfycbx_s8FkMhtnprhL2rT3XWqUOL00ctyzDeXr1r4DAiLP6BzRecmcz-0cbgJjzsv2z9HuLQ/exec';
 
 const SHEET_META = {
   "Main": {
@@ -504,9 +512,49 @@ const SHEET_META = {
     ],
     "bg": "FF843C0C",
     "rowBg": "FFFDE8D8"
+  },
+  "Process Entry": {
+    "headers": [
+      "S.N.",
+      "Exit Date",
+      "Book Code",
+      "Name",
+      "Juje",
+      "Size",
+      "Page Type",
+      "Process",
+      "Machine",
+      "Special Option",
+      "Juje Range",
+      "Rate",
+      "Quantity",
+      "Total Amount",
+      "Contractor",
+      "Entry Date"
+    ],
+    "widths": [
+      6,
+      14,
+      12,
+      36,
+      8,
+      16,
+      14,
+      24,
+      20,
+      22,
+      18,
+      10,
+      10,
+      14,
+      22,
+      14
+    ],
+    "bg": "FF0F6E56",
+    "rowBg": "FFE1F5EE"
   }
 };
-const SHEET_ORDER = ["Main", "By Machine", "Perfect Binding", "Center Pinning", "Laghu Ati Laghu", "STM"];
+const SHEET_ORDER = ["Main", "By Machine", "Perfect Binding", "Center Pinning", "Laghu Ati Laghu", "STM", "Process Entry"];
 
 // ── STATUS ───────────────────────────────────────────────────────
 function setStatus(kind, msg) {
