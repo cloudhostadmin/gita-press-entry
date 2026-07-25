@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Gita Press Data Entry</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial, sans-serif; background: #f0f4f8; min-height: 100vh; }
+
+.header {
+  background: linear-gradient(135deg, #0d3b52, #1a6b8a);
+  color: white; padding: 18px 24px;
+  display: flex; align-items: center; gap: 14px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+}
+.header h1 { font-size: 1.3rem; font-weight: 700; }
+.header p  { font-size: 0.82rem; opacity: 0.85; margin-top: 3px; }
+
+.container { max-width: 880px; margin: 24px auto; padding: 0 16px 60px; }
+
+.card {
+  background: white; border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  overflow: hidden; margin-bottom: 20px;
+}
+.section-title {
+  background: #0d3b52; color: white;
+  padding: 10px 18px; font-size: 0.85rem;
+  font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;
+}
+.form-body { padding: 16px 18px; }
+
+.field-row {
+  display: grid; grid-template-columns: 150px 1fr;
+  gap: 8px 12px; align-items: center; margin-bottom: 13px;
+}
+.field-row:last-child { margin-bottom: 0; }
+label.lbl {
+  font-size: 0.87rem; color: #0d3b52;
+  font-weight: 600; text-align: right; padding-right: 4px;
+}
+input[type=date] {
+  width: 100%; padding: 8px 11px;
+  border: 2px solid #d0dce8; border-radius: 7px;
+  font-size: 0.93rem; font-family: Arial; background: #fafdff;
+}
+input[type=date]:focus {
+  outline: none; border-color: #1a6b8a;
+  box-shadow: 0 0 0 3px rgba(26,107,138,0.15); background: white;
+}
+.hint { font-size: 0.78rem; color: #7a8a99; font-style: italic; margin-top: 2px; }
+
+.quick { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.quick button {
+  padding: 5px 12px; font-size: 0.78rem; font-weight: 600;
+  background: #eef4f8; color: #0d3b52; border: 1.5px solid #cfe0ea;
+  border-radius: 20px; cursor: pointer; transition: all .18s;
+}
+.quick button:hover { background: #dceaf2; border-color: #1a6b8a; }
+
+/* Sheet picker */
+.sheet-card {
+  display: grid;
+  grid-template-columns: 22px 12px 1fr auto auto;
+  gap: 10px; align-items: center;
+  padding: 11px 12px; margin-bottom: 8px;
+  border: 2px solid #e3ebf2; border-radius: 9px;
+  background: #fbfdff; cursor: pointer; transition: all .18s;
+}
+.sheet-card:hover { border-color: #b6d2e2; background: #f4fafd; }
+.sheet-card input[type=checkbox] { width: 17px; height: 17px; cursor: pointer; accent-color: #1a6b8a; }
+.sheet-card .dot { width: 12px; height: 12px; border-radius: 50%; }
+.sheet-card .nm  { font-size: 0.9rem; font-weight: 600; color: #24405c; }
+.sheet-card .cnt {
+  font-size: 0.78rem; font-weight: 700; color: #5b7a94;
+  background: #eef4f8; padding: 3px 10px; border-radius: 20px; min-width: 58px; text-align: center;
+}
+.sheet-card .mini {
+  padding: 5px 13px; font-size: 0.76rem; font-weight: 700;
+  background: #0d3b52; color: white; border: none; border-radius: 6px; cursor: pointer;
+}
+.sheet-card .mini:hover { background: #1a6b8a; }
+
+.btn-row {
+  display: flex; gap: 10px; padding: 16px 18px;
+  border-top: 1px solid #e8eff6; flex-wrap: wrap;
+}
+button.big {
+  padding: 11px 22px; border: none; border-radius: 8px;
+  font-size: 0.93rem; font-weight: 700; cursor: pointer;
+  transition: all 0.2s; display: flex; align-items: center; gap: 6px;
+}
+.btn-primary { background: #0d3b52; color: white; }
+.btn-primary:hover { background: #1a6b8a; transform: translateY(-1px); }
+.btn-second  { background: #1F4E79; color: white; }
+.btn-second:hover { background: #163a5a; }
+.btn-ghost   { background: #f5f5f5; color: #333; border: 1.5px solid #ddd; }
+.btn-ghost:hover { background: #e8e8e8; }
+
+.status {
+  margin: 0 18px 16px; padding: 11px 14px; border-radius: 8px;
+  font-size: 0.86rem; font-weight: 600; display: none;
+}
+.st-info { background:#e3f2fd; color:#0d47a1; }
+.st-ok   { background:#e8f5e9; color:#1b5e20; }
+.st-err  { background:#fff3e0; color:#bf360c; }
+
+.log { font-size: 0.8rem; color: #55697a; padding: 0 18px 14px; line-height: 1.7; }
+.log div { padding: 2px 0; }
+
+@media (max-width: 560px) {
+  .field-row { grid-template-columns: 1fr; }
+  label.lbl { text-align: left; }
+  .sheet-card { grid-template-columns: 22px 12px 1fr; row-gap: 6px; }
+  .sheet-card .cnt, .sheet-card .mini { grid-column: 3; justify-self: start; }
+  .btn-row { flex-direction: column; }
+  button.big { width: 100%; justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div style="font-size:2rem">📊</div>
+  <div>
+    <h1>Dashboard — Gita Press Data Entry</h1>
+    <p>किसी भी sheet का data date-wise Excel में download करें</p>
+  </div>
+</div>
+
+<div style="background:#1a3a5c;padding:8px 24px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+  <span style="color:#aac;font-size:0.78rem;font-weight:600;margin-right:4px;">GO TO →</span>
+  <a href="index.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#1F4E79;color:white;border:2px solid #4a90c4;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📚 Main Entry</button></a>
+  <a href="soft_bound.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#375623;color:white;border:2px solid #6aaa3a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📗 Soft Bound</button></a>
+  <a href="laghu_ati_laghu.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#6a3d9a;color:white;border:2px solid #b07edd;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📒 Laghu &amp; Ati Laghu</button></a>
+  <a href="stm.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#843c0c;color:white;border:2px solid #e07a3a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📋 STM Entry</button></a>
+  <button style="padding:7px 16px;background:#0d3b52;color:white;border:2px solid #3f9dc4;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:default;box-shadow:0 0 0 2px white,0 0 0 4px #3f9dc4;">📊 Dashboard ✓</button>
+</div>
+<div class="container">
+
+  <!-- DATE RANGE -->
+  <div class="card">
+    <div class="section-title">🗓️ Date Range</div>
+    <div class="form-body">
+      <div class="field-row">
+        <label class="lbl">From Date</label>
+        <div>
+          <input type="date" id="dlFrom">
+        </div>
+      </div>
+      <div class="field-row">
+        <label class="lbl">To Date</label>
+        <div>
+          <input type="date" id="dlTo">
+          <div class="hint">दोनों dates खाली छोड़ें तो पूरी sheet download होगी (Entry Date पर filter लगता है)</div>
+        </div>
+      </div>
+      <div class="field-row">
+        <label class="lbl">Quick Select</label>
+        <div class="quick">
+          <button onclick="setRange('today')">आज</button>
+          <button onclick="setRange('7')">पिछले 7 दिन</button>
+          <button onclick="setRange('30')">पिछले 30 दिन</button>
+          <button onclick="setRange('month')">इस महीने</button>
+          <button onclick="setRange('prevmonth')">पिछला महीना</button>
+          <button onclick="setRange('clear')">सब (Clear)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHEETS -->
+  <div class="card">
+    <div class="section-title">📄 Sheets</div>
+    <div class="form-body">
+      <label class="sheet-card" data-sheet="Main">
+        <input type="checkbox" class="sheetChk" value="Main" checked>
+        <span class="dot" style="background:#1F4E79"></span>
+        <span class="nm">📚 Main</span>
+        <span class="cnt" id="cnt-Main">—</span>
+        <button class="mini" onclick="event.preventDefault();downloadOne('Main')">Excel</button>
+      </label>
+      <label class="sheet-card" data-sheet="By Machine">
+        <input type="checkbox" class="sheetChk" value="By Machine" checked>
+        <span class="dot" style="background:#375623"></span>
+        <span class="nm">⚙️ By Machine</span>
+        <span class="cnt" id="cnt-By_Machine">—</span>
+        <button class="mini" onclick="event.preventDefault();downloadOne('By Machine')">Excel</button>
+      </label>
+      <label class="sheet-card" data-sheet="Perfect Binding">
+        <input type="checkbox" class="sheetChk" value="Perfect Binding" checked>
+        <span class="dot" style="background:#1F4E79"></span>
+        <span class="nm">📘 Perfect Binding</span>
+        <span class="cnt" id="cnt-Perfect_Binding">—</span>
+        <button class="mini" onclick="event.preventDefault();downloadOne('Perfect Binding')">Excel</button>
+      </label>
+      <label class="sheet-card" data-sheet="Center Pinning">
+        <input type="checkbox" class="sheetChk" value="Center Pinning" checked>
+        <span class="dot" style="background:#375623"></span>
+        <span class="nm">📎 Center Pinning</span>
+        <span class="cnt" id="cnt-Center_Pinning">—</span>
+        <button class="mini" onclick="event.preventDefault();downloadOne('Center Pinning')">Excel</button>
+      </label>
+      <label class="sheet-card" data-sheet="Laghu Ati Laghu">
+        <input type="checkbox" class="sheetChk" value="Laghu Ati Laghu" checked>
+        <span class="dot" style="background:#6a3d9a"></span>
+        <span class="nm">📒 Laghu Ati Laghu</span>
+        <span class="cnt" id="cnt-Laghu_Ati_Laghu">—</span>
+        <button class="mini" onclick="event.preventDefault();downloadOne('Laghu Ati Laghu')">Excel</button>
+      </label>
+      <label class="sheet-card" data-sheet="STM">
+        <input type="checkbox" class="sheetChk" value="STM" checked>
+        <span class="dot" style="background:#843C0C"></span>
+        <span class="nm">📋 STM</span>
+        <span class="cnt" id="cnt-STM">—</span>
+        <button class="mini" onclick="event.preventDefault();downloadOne('STM')">Excel</button>
+      </label>
+      <div class="quick" style="margin-top:12px;">
+        <button onclick="selectAll(true)">सब चुनें</button>
+        <button onclick="selectAll(false)">सब हटाएँ</button>
+        <button onclick="refreshCounts()">🔄 Counts refresh करें</button>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="big btn-primary" onclick="downloadCombined()">📥 Selected → एक Excel (multi-tab)</button>
+      <button class="big btn-second"  onclick="downloadSeparate()">📥 Selected → अलग-अलग files</button>
+    </div>
+    <div class="status" id="status"></div>
+    <div class="log" id="log"></div>
+  </div>
+
+</div>
+
+<script>
+let SHEET_URL = 'https://script.google.com/macros/s/AKfycbwHg0RV_Ak5j6qstbEJM39xxwL1BHU1Wb-s2IWZ8shGu77NGWEOCuxVEkeQGFf1xVN_Gg/exec';
+
+const SHEET_META = {
+  "Main": {
+    "headers": [
+      "S.N.",
+      "Exit Date",
+      "Book Code",
+      "Name",
+      "Edition",
+      "Juje",
+      "Size",
+      "Contractor",
+      "Dhala",
+      "Head/Tail",
+      "Book Mark",
+      "Binding",
+      "Jacket",
+      "Panni",
+      "Box",
+      "Rate",
+      "Total Qty",
+      "Entry Date"
+    ],
+    "widths": [
+      6,
+      14,
+      14,
+      38,
+      12,
+      8,
+      14,
+      22,
+      10,
+      14,
+      12,
+      24,
+      10,
+      10,
+      8,
+      10,
+      12,
+      14
+    ],
+    "bg": "FF1F4E79",
+    "rowBg": "FFDEEAF1"
+  },
+  "By Machine": {
+    "headers": [
+      "S.N.",
+      "Exit Date",
+      "Book Code",
+      "Name",
+      "Edition",
+      "Juje",
+      "Size",
+      "Contractor",
+      "Dhala",
+      "Head/Tail",
+      "Book Mark",
+      "Binding",
+      "Jacket",
+      "Panni",
+      "Box",
+      "Rate",
+      "Total Qty",
+      "Entry Date"
+    ],
+    "widths": [
+      6,
+      14,
+      14,
+      38,
+      12,
+      8,
+      14,
+      22,
+      10,
+      14,
+      12,
+      24,
+      10,
+      10,
+      8,
+      10,
+      12,
+      14
+    ],
+    "bg": "FF375623",
+    "rowBg": "FFEAF3EA"
+  },
+  "Perfect Binding": {
+    "headers": [
+      "S.N.",
+      "Exit Date",
+      "Book Code",
+      "Name",
+      "Juje",
+      "Edition",
+      "Size",
+      "Gathering",
+      "Gathering Wages",
+      "Gathering Contractor",
+      "Muller",
+      "Muller Wages",
+      "Muller Contractor",
+      "Perfect Binding",
+      "Binding Wages",
+      "Binding Contractor",
+      "3 Side Cutting",
+      "3 Side Cut Wages",
+      "3 Side Cut Contractor",
+      "Center Cutting",
+      "Center Cut Wages",
+      "Center Cut Contractor",
+      "Shrink Pack",
+      "Shrink Wages",
+      "Shrink Contractor",
+      "Rate",
+      "Total Qty",
+      "Entry Date"
+    ],
+    "widths": [
+      6,
+      14,
+      36,
+      8,
+      14,
+      12,
+      14,
+      12,
+      14,
+      22,
+      12,
+      14,
+      22,
+      16,
+      14,
+      22,
+      16,
+      16,
+      22,
+      16,
+      16,
+      22,
+      14,
+      14,
+      22,
+      10,
+      12,
+      14
+    ],
+    "bg": "FF1F4E79",
+    "rowBg": "FFDEEAF1"
+  },
+  "Center Pinning": {
+    "headers": [
+      "S.N.",
+      "Exit Date",
+      "Book Code",
+      "Name",
+      "Juje",
+      "Edition",
+      "Size",
+      "Pinning/Flowline",
+      "Pinning Wages",
+      "Pinning Contractor",
+      "Shrink Pack",
+      "Shrink Wages",
+      "Shrink Contractor",
+      "Carton Pack",
+      "Carton Wages",
+      "Carton Contractor",
+      "Rate",
+      "Total Qty",
+      "Entry Date"
+    ],
+    "widths": [
+      6,
+      14,
+      36,
+      8,
+      14,
+      12,
+      14,
+      16,
+      14,
+      22,
+      14,
+      14,
+      22,
+      14,
+      14,
+      22,
+      10,
+      12,
+      14
+    ],
+    "bg": "FF375623",
+    "rowBg": "FFEAF3EA"
+  },
+  "Laghu Ati Laghu": {
+    "headers": [
+      "S.N.",
+      "Exit Date",
+      "Size",
+      "Book Code",
+      "Name",
+      "Juje",
+      "Edition",
+      "Folding",
+      "Folding Wages",
+      "Contractor",
+      "Pinning",
+      "Cutting",
+      "Packaging",
+      "Rate",
+      "Total Qty",
+      "Entry Date"
+    ],
+    "widths": [
+      6,
+      12,
+      14,
+      36,
+      8,
+      14,
+      12,
+      22,
+      10,
+      14,
+      10,
+      10,
+      12,
+      10,
+      12,
+      14
+    ],
+    "bg": "FF6A3D9A",
+    "rowBg": "FFF3EAFF"
+  },
+  "STM": {
+    "headers": [
+      "S.N.",
+      "Exit Date",
+      "Book Code",
+      "Name",
+      "Juje",
+      "Size",
+      "Edition",
+      "Contractor",
+      "Rate",
+      "Total Qty",
+      "Entry Date"
+    ],
+    "widths": [
+      6,
+      14,
+      14,
+      38,
+      8,
+      14,
+      12,
+      22,
+      10,
+      12,
+      14
+    ],
+    "bg": "FF843C0C",
+    "rowBg": "FFFDE8D8"
+  }
+};
+const SHEET_ORDER = ["Main", "By Machine", "Perfect Binding", "Center Pinning", "Laghu Ati Laghu", "STM"];
+
+// ── STATUS ───────────────────────────────────────────────────────
+function setStatus(kind, msg) {
+  const el = document.getElementById('status');
+  el.style.display = 'block';
+  el.className = 'status ' + (kind === 'ok' ? 'st-ok' : kind === 'err' ? 'st-err' : 'st-info');
+  el.textContent = msg;
+}
+function log(msg) {
+  const el = document.getElementById('log');
+  const d = document.createElement('div');
+  d.textContent = msg;
+  el.appendChild(d);
+}
+function clearLog() { document.getElementById('log').innerHTML = ''; }
+
+// ── DATE HELPERS ─────────────────────────────────────────────────
+function iso(d) {
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function setRange(kind) {
+  const f = document.getElementById('dlFrom'), t = document.getElementById('dlTo');
+  const now = new Date();
+  if (kind === 'clear')     { f.value = ''; t.value = ''; }
+  else if (kind === 'today'){ f.value = iso(now); t.value = iso(now); }
+  else if (kind === '7' || kind === '30') {
+    const d = new Date(now); d.setDate(d.getDate() - (Number(kind) - 1));
+    f.value = iso(d); t.value = iso(now);
+  }
+  else if (kind === 'month') {
+    f.value = iso(new Date(now.getFullYear(), now.getMonth(), 1));
+    t.value = iso(now);
+  }
+  else if (kind === 'prevmonth') {
+    f.value = iso(new Date(now.getFullYear(), now.getMonth()-1, 1));
+    t.value = iso(new Date(now.getFullYear(), now.getMonth(), 0));
+  }
+}
+// dd/mm/yyyy for the Apps Script filter
+function fmt(v) { return v ? v.split('-').reverse().join('/') : ''; }
+
+// ── SELECTION ────────────────────────────────────────────────────
+function selected() {
+  return Array.from(document.querySelectorAll('.sheetChk'))
+              .filter(c => c.checked).map(c => c.value);
+}
+function selectAll(on) {
+  document.querySelectorAll('.sheetChk').forEach(c => c.checked = on);
+}
+
+// ── FETCH ────────────────────────────────────────────────────────
+async function fetchSheet(name, fromVal, toVal) {
+  let url = SHEET_URL + '?sheet=' + encodeURIComponent(name);
+  if (fromVal && toVal) {
+    url += '&from=' + encodeURIComponent(fmt(fromVal)) + '&to=' + encodeURIComponent(fmt(toVal));
+  }
+  const res  = await fetch(url);
+  const data = await res.json();
+  if (data.status !== 'success') throw new Error(data.message || 'Sheet read failed');
+  return data.records || [];
+}
+
+// ── EXCEL WRITER ─────────────────────────────────────────────────
+function addSheet(wb, name, recs) {
+  const meta    = SHEET_META[name];
+  const headers = meta.headers;
+  const ws = wb.addWorksheet(name, { views: [{ state:'frozen', ySplit:1 }] });
+  ws.columns = headers.map((h,i) => ({ header:h, key:h, width: meta.widths[i] || 14 }));
+  const hRow = ws.getRow(1); hRow.height = 22;
+  hRow.eachCell(cell => {
+    cell.font      = { bold:true, color:{ argb:'FFFFFFFF' }, size:10, name:'Arial' };
+    cell.fill      = { type:'pattern', pattern:'solid', fgColor:{ argb: meta.bg } };
+    cell.alignment = { horizontal:'center', vertical:'middle', wrapText:true };
+  });
+  recs.forEach((r, idx) => {
+    const row = ws.addRow(headers.map(h => r[h] !== undefined && r[h] !== null ? r[h] : ''));
+    row.height = 16;
+    if (idx % 2 === 0) row.eachCell({ includeEmpty:true }, c => {
+      c.fill = { type:'pattern', pattern:'solid', fgColor:{ argb: meta.rowBg } };
+      c.font = { name:'Arial', size:9 };
+    });
+  });
+  const lastCol = ws.getColumn(headers.length).letter;
+  ws.autoFilter = { from:'A1', to: lastCol + '1' };
+  return ws;
+}
+
+async function saveWb(wb, filename) {
+  const buf  = await wb.xlsx.writeBuffer();
+  const blob = new Blob([buf], { type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+function suffix() {
+  const f = document.getElementById('dlFrom').value;
+  const t = document.getElementById('dlTo').value;
+  return (f && t) ? f + '_to_' + t : 'all_' + new Date().toISOString().slice(0,10);
+}
+
+// ── DOWNLOAD: ONE SHEET ──────────────────────────────────────────
+async function downloadOne(name) {
+  const f = document.getElementById('dlFrom').value;
+  const t = document.getElementById('dlTo').value;
+  if ((f && !t) || (!f && t)) { setStatus('err','⚠️ दोनों dates भरें, या दोनों खाली छोड़ें।'); return; }
+  clearLog();
+  setStatus('info', '📡 "' + name + '" पढ़ रहे हैं...');
+  try {
+    const recs = await fetchSheet(name, f, t);
+    if (!recs.length) { setStatus('err','⚠️ "' + name + '" में इस range का कोई record नहीं मिला।'); return; }
+    const wb = new ExcelJS.Workbook();
+    addSheet(wb, name, recs);
+    await saveWb(wb, name.replace(/ /g,'_') + '_' + suffix() + '.xlsx');
+    setStatus('ok', '✅ "' + name + '" download हुआ — ' + recs.length + ' record(s)');
+  } catch (err) {
+    setStatus('err', '⚠️ ' + err.message);
+  }
+}
+
+// ── DOWNLOAD: COMBINED (one workbook, one tab per sheet) ──────────
+async function downloadCombined() {
+  const names = selected();
+  if (!names.length) { setStatus('err','⚠️ कम से कम एक sheet चुनें।'); return; }
+  const f = document.getElementById('dlFrom').value;
+  const t = document.getElementById('dlTo').value;
+  if ((f && !t) || (!f && t)) { setStatus('err','⚠️ दोनों dates भरें, या दोनों खाली छोड़ें।'); return; }
+
+  clearLog();
+  setStatus('info', '📡 ' + names.length + ' sheet(s) पढ़ रहे हैं...');
+  const wb = new ExcelJS.Workbook();
+  let total = 0, added = 0;
+  for (const name of names) {
+    try {
+      const recs = await fetchSheet(name, f, t);
+      setCount(name, recs.length);
+      if (recs.length) { addSheet(wb, name, recs); added++; total += recs.length; log('✅ ' + name + ' — ' + recs.length + ' record(s)'); }
+      else log('— ' + name + ' — कोई record नहीं');
+    } catch (err) { log('⚠️ ' + name + ' — ' + err.message); }
+  }
+  if (!added) { setStatus('err','⚠️ चुनी गई किसी भी sheet में इस range का record नहीं मिला।'); return; }
+  await saveWb(wb, 'GitaPress_Data_' + suffix() + '.xlsx');
+  setStatus('ok', '✅ Download हुआ — ' + added + ' tab(s), कुल ' + total + ' record(s)');
+}
+
+// ── DOWNLOAD: SEPARATE FILES ─────────────────────────────────────
+async function downloadSeparate() {
+  const names = selected();
+  if (!names.length) { setStatus('err','⚠️ कम से कम एक sheet चुनें।'); return; }
+  const f = document.getElementById('dlFrom').value;
+  const t = document.getElementById('dlTo').value;
+  if ((f && !t) || (!f && t)) { setStatus('err','⚠️ दोनों dates भरें, या दोनों खाली छोड़ें।'); return; }
+
+  clearLog();
+  setStatus('info', '📡 ' + names.length + ' file(s) बना रहे हैं...');
+  let files = 0, total = 0;
+  for (const name of names) {
+    try {
+      const recs = await fetchSheet(name, f, t);
+      setCount(name, recs.length);
+      if (!recs.length) { log('— ' + name + ' — कोई record नहीं'); continue; }
+      const wb = new ExcelJS.Workbook();
+      addSheet(wb, name, recs);
+      await saveWb(wb, name.replace(/ /g,'_') + '_' + suffix() + '.xlsx');
+      files++; total += recs.length;
+      log('✅ ' + name + ' — ' + recs.length + ' record(s)');
+      await new Promise(r => setTimeout(r, 400));  // browser को हर download के लिए वक्त दें
+    } catch (err) { log('⚠️ ' + name + ' — ' + err.message); }
+  }
+  if (!files) { setStatus('err','⚠️ कोई file नहीं बनी — इस range में record नहीं मिले।'); return; }
+  setStatus('ok', '✅ ' + files + ' file(s) download हुईं — कुल ' + total + ' record(s)');
+}
+
+// ── COUNTS ───────────────────────────────────────────────────────
+function setCount(name, n) {
+  const el = document.getElementById('cnt-' + name.replace(/ /g,'_'));
+  if (el) el.textContent = n + ' rec';
+}
+async function refreshCounts() {
+  const f = document.getElementById('dlFrom').value;
+  const t = document.getElementById('dlTo').value;
+  if ((f && !t) || (!f && t)) { setStatus('err','⚠️ दोनों dates भरें, या दोनों खाली छोड़ें।'); return; }
+  clearLog();
+  setStatus('info','📡 Counts पढ़ रहे हैं...');
+  SHEET_ORDER.forEach(n => setCount(n, 0));
+  let total = 0;
+  for (const name of SHEET_ORDER) {
+    try {
+      const recs = await fetchSheet(name, f, t);
+      setCount(name, recs.length); total += recs.length;
+    } catch (err) {
+      const el = document.getElementById('cnt-' + name.replace(/ /g,'_'));
+      if (el) el.textContent = 'err';
+      log('⚠️ ' + name + ' — ' + err.message);
+    }
+  }
+  const range = (f && t) ? (fmt(f) + ' – ' + fmt(t)) : 'पूरी sheet';
+  setStatus('ok', '✅ कुल ' + total + ' record(s) — ' + range);
+}
+
+// ── LOAD ─────────────────────────────────────────────────────────
+window.addEventListener('load', () => refreshCounts());
+</script>
+</body>
+</html>

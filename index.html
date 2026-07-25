@@ -198,8 +198,8 @@ option   { font-weight: 400; color: #333; }
   <a href="soft_bound.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#375623;color:white;border:2px solid #6aaa3a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📗 Soft Bound</button></a>
   <a href="laghu_ati_laghu.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#6a3d9a;color:white;border:2px solid #b07edd;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📒 Laghu &amp; Ati Laghu</button></a>
   <a href="stm.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#843c0c;color:white;border:2px solid #e07a3a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📋 STM Entry</button></a>
+  <a href="dashboard.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#0d3b52;color:white;border:2px solid #3f9dc4;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📊 Dashboard</button></a>
 </div>
-
 <div class="container">
 
   <!-- sync status bar (hidden, auto-shown on connect) -->
@@ -415,26 +415,6 @@ option   { font-weight: 400; color: #333; }
   </div>
 
   </div><!-- /entrySection -->
-
-  <!-- DOWNLOAD DATE-WISE SHEET -->
-  <div class="card">
-    <div class="section-title" style="background:#843c0c;">📥 Download Date-wise Sheet</div>
-    <div class="form-body">
-      <div class="field-row">
-        <label>From Date</label>
-        <input type="date" id="dlFrom">
-      </div>
-      <div class="field-row">
-        <label>To Date</label>
-        <input type="date" id="dlTo">
-      </div>
-      <div class="btn-row" style="padding:10px 0 0; flex-wrap:wrap; gap:10px;">
-        <button class="btn-save" onclick="downloadSheet('Main')">📥 Download Main Sheet</button>
-        <button class="btn-export" onclick="downloadSheet('By Machine')">📥 Download By Machine Sheet</button>
-      </div>
-      <div id="dlStatus" style="display:none;font-size:0.85rem;font-weight:600;margin-top:10px;"></div>
-    </div>
-  </div>
 
   <!-- RECORDS TABLE -->
   <div class="card">
@@ -834,105 +814,6 @@ async function exportToExcel() {
 
   document.getElementById('statusBar').className = 'status-bar status-saved';
   document.getElementById('statusBar').textContent = `📥 Exported ${records.length} records with formatting.`;
-}
-
-// ── DOWNLOAD DATE-WISE SHEET ─────────────────────────────────────
-async function downloadSheet(sheetName) {
-  const fromVal = document.getElementById('dlFrom').value;
-  const toVal   = document.getElementById('dlTo').value;
-  const dlStatus = document.getElementById('dlStatus');
-
-  if (!fromVal || !toVal) {
-    alert('Please select both From Date and To Date.');
-    return;
-  }
-
-  // Convert yyyy-mm-dd → dd/mm/yyyy for Apps Script
-  const fromFmt = fromVal.split('-').reverse().join('/');
-  const toFmt   = toVal.split('-').reverse().join('/');
-
-  dlStatus.style.display = 'block';
-  dlStatus.style.color   = '#2e75b6';
-  dlStatus.textContent   = `📡 Loading "${sheetName}" records (${fromFmt} – ${toFmt})...`;
-
-  try {
-    const url = `${SHEET_URL}?sheet=${encodeURIComponent(sheetName)}&from=${encodeURIComponent(fromFmt)}&to=${encodeURIComponent(toFmt)}`;
-    const res  = await fetch(url);
-    const data = await res.json();
-
-    if (data.status !== 'success') {
-      dlStatus.style.color   = '#bf360c';
-      dlStatus.textContent   = `⚠️ Error: ${data.message}`;
-      return;
-    }
-
-    const records = data.records || [];
-    if (!records.length) {
-      dlStatus.style.color   = '#bf360c';
-      dlStatus.textContent   = `⚠️ No records found in "${sheetName}" for selected date range.`;
-      return;
-    }
-
-    // Build Excel
-    const headers   = ['S.N.','Exit Date','Book Code','Name','Edition','Juje','Size','Contractor',
-                        'Dhala','Head/Tail','Book Mark','Binding','Jacket','Panni',
-                        'Box','Rate','Total Qty','Entry Date'];
-    const colWidths = [6,14,14,38,12,8,22,10,14,12,24,10,10,8,10,12,14];
-    const bgColor   = sheetName === 'By Machine' ? 'FF375623' : 'FF1F4E79';
-    const rowBg     = sheetName === 'By Machine' ? 'FFEAF3EA' : 'FFDEEAF1';
-
-    const wb = new ExcelJS.Workbook();
-    const ws = wb.addWorksheet(sheetName, { views: [{ state:'frozen', ySplit:1 }] });
-    ws.columns = headers.map((h,i) => ({ header:h, key:h, width:colWidths[i] }));
-
-    // Header styling
-    const hRow = ws.getRow(1);
-    hRow.height = 24;
-    hRow.eachCell(cell => {
-      cell.font      = { bold:true, color:{ argb:'FFFFFFFF' }, size:11, name:'Arial' };
-      cell.fill      = { type:'pattern', pattern:'solid', fgColor:{ argb: bgColor } };
-      cell.alignment = { horizontal:'center', vertical:'middle', wrapText:true };
-    });
-
-    // Data rows
-    records.forEach((r, idx) => {
-      const row = ws.addRow([
-        r.sn, r.exitDate||'', r.code, r.name, r.edition, r.juje, r.contractor,
-        r.dhala, r.ht, r.bm, r.binding, r.jacket, r.panni, r.box_yn,
-        r.rate ? Number(r.rate) : '', r.totalQty ? Number(r.totalQty) : '', r.entryDate||''
-      ]);
-      row.height = 18;
-      if (idx % 2 === 0) {
-        row.eachCell({ includeEmpty:true }, cell => {
-          cell.fill = { type:'pattern', pattern:'solid', fgColor:{ argb: rowBg } };
-          cell.font = { name:'Arial', size:10 };
-        });
-      } else {
-        row.eachCell({ includeEmpty:true }, cell => {
-          cell.font = { name:'Arial', size:10 };
-        });
-      }
-    });
-
-    ws.autoFilter = { from:'A1', to:'Q1' };
-
-    // Download
-    const buf  = await wb.xlsx.writeBuffer();
-    const blob = new Blob([buf], { type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    const url2 = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    a.href     = url2;
-    a.download = `${sheetName.replace(' ','_')}_${fromVal}_to_${toVal}.xlsx`;
-    a.click();
-    URL.revokeObjectURL(url2);
-
-    dlStatus.style.color   = '#1b5e20';
-    dlStatus.textContent   = `✅ Downloaded "${sheetName}" — ${records.length} record(s) (${fromFmt} – ${toFmt})`;
-
-  } catch(err) {
-    dlStatus.style.color   = '#bf360c';
-    dlStatus.textContent   = `⚠️ Failed: ${err.message}`;
-  }
 }
 
 // ── AUTO-CONNECT ON PAGE LOAD ─────────────────────────────────
