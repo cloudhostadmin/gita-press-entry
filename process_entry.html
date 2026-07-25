@@ -198,6 +198,10 @@ tr:hover td { background: #e1f5ee; cursor: pointer; }
           <input type="date" id="fExitDate">
         </div>
         <div class="field-row">
+          <label>Edition</label>
+          <input type="text" id="fEdition" placeholder="e.g. 1st, 2nd, revised...">
+        </div>
+        <div class="field-row">
           <label>Contractor</label>
           <select id="fContractor">
             <option value="">— Select Contractor Code —</option>
@@ -248,12 +252,12 @@ tr:hover td { background: #e1f5ee; cursor: pointer; }
     <div style="overflow-x:auto;">
       <table>
         <thead><tr>
-          <th>S.N.</th><th>Code</th><th>Name</th><th>Size</th><th>Process</th>
+          <th>S.N.</th><th>Code</th><th>Name</th><th>Edn.</th><th>Size</th><th>Process</th>
           <th>Machine</th><th>Sp. Option</th><th>Range</th>
           <th>Rate</th><th>Qty</th><th>Total</th><th>Contractor</th><th>Entry</th>
         </tr></thead>
         <tbody id="recordsBody">
-          <tr><td colspan="13" style="text-align:center;color:#aaa;padding:20px;">
+          <tr><td colspan="14" style="text-align:center;color:#aaa;padding:20px;">
             No records yet. Fill the form and click Save.</td></tr>
         </tbody>
       </table>
@@ -270,7 +274,7 @@ const RM_PT = {"2279":"स्टैन्डर्ड","1":"स्टैन्�
 const PROCESSES = ["कटिंग(अजिल्द)","कटिंग(सजिल्द)","कपडा कटिंग छपाई हेतु","कपडा छपाई","कपडा लेमिनेशन","कल्याण रेपर चिपकाई","कवर तोडाई","डिब्बा भराई","तार सिलाई","दफ्ती कटिंग","निपिंग","पन्नी भराई","परफैक्ट बाइन्डिंग","पोस्तीन चिपकाई","फर्मा कवर भराई","बण्डल बधाई","बुक सेविंग(अजिल्द)","बुक सेविंग(सजिल्द)","मिसिल","रैपर भराई (सजिल्द)","लिफाफा तैयारी","सजिल्द तैयारी","सजिल्द तैयारी (delux)","सम(अजिल्द)","सम(सजिल्द)","सिलिचैक"];
 const RATE_TREE = {"कटिंग(अजिल्द)":{"पुस्तकाकार":{"default":{"पुस्तकार सिंगल":{"Between1-3":4.5,"Between4-5":5.7,"Between6-8":11.3,"Between9-25":12.5},"default":{"Between1-3":3.8,"Between4-5":4.5,"Between9-1000":10.7,"Between6-8":10.0}}},"ग्रन्थाकार":{"default":{"default":{"Between1-3":2.1,"Between9-10":10.7,"Between6-8":10.0,"Between3-5":3.5,"Between1-2":2.9,"Between11-25":25.0,"Between1-1000":7.0},"कल्याण विशेषांक(अजिल्द) कटिंग":{"Between16-25":25.0},"कल्याण(मासिक-अंक) कटिंग":{"Between1-2":7.2}}},"पत्रिका":{"default":{"default":{"Between1-2":2.4,"Between6-8":7.5,"Between9-1000":8.2,"Between3-5":2.8},"कल्याण(मासिक-अंक) कटिंग":{"Between1-2":7.2}}},"महात्म्य":{"default":{"default":{"Between6-1000":10.0}}},"पत्रिका(वृहदाकार)":{"default":{"default":{"Between1-1000":7.0}}},"लघु आकार":{"default":{"default":{"Between2-3":7.0,"Between1-1":6.3,"Between4-1000":7.5,"Between4-14":7.5}}},"पाकेट":{"default":{"default":{"Between9-1000":10.7,"Between6-8":10.0,"Between4-5":4.1,"Between1-3":3.2}}},"पत्रिका(top open)":{"default":{"default":{"Between9-1000":8.2,"Between6-8":7.5,"Between3-5":2.8,"Between1-2":2.9}}}},"कटिंग(सजिल्द)":{"ग्रन्थाकार":{"default":{"default":{"Between26-1000":37.5,"Between1-25":25.0}}},"पुस्तकाकार":{"default":{"पुस्तकार सिंगल":{"Between1-44":20.7},"default":{"Between10-14":10.0,"Between1-9":10.0,"Between26-1000":20.0,"Between15-25":10.7}}},"पाकेट":{"default":{"default":{"Between10-14":10.0,"Between15-1000":11.3,"Between1-9":10.0}}},"लघु आकार":{"default":{"default":{"Between4-14":6.3}}},"महात्म्य":{"default":{"default":{"Between10-14":10.0,"Between1-9":7.5,"Between15-25":11.3}}},"माचिस आकार":{"default":{"default":{"Between1-1000":6.3}}},"वृहदाकार":{"default":{"default":{"Between1-34":35.0,"Between35-1000":50.0}}}},"कपडा कटिंग छपाई हेतु":{"महात्म्य":{"default":{"default":{"*":0.7}}},"पाकेट":{"default":{"default":{"*":0.7}}},"वृहदाकार":{"default":{"default":{"*":1.4}}},"पुस्तकाकार":{"default":{"default":{"*":0.7}}},"ग्रन्थाकार":{"default":{"default":{"*":1.4}}}},"कपडा छपाई":{"पाकेट":{"बाईन्डिंग क्लाथ":{"default":{"*":11.3}},"स्क्रीन प्रिन्टिंग":{"default":{"*":5.1}},"हैन्ड प्रिन्टिंग":{"default":{"*":21.3}}},"माचिस आकार":{"हैन्ड प्रिन्टिंग":{"default":{"*":16.3}},"स्क्रीन प्रिन्टिंग":{"default":{"*":15.0}}},"लघु आकार":{"इम्बोसिंग प्रिन्टिगं":{"default":{"*":25.0}},"हैन्ड प्रिन्टिंग":{"default":{"*":16.3}}},"ग्रन्थाकार":{"स्क्रीन प्रिन्टिंग":{"default":{"*":10.0}}},"वृहदाकार":{"स्क्रीन प्रिन्टिंग":{"default":{"*":11.3}}},"महात्म्य":{"स्क्रीन प्रिन्टिंग":{"default":{"*":5.1}}},"पुस्तकाकार":{"स्क्रीन प्रिन्टिंग":{"default":{"*":5.7}}}},"कपडा लेमिनेशन":{"पुस्तकाकार":{"default":{"default":{"*":11.3}}},"महात्म्य":{"default":{"default":{"*":10.6}}},"ग्रन्थाकार":{"default":{"default":{"*":20.2}}},"पाकेट":{"default":{"default":{"*":10.6}}},"वृहदाकार":{"default":{"default":{"*":20.2}}}},"कल्याण रेपर चिपकाई":{"ग्रन्थाकार":{"default":{"default":{"*":91.2}}},"पुस्तकाकार":{"default":{"default":{"*":74.9}}}},"कवर तोडाई":{"पत्रिका(top open)":{"default":{"default":{"*":6.3}}},"पत्रिका(वृहदाकार)":{"default":{"default":{"*":7.5}}},"लघु आकार":{"default":{"default":{"*":3.2}}},"पाकेट":{"default":{"default":{"*":2.3}}},"पुस्तकाकार":{"default":{"पुस्तकाकार सिगंल":{"*":4.5},"default":{"*":3.8}}},"ग्रन्थाकार":{"default":{"default":{"*":4.5}}}},"डिब्बा भराई":{"वृहदाकार":{"default":{"डिब्बा भराई":{"*":62.5}}},"महात्म्य":{"default":{"डिब्बा भराई":{"*":37.5}}},"पुस्तकाकार":{"default":{"डिब्बा भराई":{"*":37.5}}},"ग्रन्थाकार":{"default":{"डिब्बा भराई":{"*":50.0}}},"पाकेट":{"default":{"डिब्बा भराई":{"*":25.0}}}},"तार सिलाई":{"पुस्तकाकार":{"default":{"4 टांके की सिलाई":{"*":55.0},"2  टांके की सिलाई":{"*":109.9}}},"पत्रिका(top open)":{"default":{"2  टांके की सिलाई":{"*":93.7}}},"लघु आकार":{"default":{"8 टांके की सिलाई":{"*":33.8}}},"पाकेट":{"default":{"4 टांके की सिलाई":{"*":55.0},"2  टांके की सिलाई":{"*":11.7}}},"ग्रन्थाकार":{"default":{"2  टांके की सिलाई":{"*":93.7}}},"पत्रिका(वृहदाकार)":{"default":{"2  टांके की सिलाई":{"*":132.3}}}},"दफ्ती कटिंग":{"वृहदाकार":{"default":{"साघारण":{"*":11.1}}},"माचिस आकार":{"default":{"साघारण":{"*":3.5}}},"लघु आकार":{"default":{"साघारण":{"*":3.5}}},"पुस्तकाकार":{"default":{"साघारण":{"*":6.3}}},"पाकेट":{"default":{"साघारण":{"*":6.3}}},"महात्म्य":{"default":{"साघारण":{"*":6.3}}},"ग्रन्थाकार":{"default":{"साघारण":{"*":8.8}}}},"निपिंग":{"पुस्तकाकार":{"default":{"निपिंग":{"Between16-25":8.8,"Between26-30":11.3,"Between1-15":7.5,"Between30-100":12.5},"पुस्तकाकार सिंगल":{"Between1-15":11.3,"Between16-25":13.8,"Between26-50":16.3}}},"ग्रन्थाकार":{"default":{"निपिंग":{"Between16-25":17.5,"Between1-15":15.0,"Between26-30":22.5,"Between30-100":25.0}}},"पाकेट":{"default":{"निपिंग":{"Between26-30":11.3,"Between16-25":8.8,"Between1-15":7.5}}},"वृहदाकार":{"default":{"निपिंग":{"Between30-100":35.0}}},"महात्म्य":{"default":{"निपिंग":{"Between16-25":8.8,"Between1-15":7.5}}},"माचिस आकार":{"default":{"निपिंग":{"Between1-8":5.1}}},"लघु आकार":{"default":{"निपिंग":{"Between1-14":5.1}}}},"पन्नी भराई":{"वृहदाकार":{"default":{"default":{"*":37.5}}},"ग्रन्थाकार":{"default":{"default":{"*":18.8}}},"पाकेट":{"default":{"default":{"*":15.0}}},"पुस्तकाकार":{"default":{"default":{"*":15.0}}}},"परफैक्ट बाइन्डिंग":{"पुस्तकाकार":{"परफेक्ट-appu":{"परफैक्ट":{"*":133.6},"पुस्तकाकार सिगंल":{"*":237.2}}},"ग्रन्थाकार":{"परफेक्ट-appu":{"default":{"*":268.4},"कल्य़ाण विशेषांक":{"*":268.4}}},"महात्म्य":{"परफेक्ट-appu":{"परफैक्ट":{"*":118.6}}},"पाकेट":{"परफेक्ट-appu":{"परफैक्ट":{"*":118.6}}},"लघु आकार":{"परफेक्ट-appu":{"परफैक्ट":{"*":81.2}}}},"पोस्तीन चिपकाई":{"ग्रन्थाकार":{"default":{"वभ कवर चिपकाई":{"*":2.3},"पोस्तीन चिपकाई":{"*":37.5}}},"वृहदाकार":{"default":{"पोस्तीन चिपकाई":{"*":62.5}}},"महात्म्य":{"default":{"पोस्तीन चिपकाई":{"*":18.8}}},"पुस्तकाकार":{"default":{"पुस्तकाकार सिगंल":{"*":18.8},"पोस्तीन चिपकाई":{"*":22.5}}},"माचिस आकार":{"default":{"पोस्तीन चिपकाई":{"*":10.0}}},"लघु आकार":{"default":{"पोस्तीन चिपकाई":{"*":10.0}}},"पाकेट":{"default":{"पोस्तीन चिपकाई":{"*":22.5}}}},"फर्मा कवर भराई":{"लघु आकार":{"default":{"full section":{"*":12.5},"one fourth section":{"*":12.5}}},"पुस्तकाकार":{"default":{"full section":{"*":20.0},"half section":{"*":20.0},"one fourth section":{"*":7.1},"one eighth section":{"*":7.1},"पुस्तकाकार सिगंल":{"*":41.3}}},"पाकेट":{"default":{"full section":{"*":7.1},"half section":{"*":20.0},"one fourth section":{"*":7.1},"one eighth section":{"*":7.1}}},"पत्रिका(वृहदाकार)":{"default":{"full section":{"*":62.5}}},"ग्रन्थाकार":{"default":{"full section":{"*":18.8}}},"पत्रिका(top open)":{"default":{"full section":{"*":42.5}}}},"बण्डल बधाई":{"वृहदाकार":{"default":{"बंडल बंधाई":{"*":12.9}}},"ग्रन्थाकार":{"default":{"बंडल बंधाई":{"*":10.0}}},"पुस्तकाकार":{"default":{"पुस्तकाकार सिगंल":{"*":6.3},"बंडल बंधाई":{"*":5.3}}},"पाकेट":{"default":{"बंडल बंधाई":{"*":5.0}}},"लघु आकार":{"default":{"बंडल बंधाई":{"*":1.4}}},"माचिस आकार":{"default":{"बंडल बंधाई":{"*":1.2}}},"महात्म्य":{"default":{"बंडल बंधाई":{"*":5.0}}}},"बुक सेविंग(अजिल्द)":{"महात्म्य":{"बुक सेविंग(चैनल)":{"बुकसेविंग":{"Between15-100":12.3,"Between9-14":17.0,"Between2-8":18.1},"default":{"Between1-8":15.3}},"बुक सेविंग(स्टैन्डर्ड)":{"बुकसेविंग":{"Between15-100":17.5,"Between9-14":26.3,"Between1-8":22.5,"Between2-8":26.3}}},"पाकेट":{"बुक सेविंग(स्टैन्डर्ड)":{"बुकसेविंग":{"Between15-100":22.5,"Between1-8":22.5,"Between9-14":25.0}},"बुक सेविंग(चैनल)":{"बुकसेविंग":{"Between15-100":15.3,"Between9-14":17.0,"Between1-8":15.3}}},"ग्रन्थाकार":{"बुक सेविंग(स्टैन्डर्ड)":{"बुकसेविंग":{"Between2-8":40.0,"Between15-100":41.3,"Between9-14":35.0}},"बुक सेविंग(चैनल)":{"बुकसेविंग":{"Between2-8":33.9,"Between15-100":30.4,"Between1-8":29.2,"Between9-14":25.7}}},"पुस्तकाकार":{"बुक सेविंग(स्टैन्डर्ड)":{"बुकसेविंग":{"Between3-8":32.5,"Between9-14":22.5,"Between15-100":25.0},"पुस्तकाकार सिंगल":{"Between1-32":37.5}},"बुक सेविंग(चैनल)":{"बुकसेविंग":{"Between15-100":14.1,"Between1-8":18.1,"Between9-14":14.7}}},"माचिस आकार":{"बुक सेविंग(स्टैन्डर्ड)":{"default":{"Between1-1000":15.0}}},"लघु आकार":{"बुक सेविंग(चैनल)":{"बुकसेविंग":{"Between1-14":14.1}},"बुक सेविंग(स्टैन्डर्ड)":{"बुकसेविंग":{"Between1-14":17.5}}}},"बुक सेविंग(सजिल्द)":{"पुस्तकाकार":{"बुक सेविंग(स्टैन्डर्ड)":{"पुस्तकाकार सिंगल":{"Between1-32":37.5,"Between33-44":36.3},"साधारण सिलाई":{"Between3-8":31.3,"Between15-100":20.0,"Between9-14":26.3}},"बुक सेविंग(चैनल)":{"साधारण सिलाई":{"Between15-100":14.1,"Between9-14":14.7,"Between1-8":18.1}}},"पाकेट":{"बुक सेविंग(चैनल)":{"साधारण सिलाई":{"Between15-100":15.3,"Between1-8":15.3,"Between9-14":17.0}},"बुक सेविंग(स्टैन्डर्ड)":{"साधारण सिलाई":{"Between15-100":22.5,"Between1-8":22.5,"Between2-8":25.0,"Between9-14":25.0}}},"महात्म्य":{"बुक सेविंग(स्टैन्डर्ड)":{"साधारण सिलाई":{"Between1-8":22.5,"Between15-100":17.5,"Between9-14":25.0},"बुकसेविंग":{"Between1-8":26.3}},"बुक सेविंग(चैनल)":{"साधारण सिलाई":{"Between1-8":15.3,"Between15-100":12.3,"Between9-14":17.0},"बुकसेविंग":{"Between1-8":18.1}}},"ग्रन्थाकार":{"बुक सेविंग(चैनल)":{"साधारण सिलाई":{"Between15-100":30.4,"Between9-14":31.6,"Between1-8":33.9}},"बुक सेविंग(स्टैन्डर्ड)":{"साधारण सिलाई":{"Between15-100":33.8,"Between9-14":43.8,"Between1-8":46.3}}},"वृहदाकार":{"बुक सेविंग(स्टैन्डर्ड)":{"तानी सिलाई":{"Between1-1000":130.7},"स्टेप सिलाई":{"Between1-1000":14.7}},"बुक सेविंग(चैनल)":{"साधारण सिलाई":{"Between1-100":40.9}}},"माचिस आकार":{"बुक सेविंग(स्टैन्डर्ड)":{"साधारण सिलाई":{"Between1-1000":17.5}}},"लघु आकार":{"बुक सेविंग(स्टैन्डर्ड)":{"बुकसेविंग":{"Between1-14":20.0}},"बुक सेविंग(चैनल)":{"बुकसेविंग":{"Between1-14":12.9}}}},"मिसिल":{"लघु आकार":{"default":{"मिसिल उठाई":{"Between1-14":10.0}}},"पुस्तकाकार":{"default":{"मिसिल उठाई सिंगल":{"Between1-4":21.3,"Between5-8":23.8,"Between9-50":27.5},"मिसिल उठाई":{"Between9-1000":15.0,"Between5-8":13.8,"Between1-4":12.5}}},"माचिस आकार":{"default":{"मिसिल उठाई":{"Between1-8":6.3}}},"महात्म्य":{"default":{"मिसिल उठाई":{"Between9-1000":13.8,"Between5-8":12.5,"Between1-4":11.3}}},"ग्रन्थाकार":{"default":{"मिसिल उठाई":{"Between1-4":21.3,"Between9-1000":27.5,"Between5-8":23.8}}},"पाकेट":{"default":{"मिसिल उठाई":{"Between1-4":11.3,"Between9-1000":13.8,"Between5-8":12.5}}},"वृहदाकार":{"default":{"मिसिल उठाई":{"Between1-1000":47.5}}}},"रैपर भराई (सजिल्द)":{"महात्म्य":{"default":{"default":{"*":8.2}}},"ग्रन्थाकार":{"default":{"default":{"*":16.3}}},"पुस्तकाकार":{"default":{"default":{"*":8.2}}},"वृहदाकार":{"default":{"default":{"*":22.5}}},"पाकेट":{"default":{"default":{"*":8.2}}}},"लिफाफा तैयारी":{"पुस्तकाकार":{"default":{"लिफाफा तैयारी":{"*":374.5}}},"ग्रन्थाकार":{"default":{"लिफाफा तैयारी":{"*":374.5}}}},"सजिल्द तैयारी":{"माचिस आकार":{"default":{"जोईन्ट फारमिग":{"Between1-8":174.8,"Between1-9":174.8}}},"पुस्तकाकार":{"default":{"दैन्नदनी तैयारी":{"Between1-15":62.5},"दैन्नदनी डिलक्स":{"Between1-15":124.9},"रैपर सहित":{"Between1-12":237.2,"Between26-1000":262.1,"Between13-25":243.4},"बिना रैपर":{"Between1-12":206.0,"Between26-1000":212.2,"Between13-25":206.0}}},"महात्म्य":{"default":{"बिना रैपर":{"Between1-12":193.5,"Between13-25":193.5},"रैपर सहित":{"Between13-25":237.2,"Between1-12":237.2}}},"पाकेट":{"default":{"दैन्नदनी तैयारी":{"Between1-15":50.0},"बिना रैपर":{"Between1-12":218.5,"Between13-25":206.0},"दैन्नदनी डिलक्स":{"Between1-15":218.5},"रैपर सहित":{"Between13-25":243.4,"Between1-12":231.0}}},"लघु आकार":{"default":{"दैन्नदनी तैयारी":{"Between1-14":22.5},"लधु विशेष तैयारी":{"Between1-12":218.5}}},"ग्रन्थाकार":{"default":{"रैपर सहित":{"Between1-12":243.4,"Between26-1000":274.6,"Between13-25":268.4},"बिना रैपर":{"Between1-12":212.2,"Between26-1000":249.7,"Between13-25":249.7}}},"वृहदाकार":{"default":{"रैपर सहित":{"Between1-33":330.8,"Between34-1000":405.6,"Between1-1000":436.9}}}},"सजिल्द तैयारी (delux)":{"ग्रन्थाकार":{"default":{"रैपर सहित":{"Between1-40":287.1}}},"पुस्तकाकार":{"default":{"रैपर सहित":{"Between1-25":249.7,"Between26-100":262.1}}},"पाकेट":{"default":{"रैपर सहित":{"Between1-25":243.4}}},"महात्म्य":{"default":{"रैपर सहित":{"Between1-25":249.7}}}},"सम(अजिल्द)":{"लघु आकार":{"default":{"default":{"*":4.5}}},"पुस्तकाकार":{"default":{"default":{"*":4.5},"पुस्तकाकार सिगंल":{"*":5.7}}},"पाकेट":{"default":{"default":{"*":4.5}}},"पत्रिका(top open)":{"default":{"default":{"*":3.8}}},"पत्रिका(वृहदाकार)":{"default":{"default":{"*":10.0}}},"ग्रन्थाकार":{"default":{"default":{"*":3.8}}}},"सम(सजिल्द)":{"लघु आकार":{"default":{"default":{"Between1-12":7.5}}},"माचिस आकार":{"default":{"default":{"Between1-8":7.5}}},"वृहदाकार":{"default":{"default":{"Between31-100":56.2}}},"महात्म्य":{"default":{"default":{"Between1-100":12.5}}},"पुस्तकाकार":{"default":{"default":{"Between1-25":12.5,"Between30-100":18.8,"Between26-30":17.5},"पुस्तकाकार सिगंल":{"Between1-44":22.5}}},"ग्रन्थाकार":{"default":{"default":{"Between30-100":37.5,"Between1-25":27.5,"Between26-30":35.0}}},"पाकेट":{"default":{"default":{"Between1-100":12.5}}}},"सिलिचैक":{"वृहदाकार":{"default":{"सिंगल चैक":{"Between1-1000":22.5}}},"पुस्तकाकार":{"default":{"सिंगल चैक":{"Between3-8":13.8,"Between9-1000":11.3},"सिंगल चेक पुस्तकाकार":{"Between1-43":23.4}}},"माचिस आकार":{"default":{"सिंगल चैक":{"Between1-1000":4.1}}},"ग्रन्थाकार":{"default":{"सिंगल चैक":{"Between1-1000":17.5}}},"लघु आकार":{"default":{"सिंगल चैक":{"Between1-14":6.3}}},"पाकेट":{"default":{"सिंगल चैक":{"Between1-1000":14.7}}},"महात्म्य":{"default":{"सिंगल चैक":{"Between1-1000":11.3}}}}};
 
-let SHEET_URL = 'https://script.google.com/macros/s/AKfycbx_s8FkMhtnprhL2rT3XWqUOL00ctyzDeXr1r4DAiLP6BzRecmcz-0cbgJjzsv2z9HuLQ/exec';
+let SHEET_URL = 'https://script.google.com/macros/s/AKfycbwWQZnbKbfDBpH5adbujBYXMB7Xr3QIr9yP9jZ9u5gzglPzdNVdgRuT6jFBp5HhfGHXTQ/exec';
 const ANY = '*';
 let records = [];
 let editIndex = -1;
@@ -510,6 +514,7 @@ async function saveRecord() {
     exitDate: document.getElementById('fExitDate').value,
     code,
     name: document.getElementById('bookName').value,
+    edition: document.getElementById('fEdition').value.trim(),
     juje: document.getElementById('bookJuje').value,
     size: document.getElementById('bookSize').value,
     pageType: document.getElementById('bookPT').value,
@@ -538,7 +543,7 @@ function renderTable() {
   document.getElementById('grandTotal').textContent = 'Grand Total: ₹' + grand.toFixed(2);
   const tb = document.getElementById('recordsBody');
   if (!records.length) {
-    tb.innerHTML = '<tr><td colspan="13" style="text-align:center;color:#aaa;padding:20px;">No records yet.</td></tr>';
+    tb.innerHTML = '<tr><td colspan="14" style="text-align:center;color:#aaa;padding:20px;">No records yet.</td></tr>';
     return;
   }
   tb.innerHTML = records.map((r, i) =>
@@ -546,6 +551,7 @@ function renderTable() {
     '<td>' + r.sn + '</td>' +
     '<td><strong>' + r.code + '</strong></td>' +
     '<td title="' + r.name + '">' + r.name.substring(0, 16) + (r.name.length > 16 ? '…' : '') + '</td>' +
+    '<td>' + (r.edition || '—') + '</td>' +
     '<td>' + (r.size || '—') + '</td>' +
     '<td title="' + r.process + '">' + r.process.substring(0, 14) + (r.process.length > 14 ? '…' : '') + '</td>' +
     '<td>' + (r.machine || '—') + '</td>' +
@@ -570,6 +576,7 @@ function editRecord(i) {
   onRange();
   document.getElementById('fQty').value = r.qty; calcTotal();
   document.getElementById('fExitDate').value = r.exitDate || '';
+  document.getElementById('fEdition').value = r.edition || '';
   document.getElementById('fContractor').value = r.contractor || '';
   const bar = document.getElementById('statusBar');
   bar.className = 'status-bar status-saved';
@@ -579,7 +586,7 @@ function editRecord(i) {
 
 function clearForm() {
   editIndex = -1;
-  ['bookCode','bookName','bookJuje','bookSize','bookPT','fRate','fQty','fTotal','fExitDate']
+  ['bookCode','bookName','bookJuje','bookSize','bookPT','fRate','fQty','fTotal','fExitDate','fEdition']
     .forEach(id => document.getElementById(id).value = '');
   document.getElementById('fContractor').value = '';
   ['fMachine','fSpecial','fRange'].forEach(i => resetSel(i));
@@ -594,10 +601,10 @@ function clearForm() {
 
 async function exportToExcel() {
   if (!records.length) { alert('No records to export.'); return; }
-  const headers = ['S.N.','Exit Date','Book Code','Name','Juje','Size','Page Type',
+  const headers = ['S.N.','Exit Date','Book Code','Name','Edition','Juje','Size','Page Type',
                    'Process','Machine','Special Option','Juje Range',
                    'Rate','Quantity','Total Amount','Contractor','Entry Date'];
-  const widths = [6,14,12,36,8,16,14,24,20,22,18,10,10,14,22,14];
+  const widths = [6,14,12,36,12,8,16,14,24,20,22,18,10,10,14,22,14];
   const wb = new ExcelJS.Workbook();
   const ws = wb.addWorksheet('Process Entry', { views: [{ state: 'frozen', ySplit: 1 }] });
   ws.columns = headers.map((h, i) => ({ header: h, key: h, width: widths[i] }));
@@ -608,7 +615,7 @@ async function exportToExcel() {
     c.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
   });
   records.forEach((r, i) => {
-    const row = ws.addRow([r.sn, r.exitDate, r.code, r.name, r.juje, r.size, r.pageType,
+    const row = ws.addRow([r.sn, r.exitDate, r.code, r.name, r.edition, r.juje, r.size, r.pageType,
       r.process, r.machine, r.specialOption, r.jujeRange,
       Number(r.rate), Number(r.qty), Number(r.total), r.contractor, r.entryDate]);
     row.height = 16;
@@ -618,14 +625,14 @@ async function exportToExcel() {
     });
   });
   const gr = ws.addRow([]);
-  gr.getCell(13).value = 'Grand Total';
-  gr.getCell(14).value = records.reduce((a, r) => a + (parseFloat(r.total) || 0), 0);
-  [13, 14].forEach(n => {
+  gr.getCell(14).value = 'Grand Total';
+  gr.getCell(15).value = records.reduce((a, r) => a + (parseFloat(r.total) || 0), 0);
+  [14, 15].forEach(n => {
     gr.getCell(n).font = { bold: true, size: 10, name: 'Arial' };
     gr.getCell(n).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEAF3DE' } };
   });
-  ['L','M','N'].forEach(col => { ws.getColumn(col).numFmt = '0.00'; });
-  ws.autoFilter = { from: 'A1', to: 'P1' };
+  ['M','N','O'].forEach(col => { ws.getColumn(col).numFmt = '0.00'; });
+  ws.autoFilter = { from: 'A1', to: 'Q1' };
   const buf = await wb.xlsx.writeBuffer();
   const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
   const url = URL.createObjectURL(blob);
