@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reconcile — Gita Press</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial, sans-serif; background: #f0f4f8; min-height: 100vh; }
+.header { background: linear-gradient(135deg, #3f3d8f, #6462c4); color: white; padding: 18px 24px;
+  display: flex; align-items: center; gap: 14px; box-shadow: 0 3px 12px rgba(0,0,0,.2); }
+.header h1 { font-size: 1.3rem; font-weight: 700; }
+.header p { font-size: .82rem; opacity: .85; margin-top: 3px; }
+.container { max-width: 1180px; margin: 24px auto; padding: 0 16px 60px; }
+.card { background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  overflow: hidden; margin-bottom: 20px; }
+.section-title { background: #3f3d8f; color: white; padding: 10px 18px; font-size: .85rem;
+  font-weight: 600; letter-spacing: .5px; text-transform: uppercase; }
+.form-body { padding: 16px 18px; }
+.rule { background: #eef0fb; border-left: 4px solid #3f3d8f; padding: 11px 14px;
+  border-radius: 0 7px 7px 0; font-size: .84rem; color: #2a2960; line-height: 1.75; }
+.rule code { background: #fff; padding: 1px 5px; border-radius: 4px; font-size: .8rem; }
+.filters { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+.fgrp { display: flex; flex-direction: column; gap: 4px; }
+.fgrp label { font-size: .78rem; font-weight: 700; color: #3f3d8f; }
+input[type=text] { padding: 8px 11px; border: 2px solid #d0dce8; border-radius: 7px;
+  font-size: .9rem; font-family: Arial; background: #fafdff; min-width: 150px; }
+input[type=text]:focus { outline: none; border-color: #3f3d8f; box-shadow: 0 0 0 3px rgba(63,61,143,.15); background: #fff; }
+.chk { display: flex; align-items: center; gap: 7px; font-size: .85rem; font-weight: 600; color: #34405c; }
+.chk input { width: 16px; height: 16px; accent-color: #3f3d8f; cursor: pointer; }
+button { padding: 10px 20px; border: none; border-radius: 8px; font-size: .9rem; font-weight: 700;
+  cursor: pointer; transition: all .2s; }
+.btn-run { background: #3f3d8f; color: #fff; }
+.btn-run:hover { background: #2f2d75; transform: translateY(-1px); }
+.btn-x { background: #1F4E79; color: #fff; }
+.btn-x:hover { background: #163a5a; }
+.btn-ghost { background: #f5f5f5; color: #333; border: 1.5px solid #ddd; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px; padding: 0 18px 16px; }
+.kpi { border-radius: 9px; padding: 12px 14px; border: 2px solid; }
+.kpi .n { font-size: 1.5rem; font-weight: 800; line-height: 1.1; }
+.kpi .l { font-size: .74rem; font-weight: 700; margin-top: 3px; text-transform: uppercase; letter-spacing: .3px; }
+.k-all { background: #eef0fb; border-color: #c3c2ea; color: #2a2960; }
+.k-ok  { background: #e8f5e9; border-color: #a5d6a7; color: #1b5e20; }
+.k-lo  { background: #fdecea; border-color: #f5b8b0; color: #a3241a; }
+.k-hi  { background: #fff8e1; border-color: #ffe082; color: #7a5200; }
+.k-na  { background: #f3f3f6; border-color: #d0d0dc; color: #4a4a5c; }
+.status { margin: 0 18px 16px; padding: 11px 14px; border-radius: 8px; font-size: .86rem;
+  font-weight: 600; display: none; }
+.st-info { background: #e3f2fd; color: #0d47a1; }
+.st-ok { background: #e8f5e9; color: #1b5e20; }
+.st-err { background: #fff3e0; color: #bf360c; }
+table { width: 100%; border-collapse: collapse; font-size: .8rem; }
+th { background: #3f3d8f; color: #fff; padding: 8px 9px; text-align: left; font-weight: 600;
+  font-size: .73rem; white-space: nowrap; position: sticky; top: 0; }
+th.num, td.num { text-align: right; font-variant-numeric: tabular-nums; }
+td { padding: 6px 9px; border-bottom: 1px solid #eef2f6; color: #333; white-space: nowrap; }
+tr:nth-child(even) td { background: #f7f7fc; }
+tr.r-ok td { background: #f2fbf3; }
+tr.r-lo td { background: #fdf2f0; }
+tr.r-hi td { background: #fffbf0; }
+tr.r-na td { background: #f6f6f9; }
+.pill { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: .72rem; font-weight: 700; }
+.p-ok { background: #c8e6c9; color: #1b5e20; }
+.p-lo { background: #f8cdc6; color: #a3241a; }
+.p-hi { background: #ffe6a3; color: #7a5200; }
+.p-na { background: #dcdce6; color: #43435c; }
+.tbl-wrap { max-height: 620px; overflow: auto; }
+.log { font-size: .79rem; color: #55697a; padding: 0 18px 14px; line-height: 1.7; }
+@media (max-width: 620px) { .filters { flex-direction: column; align-items: stretch; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div style="font-size:2rem">🔍</div>
+  <div>
+    <h1>Reconcile — Print Order vs तैयार माल</h1>
+    <p>Book code + edition पर छपाई आदेश और तैयार मात्रा का मिलान</p>
+  </div>
+</div>
+
+<div style="background:#1a3a5c;padding:8px 24px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+  <span style="color:#aac;font-size:0.78rem;font-weight:600;margin-right:4px;">GO TO →</span>
+  <a href="dashboard.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#0d3b52;color:white;border:2px solid #3f9dc4;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📊 Dashboard</button></a>
+  <button style="padding:7px 16px;background:#3f3d8f;color:white;border:2px solid #8785d6;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:default;box-shadow:0 0 0 2px white,0 0 0 4px #8785d6;">🔍 Reconcile ✓</button>
+  <a href="print_order.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#7b2d5e;color:white;border:2px solid #c470a0;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">🖨️ Print Order</button></a>
+  <a href="stm.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#843c0c;color:white;border:2px solid #e07a3a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📋 STM Entry</button></a>
+  <a href="process_entry.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#0f6e56;color:white;border:2px solid #3fb99a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">⚙️ Process Entry</button></a>
+  <a href="index.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#1F4E79;color:white;border:2px solid #4a90c4;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📚 Main Entry</button></a>
+  <a href="soft_bound.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#375623;color:white;border:2px solid #6aaa3a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📗 Soft Bound</button></a>
+  <a href="laghu_ati_laghu.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#6a3d9a;color:white;border:2px solid #b07edd;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📒 Laghu &amp; Ati Laghu</button></a>
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <div class="section-title">📐 मिलान का नियम</div>
+    <div class="form-body">
+      <div class="rule">
+        <strong>Print Order quantity</strong> को benchmark मानकर उसी book code + edition की तैयार मात्रा जोड़ी जाती है:<br>
+        • <strong>STM</strong> — उस book+edition के सारे rows का <code>Total Quantity</code><br>
+        • <strong>Process Entry</strong> — सिर्फ़ <em>अंतिम चरण</em> के तीन processes:
+          <code>कटिंग(अजिल्द)</code> <code>सजिल्द तैयारी</code> <code>सजिल्द तैयारी (delux)</code><br>
+        बीच के processes (तार सिलाई, मिसिल, निपिंग आदि) नहीं गिने जाते — वरना हर copy कई बार गिनी जाती।<br>
+        Edition का मिलान अंक निकालकर होता है, तो <code>2</code> · <code>2nd</code> · <code>II संस्करण</code> एक ही माने जाते हैं।
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">⚙️ Filters</div>
+    <div class="form-body">
+      <div class="filters">
+        <div class="fgrp">
+          <label>Book Code (खाली = सब)</label>
+          <input type="text" id="fCode" placeholder="e.g. 48  या  48,1426,11">
+        </div>
+        <div class="fgrp">
+          <label>Book Name में खोजें</label>
+          <input type="text" id="fName" placeholder="e.g. गीता">
+        </div>
+        <div class="fgrp">
+          <label class="chk"><input type="checkbox" id="fOnlyDiff"> सिर्फ़ mismatch दिखाएँ</label>
+          <label class="chk"><input type="checkbox" id="fHideNoPO"> Print Order बिना वाले छिपाएँ</label>
+        </div>
+        <button class="btn-run" onclick="run()">🔄 मिलान चलाएँ</button>
+        <button class="btn-x" onclick="exportXlsx()">📥 Excel</button>
+      </div>
+    </div>
+    <div class="status" id="status"></div>
+    <div class="cards" id="kpis" style="display:none;">
+      <div class="kpi k-all"><div class="n" id="kAll">0</div><div class="l">Book+Edition</div></div>
+      <div class="kpi k-ok"><div class="n" id="kOk">0</div><div class="l">मिल गए</div></div>
+      <div class="kpi k-lo"><div class="n" id="kLo">0</div><div class="l">कम बने</div></div>
+      <div class="kpi k-hi"><div class="n" id="kHi">0</div><div class="l">ज़्यादा बने</div></div>
+      <div class="kpi k-na"><div class="n" id="kNa">0</div><div class="l">Print Order नहीं</div></div>
+    </div>
+    <div class="log" id="log"></div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">📋 मिलान तालिका</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Code</th><th>Name</th><th>Edition</th>
+          <th class="num">Print Order</th>
+          <th class="num">STM</th>
+          <th class="num">कटिंग(अजिल्द)</th>
+          <th class="num">सजिल्द तैयारी</th>
+          <th class="num">सजिल्द तैयारी (delux)</th>
+          <th class="num">कुल तैयार</th>
+          <th class="num">अंतर</th>
+          <th>स्थिति</th>
+        </tr></thead>
+        <tbody id="tbody">
+          <tr><td colspan="11" style="text-align:center;color:#aaa;padding:24px;">
+            "मिलान चलाएँ" दबाएँ</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let SHEET_URL = 'https://script.google.com/macros/s/AKfycbzgepvz3PrkAYrAurVxNoPvsZr8HfaCFgyG9DBjTW1ZXHEjelr28P-LnEbSvO64L2B1/exec';
+
+const FINAL_PROCESSES = ['कटिंग(अजिल्द)', 'सजिल्द तैयारी', 'सजिल्द तैयारी (delux)'];
+let rows = [];   // reconciliation result
+
+function setStatus(kind, msg) {
+  const el = document.getElementById('status');
+  el.style.display = 'block';
+  el.className = 'status ' + (kind === 'ok' ? 'st-ok' : kind === 'err' ? 'st-err' : 'st-info');
+  el.textContent = msg;
+}
+function log(msg) {
+  const el = document.getElementById('log');
+  const d = document.createElement('div'); d.textContent = msg; el.appendChild(d);
+}
+function clearLog() { document.getElementById('log').innerHTML = ''; }
+function n(v) { const x = Number(v); return isNaN(x) ? 0 : x; }
+function fmt(v) { return n(v).toLocaleString('en-IN'); }
+
+// Edition ko normalize: pehla number nikaalo; number na ho to lowercase text
+function edKey(s) {
+  const t = String(s == null ? '' : s).trim();
+  const m = /(\d+)/.exec(t);
+  return m ? m[1] : t.toLowerCase();
+}
+
+async function fetchSheet(name) {
+  const res  = await fetch(SHEET_URL + '?sheet=' + encodeURIComponent(name));
+  const data = await res.json();
+  if (data.status !== 'success') throw new Error(name + ': ' + (data.message || 'read failed'));
+  return data.records || [];
+}
+
+async function run() {
+  clearLog();
+  document.getElementById('kpis').style.display = 'none';
+  setStatus('info', '📡 Print Order, STM और Process Entry पढ़ रहे हैं...');
+  let po, stm, pe;
+  try {
+    [po, stm, pe] = await Promise.all([
+      fetchSheet('Print Order'), fetchSheet('STM'), fetchSheet('Process Entry')
+    ]);
+  } catch (err) { setStatus('err', '⚠️ ' + err.message); return; }
+  log('Print Order rows: ' + po.length + '   STM rows: ' + stm.length + '   Process Entry rows: ' + pe.length);
+
+  const map = new Map();   // code|edKey -> aggregate
+  function slot(code, ed, name) {
+    const k = code + '|' + edKey(ed);
+    if (!map.has(k)) map.set(k, {
+      code: code, name: name || '', edition: String(ed == null ? '' : ed).trim(),
+      po: 0, stm: 0, f0: 0, f1: 0, f2: 0, hasPO: false
+    });
+    const o = map.get(k);
+    if (!o.name && name) o.name = name;
+    return o;
+  }
+
+  po.forEach(r => {
+    const code = String(r['Book Code'] || '').trim();
+    if (!code) return;
+    const o = slot(code, r['Current Edition'], r['Name']);
+    o.po += n(r['Current Edition Quantity']);
+    o.hasPO = true;
+  });
+
+  stm.forEach(r => {
+    const code = String(r['Book Code'] || '').trim();
+    if (!code) return;
+    slot(code, r['Edition'], r['Name']).stm += n(r['Total Qty']);
+  });
+
+  let skipped = 0;
+  pe.forEach(r => {
+    const code = String(r['Book Code'] || '').trim();
+    if (!code) return;
+    const proc = String(r['Process'] || '').trim();
+    const i = FINAL_PROCESSES.indexOf(proc);
+    if (i === -1) { skipped++; return; }        // बीच का process — नहीं गिनते
+    const o = slot(code, r['Edition'], r['Name']);
+    o['f' + i] += n(r['Quantity']);
+  });
+  log('Process Entry में बीच के processes छोड़े गए: ' + skipped + ' rows');
+
+  rows = Array.from(map.values()).map(o => {
+    const done = o.stm + o.f0 + o.f1 + o.f2;
+    const diff = done - o.po;
+    let st = 'na';
+    if (o.hasPO) st = (diff === 0) ? 'ok' : (diff < 0 ? 'lo' : 'hi');
+    return Object.assign({}, o, { done: done, diff: diff, st: st });
+  }).sort((a, b) => {
+    const rank = { lo: 0, hi: 1, na: 2, ok: 3 };
+    if (rank[a.st] !== rank[b.st]) return rank[a.st] - rank[b.st];
+    const d = Math.abs(b.diff) - Math.abs(a.diff);
+    if (d !== 0) return d;
+    return (Number(a.code) || 0) - (Number(b.code) || 0);
+  });
+
+  render();
+  const c = { ok: 0, lo: 0, hi: 0, na: 0 };
+  rows.forEach(r => c[r.st]++);
+  document.getElementById('kAll').textContent = fmt(rows.length);
+  document.getElementById('kOk').textContent = fmt(c.ok);
+  document.getElementById('kLo').textContent = fmt(c.lo);
+  document.getElementById('kHi').textContent = fmt(c.hi);
+  document.getElementById('kNa').textContent = fmt(c.na);
+  document.getElementById('kpis').style.display = 'grid';
+  setStatus(c.lo || c.hi ? 'err' : 'ok',
+    (c.lo || c.hi) ? ('⚠️ ' + (c.lo + c.hi) + ' book+edition में अंतर मिला')
+                   : '✅ सभी book+edition मिल गए');
+}
+
+function visible() {
+  const codeRaw = document.getElementById('fCode').value.trim();
+  const codes = codeRaw ? codeRaw.split(/[,\s]+/).filter(Boolean) : null;
+  const nm = document.getElementById('fName').value.trim().toLowerCase();
+  const onlyDiff = document.getElementById('fOnlyDiff').checked;
+  const hideNoPO = document.getElementById('fHideNoPO').checked;
+  return rows.filter(r => {
+    if (codes && codes.indexOf(r.code) === -1) return false;
+    if (nm && String(r.name).toLowerCase().indexOf(nm) === -1) return false;
+    if (onlyDiff && r.st === 'ok') return false;
+    if (hideNoPO && r.st === 'na') return false;
+    return true;
+  });
+}
+
+function render() {
+  const v = visible();
+  const tb = document.getElementById('tbody');
+  if (!v.length) {
+    tb.innerHTML = '<tr><td colspan="11" style="text-align:center;color:#aaa;padding:24px;">कोई row नहीं मिली</td></tr>';
+    return;
+  }
+  const pill = { ok: ['p-ok', 'मिल गया'], lo: ['p-lo', 'कम'], hi: ['p-hi', 'ज़्यादा'], na: ['p-na', 'PO नहीं'] };
+  tb.innerHTML = v.map(r =>
+    '<tr class="r-' + r.st + '">' +
+    '<td><strong>' + r.code + '</strong></td>' +
+    '<td title="' + r.name + '">' + String(r.name).substring(0, 26) + (String(r.name).length > 26 ? '…' : '') + '</td>' +
+    '<td>' + (r.edition || '—') + '</td>' +
+    '<td class="num">' + (r.hasPO ? fmt(r.po) : '—') + '</td>' +
+    '<td class="num">' + fmt(r.stm) + '</td>' +
+    '<td class="num">' + fmt(r.f0) + '</td>' +
+    '<td class="num">' + fmt(r.f1) + '</td>' +
+    '<td class="num">' + fmt(r.f2) + '</td>' +
+    '<td class="num"><strong>' + fmt(r.done) + '</strong></td>' +
+    '<td class="num">' + (r.hasPO ? (r.diff > 0 ? '+' : '') + fmt(r.diff) : '—') + '</td>' +
+    '<td><span class="pill ' + pill[r.st][0] + '">' + pill[r.st][1] + '</span></td></tr>').join('');
+}
+
+['fCode','fName'].forEach(i => document.getElementById(i).addEventListener('input', () => { if (rows.length) render(); }));
+['fOnlyDiff','fHideNoPO'].forEach(i => document.getElementById(i).addEventListener('change', () => { if (rows.length) render(); }));
+
+async function exportXlsx() {
+  const v = visible();
+  if (!v.length) { alert('पहले मिलान चलाएँ।'); return; }
+  const headers = ['Book Code','Name','Edition','Print Order Qty','STM Qty',
+                   'कटिंग(अजिल्द)','सजिल्द तैयारी','सजिल्द तैयारी (delux)',
+                   'कुल तैयार','अंतर','स्थिति'];
+  const widths = [12,38,12,16,12,16,16,20,14,12,14];
+  const label = { ok: 'मिल गया', lo: 'कम बना', hi: 'ज़्यादा बना', na: 'Print Order नहीं' };
+  const tint  = { ok: 'FFE8F5E9', lo: 'FFFDECEA', hi: 'FFFFF8E1', na: 'FFF3F3F6' };
+  const wb = new ExcelJS.Workbook();
+  const ws = wb.addWorksheet('Reconcile', { views: [{ state: 'frozen', ySplit: 1 }] });
+  ws.columns = headers.map((h, i) => ({ header: h, key: h, width: widths[i] }));
+  const hr = ws.getRow(1); hr.height = 24;
+  hr.eachCell(c => {
+    c.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 10, name: 'Arial' };
+    c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF3F3D8F' } };
+    c.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
+  });
+  v.forEach(r => {
+    const row = ws.addRow([r.code, r.name, r.edition, r.hasPO ? r.po : '', r.stm,
+      r.f0, r.f1, r.f2, r.done, r.hasPO ? r.diff : '', label[r.st]]);
+    row.height = 16;
+    row.eachCell({ includeEmpty: true }, c => {
+      c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: tint[r.st] } };
+      c.font = { name: 'Arial', size: 9 };
+    });
+  });
+  ['D','E','F','G','H','I','J'].forEach(col => { ws.getColumn(col).numFmt = '#,##0'; });
+  ws.autoFilter = { from: 'A1', to: 'K1' };
+  const buf = await wb.xlsx.writeBuffer();
+  const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'Reconcile_' + new Date().toISOString().slice(0, 10) + '.xlsx';
+  a.click(); URL.revokeObjectURL(url);
+}
+
+window.addEventListener('load', () => run());
+</script>
+</body>
+</html>
