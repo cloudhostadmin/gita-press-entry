@@ -137,6 +137,7 @@ button.big {
   <a href="laghu_ati_laghu.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#6a3d9a;color:white;border:2px solid #b07edd;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📒 Laghu &amp; Ati Laghu</button></a>
   <a href="stm.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#843c0c;color:white;border:2px solid #e07a3a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📋 STM Entry</button></a>
   <a href="process_entry.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#0f6e56;color:white;border:2px solid #3fb99a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">⚙️ Process Entry</button></a>
+  <a href="print_order.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#7b2d5e;color:white;border:2px solid #c470a0;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">🖨️ Print Order</button></a>
   <button style="padding:7px 16px;background:#0d3b52;color:white;border:2px solid #3f9dc4;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:default;box-shadow:0 0 0 2px white,0 0 0 4px #3f9dc4;">📊 Dashboard ✓</button>
 </div>
 <div class="container">
@@ -225,6 +226,13 @@ button.big {
         <span class="cnt" id="cnt-Process_Entry">—</span>
         <button class="mini" onclick="event.preventDefault();downloadOne('Process Entry')">Excel</button>
       </label>
+      <label class="sheet-card" data-sheet="Print Order">
+        <input type="checkbox" class="sheetChk" value="Print Order" checked>
+        <span class="dot" style="background:#7b2d5e"></span>
+        <span class="nm">🖨️ Print Order</span>
+        <span class="cnt" id="cnt-Print_Order">—</span>
+        <button class="mini" onclick="event.preventDefault();downloadOne('Print Order')">Excel</button>
+      </label>
       <div class="quick" style="margin-top:12px;">
         <button onclick="selectAll(true)">सब चुनें</button>
         <button onclick="selectAll(false)">सब हटाएँ</button>
@@ -242,7 +250,7 @@ button.big {
 </div>
 
 <script>
-let SHEET_URL = 'https://script.google.com/macros/s/AKfycby3NFsMNoG4lmsdzrp9_g_tyBwuNEjHapNf783knfMKK08m2xQuzR8bLcPvrb6YfRzczQ/exec';
+let SHEET_URL = 'https://script.google.com/macros/s/AKfycbzgepvz3PrkAYrAurVxNoPvsZr8HfaCFgyG9DBjTW1ZXHEjelr28P-LnEbSvO64L2B1/exec';
 
 const SHEET_META = {
   "Main": {
@@ -556,9 +564,49 @@ const SHEET_META = {
     ],
     "bg": "FF0F6E56",
     "rowBg": "FFE1F5EE"
+  },
+  "Print Order": {
+    "headers": [
+      "S.N.",
+      "Date",
+      "Bound Type",
+      "Book Code",
+      "Name",
+      "Size",
+      "Juje",
+      "Last Edition",
+      "Last Edition Quantity",
+      "Last Edition Price",
+      "Current Edition",
+      "Current Edition Quantity",
+      "Current Edition Price",
+      "Value",
+      "Total Quantity Printed",
+      "Entry Date"
+    ],
+    "widths": [
+      6,
+      14,
+      14,
+      12,
+      36,
+      16,
+      8,
+      14,
+      20,
+      18,
+      16,
+      22,
+      20,
+      14,
+      22,
+      14
+    ],
+    "bg": "FF7B2D5E",
+    "rowBg": "FFF6E7F0"
   }
 };
-const SHEET_ORDER = ["Main", "By Machine", "Perfect Binding", "Center Pinning", "Laghu Ati Laghu", "STM", "Process Entry"];
+const SHEET_ORDER = ["Main", "By Machine", "Perfect Binding", "Center Pinning", "Laghu Ati Laghu", "STM", "Process Entry", "Print Order"];
 
 // ── STATUS ───────────────────────────────────────────────────────
 function setStatus(kind, msg) {

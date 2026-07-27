@@ -199,6 +199,7 @@ option   { font-weight: 400; color: #333; }
   <a href="laghu_ati_laghu.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#6a3d9a;color:white;border:2px solid #b07edd;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📒 Laghu &amp; Ati Laghu</button></a>
   <a href="stm.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#843c0c;color:white;border:2px solid #e07a3a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📋 STM Entry</button></a>
   <a href="process_entry.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#0f6e56;color:white;border:2px solid #3fb99a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">⚙️ Process Entry</button></a>
+  <a href="print_order.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#7b2d5e;color:white;border:2px solid #c470a0;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">🖨️ Print Order</button></a>
   <a href="dashboard.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#0d3b52;color:white;border:2px solid #3f9dc4;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📊 Dashboard</button></a>
 </div>
 <div class="container">
@@ -458,7 +459,7 @@ let loadedData = null;
 let editIndex  = -1;
 
 // ── GOOGLE SHEET CONNECTION ──────────────────────────────────────
-let SHEET_URL = 'https://script.google.com/macros/s/AKfycby3NFsMNoG4lmsdzrp9_g_tyBwuNEjHapNf783knfMKK08m2xQuzR8bLcPvrb6YfRzczQ/exec';
+let SHEET_URL = 'https://script.google.com/macros/s/AKfycbzgepvz3PrkAYrAurVxNoPvsZr8HfaCFgyG9DBjTW1ZXHEjelr28P-LnEbSvO64L2B1/exec';
 
 function setSyncStatus(state, msg) {
   const el = document.getElementById('syncStatus');
