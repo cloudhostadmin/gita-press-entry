@@ -230,6 +230,15 @@ tr:hover td { background: #f6e7f0; cursor: pointer; }
           </div>
         </div>
         <div class="field-row">
+          <label>Machine Type <span class="req">*</span></label>
+          <div class="seg-wrap">
+            <input type="radio" name="machineType" id="mt_sf" value="Sheet-Fed">
+            <label for="mt_sf">Sheet-Fed</label>
+            <input type="radio" name="machineType" id="mt_wo" value="Web-Offset">
+            <label for="mt_wo">Web-Offset</label>
+          </div>
+        </div>
+        <div class="field-row">
           <label>Book Code <span class="req">*</span></label>
           <input type="text" id="bookCode" class="book-code-input" disabled autocomplete="off"
                  placeholder="Enter Book Code (e.g. 1, 25, 1095)" oninput="onCodeInput()">
@@ -328,12 +337,12 @@ tr:hover td { background: #f6e7f0; cursor: pointer; }
     <div style="overflow-x:auto;">
       <table>
         <thead><tr>
-          <th>S.N.</th><th>Date</th><th>Bound</th><th>Code</th><th>Name</th><th>Size</th><th>Juje</th>
+          <th>S.N.</th><th>Date</th><th>Bound</th><th>Machine</th><th>Code</th><th>Name</th><th>Size</th><th>Juje</th>
           <th>Last Edn</th><th>Last Qty</th><th>Last ₹</th>
           <th>Cur Edn</th><th>Cur Qty</th><th>Cur ₹</th><th>Value</th><th>Total Printed</th>
         </tr></thead>
         <tbody id="recordsBody">
-          <tr><td colspan="15" style="text-align:center;color:#aaa;padding:20px;">
+          <tr><td colspan="16" style="text-align:center;color:#aaa;padding:20px;">
             No records yet. Fill the form and click Save.</td></tr>
         </tbody>
       </table>
@@ -722,6 +731,7 @@ async function saveRecord() {
   const code = document.getElementById('bookCode').value.trim();
   if (!document.getElementById('fDate').value) { alert('Date चुनें।'); return; }
   if (!getRadio('boundType')) { alert('Bound Type चुनें।'); return; }
+  if (!getRadio('machineType')) { alert('Machine Type चुनें — Sheet-Fed या Web-Offset।'); return; }
   if (!code) { alert('Book Code डालें।'); return; }
   if (!document.getElementById('bookName').value) { alert('Book Code नहीं मिला।'); return; }
   const curEd = document.getElementById('fCurEd').value.trim();
@@ -745,6 +755,7 @@ async function saveRecord() {
   const payload = {
     order_date:               document.getElementById('fDate').value,
     bound_type:               getRadio('boundType'),
+    machine_type:             getRadio('machineType'),
     book_code:                code,
     name:                     document.getElementById('bookName').value,
     size:                     document.getElementById('bookSize').value || null,
@@ -776,6 +787,7 @@ async function saveRecord() {
   // S.N. database से आता है — दो लोग एक साथ save करें तो भी टकराव नहीं
   records.push({
     sn: saved.id, date: saved.order_date, boundType: saved.bound_type,
+    machineType: saved.machine_type,
     code: saved.book_code, name: saved.name, size: saved.size, juje: saved.juje,
     lastEdition: saved.last_edition, lastQty: saved.last_edition_quantity,
     lastPrice: saved.last_edition_price, curEdition: saved.current_edition,
@@ -797,7 +809,7 @@ function renderTable() {
   document.getElementById('grandTotal').textContent = 'Total Value: ₹' + grand.toFixed(2);
   const tb = document.getElementById('recordsBody');
   if (!records.length) {
-    tb.innerHTML = '<tr><td colspan="15" style="text-align:center;color:#aaa;padding:20px;">No records yet.</td></tr>';
+    tb.innerHTML = '<tr><td colspan="16" style="text-align:center;color:#aaa;padding:20px;">No records yet.</td></tr>';
     return;
   }
   const n = function (v) { return (v === '' || v == null) ? '—' : inr(v); };
@@ -806,6 +818,7 @@ function renderTable() {
       '<td>' + r.sn + '</td>' +
       '<td>' + (r.date || '—') + '</td>' +
       '<td>' + (r.boundType || '—') + '</td>' +
+      '<td>' + (r.machineType || '—') + '</td>' +
       '<td><strong>' + r.code + '</strong></td>' +
       '<td title="' + r.name + '">' + String(r.name).substring(0, 16) + (String(r.name).length > 16 ? '…' : '') + '</td>' +
       '<td>' + (r.size || '—') + '</td>' +
@@ -849,11 +862,11 @@ function clearForm() {
 
 async function exportToExcel() {
   if (!records.length) { alert('No records to export.'); return; }
-  const headers = ['S.N.','Date','Bound Type','Book Code','Name','Size','Juje',
+  const headers = ['S.N.','Date','Bound Type','Machine Type','Book Code','Name','Size','Juje',
                    'Last Edition','Last Edition Quantity','Last Edition Price',
                    'Current Edition','Current Edition Quantity','Current Edition Price',
                    'Value','Total Quantity Printed','Entered By','Entry Date'];
-  const widths = [6,14,14,12,36,16,8,14,20,18,16,22,20,14,22,20,14];
+  const widths = [6,14,14,14,12,36,16,8,14,20,18,16,22,20,14,22,20,14];
   const num = function (v) { return (v === '' || v == null) ? '' : Number(v); };
   const wb = new ExcelJS.Workbook();
   const ws = wb.addWorksheet('Print Order', { views: [{ state: 'frozen', ySplit: 1 }] });
@@ -865,7 +878,7 @@ async function exportToExcel() {
     c.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
   });
   records.forEach(function (r, i) {
-    const row = ws.addRow([r.sn, r.date, r.boundType, r.code, r.name, r.size, r.juje,
+    const row = ws.addRow([r.sn, r.date, r.boundType, r.machineType, r.code, r.name, r.size, r.juje,
       r.lastEdition, num(r.lastQty), num(r.lastPrice),
       r.curEdition, num(r.curQty), num(r.curPrice),
       num(r.value), num(r.totalPrinted), r.enteredBy, r.entryDate]);
@@ -876,14 +889,14 @@ async function exportToExcel() {
     });
   });
   const gr = ws.addRow([]);
-  gr.getCell(13).value = 'Total Value';
-  gr.getCell(14).value = records.reduce(function (a, r) { return a + (parseFloat(r.value) || 0); }, 0);
-  [13, 14].forEach(function (k) {
+  gr.getCell(14).value = 'Total Value';
+  gr.getCell(15).value = records.reduce(function (a, r) { return a + (parseFloat(r.value) || 0); }, 0);
+  [14, 15].forEach(function (k) {
     gr.getCell(k).font = { bold: true, size: 10, name: 'Arial' };
     gr.getCell(k).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEAF3DE' } };
   });
-  ['I','J','L','M','N','O'].forEach(function (col) { ws.getColumn(col).numFmt = '#,##0.00'; });
-  ws.autoFilter = { from: 'A1', to: 'Q1' };
+  ['J','K','M','N','O','P'].forEach(function (col) { ws.getColumn(col).numFmt = '#,##0.00'; });
+  ws.autoFilter = { from: 'A1', to: 'R1' };
   const buf = await wb.xlsx.writeBuffer();
   const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
   const url = URL.createObjectURL(blob);
