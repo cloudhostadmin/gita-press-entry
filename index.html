@@ -801,6 +801,7 @@ function lookupBook() {
   ['bookName','bookJuje','bookSize'].forEach(function (i) {
     const el = document.getElementById(i); if (el) el.value = '';
   });
+  clearRadio('panni'); clearRadio('box');
   
   if (!code) {
     bar.className = 'status-bar status-empty';
@@ -817,7 +818,7 @@ async function fetchBook(code) {
   const seq = ++inflight;
   try {
     const rows = await sbFetch('books?code=eq.' + encodeURIComponent(code) +
-                               '&select=code,name,juje,size&limit=1');
+                               '&select=code,name,juje,size,panni,box&limit=1');
     if (seq !== inflight || document.getElementById('bookCode').value.trim() !== code) return;
     const b = (rows || [])[0];
     if (!b) {
@@ -829,6 +830,9 @@ async function fetchBook(code) {
     document.getElementById('bookJuje').value = (b.juje == null ? '' : b.juje);
     const sz = document.getElementById('bookSize');
     if (sz) sz.value = b.size || '';
+    // Panni और Box किताब के झंडों से — पहले ये HTML में embedded सूचियाँ थीं
+    setRadio('panni', b.panni ? 'Yes' : 'No');
+    setRadio('box',   b.box   ? 'Yes' : 'No');
     
     bar.className = 'status-bar status-found';
     bar.textContent = '✅ Book मिली! ब्यौरा भरकर Save करें।';
@@ -836,6 +840,19 @@ async function fetchBook(code) {
     if (seq !== inflight) return;
     bar.className = 'status-bar status-notfound';
     bar.textContent = '⚠️ ' + err.message;
+  }
+}
+
+// ── By Machine चुनने पर पाँच fields अपने आप ────────────────────────
+// Panni और Box जान-बूझकर नहीं छूते — वो किताब के हिसाब से भरते हैं,
+// contractor के हिसाब से नहीं
+function onContractorChange(val) {
+  if (val === 'By Machine') {
+    setRadio('dhala',    'Yes');
+    setRadio('headtail', 'Head & Tail');
+    setRadio('bookmark', 'Yes');
+    setRadio('binding',  'Yes');
+    setRadio('jacket',   'Yes');
   }
 }
 
