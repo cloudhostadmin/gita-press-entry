@@ -8,7 +8,7 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: Arial, sans-serif; background: #f0f4f8; min-height: 100vh; }
-.header { background: linear-gradient(135deg, #3f3d8f, #6462c4); color: white; padding: 18px 24px;
+.header { background: linear-gradient(135deg, #1f6f4a, #2f9d69); color: white; padding: 18px 24px;
   display: flex; align-items: center; gap: 14px; box-shadow: 0 3px 12px rgba(0,0,0,.2); }
 .header h1 { font-size: 1.3rem; font-weight: 700; }
 .header p { font-size: .82rem; opacity: .85; margin-top: 3px; }
@@ -73,17 +73,85 @@ tr.r-na td { background: #f6f6f9; }
 </head>
 <body>
 
+<!-- ── LOGIN GATE ─────────────────────────────────────────────── -->
+<div id="authGate" style="position:fixed;inset:0;z-index:9999;background:#12253a;
+     display:none;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.35);
+              width:100%;max-width:380px;overflow:hidden;">
+    <div style="background:linear-gradient(135deg,#1f6f4a,#2f9d69);color:#fff;padding:18px 22px;">
+      <div style="font-size:1.15rem;font-weight:700;">गीता प्रेस — Login</div>
+      <div style="font-size:.8rem;opacity:.85;margin-top:2px;">अपना खाता इस्तेमाल करें</div>
+    </div>
+    <div style="padding:20px 22px;">
+      <label style="display:block;font-size:.8rem;font-weight:700;color:#1f6f4a;
+                    text-align:left;margin-bottom:4px;">Email</label>
+      <input type="email" id="authEmail" autocomplete="username"
+             style="width:100%;padding:9px 11px;border:2px solid #d0dce8;border-radius:7px;
+                    font-size:.95rem;margin-bottom:12px;">
+      <label style="display:block;font-size:.8rem;font-weight:700;color:#1f6f4a;
+                    text-align:left;margin-bottom:4px;">Password</label>
+      <input type="password" id="authPass" autocomplete="current-password"
+             style="width:100%;padding:9px 11px;border:2px solid #d0dce8;border-radius:7px;
+                    font-size:.95rem;margin-bottom:16px;">
+      <button id="authBtn" style="width:100%;justify-content:center;padding:11px;
+              background:#1f6f4a;color:#fff;border:none;border-radius:8px;
+              font-size:.95rem;font-weight:700;cursor:pointer;">Login</button>
+      <div id="authMsg" style="display:none;margin-top:12px;padding:9px 11px;border-radius:7px;
+           font-size:.83rem;font-weight:600;background:#fff3e0;color:#bf360c;"></div>
+      <div style="margin-top:14px;font-size:.76rem;color:#7a8a99;line-height:1.6;">
+        खाता न हो तो व्यवस्थापक से कहें — Supabase → Authentication → Users में बनता है।
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ── PASSWORD बदलें ─────────────────────────────────────────── -->
+<div id="pwdBox" style="position:fixed;inset:0;z-index:9998;background:rgba(18,37,58,.72);
+     display:none;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.35);
+              width:100%;max-width:380px;overflow:hidden;">
+    <div style="background:#3a5570;color:#fff;padding:16px 22px;">
+      <div style="font-size:1.05rem;font-weight:700;">Password बदलें</div>
+      <div style="font-size:.78rem;opacity:.85;margin-top:2px;" id="pwdWho"></div>
+    </div>
+    <div style="padding:20px 22px;">
+      <label style="display:block;font-size:.8rem;font-weight:700;color:#3a5570;
+                    text-align:left;margin-bottom:4px;">नया Password</label>
+      <input type="password" id="pwdNew" autocomplete="new-password"
+             style="width:100%;padding:9px 11px;border:2px solid #d0dce8;border-radius:7px;
+                    font-size:.95rem;margin-bottom:12px;">
+      <label style="display:block;font-size:.8rem;font-weight:700;color:#3a5570;
+                    text-align:left;margin-bottom:4px;">दोबारा लिखें</label>
+      <input type="password" id="pwdNew2" autocomplete="new-password"
+             style="width:100%;padding:9px 11px;border:2px solid #d0dce8;border-radius:7px;
+                    font-size:.95rem;margin-bottom:16px;">
+      <div style="display:flex;gap:9px;">
+        <button id="pwdSave" style="flex:1;justify-content:center;padding:10px;background:#1f6f4a;
+                color:#fff;border:none;border-radius:8px;font-size:.9rem;font-weight:700;cursor:pointer;">बदलें</button>
+        <button onclick="pwdHide()" style="padding:10px 16px;background:#f0f0f0;color:#333;
+                border:1.5px solid #ddd;border-radius:8px;font-size:.9rem;font-weight:700;cursor:pointer;">रहने दें</button>
+      </div>
+      <div id="pwdMsg" style="display:none;margin-top:12px;padding:9px 11px;border-radius:7px;
+           font-size:.83rem;font-weight:600;"></div>
+      <div style="margin-top:14px;font-size:.76rem;color:#7a8a99;line-height:1.6;">
+        Password भूल जाएँ तो खुद रीसेट नहीं हो सकता — व्यवस्थापक Supabase से नया देगा।
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 <div class="header">
   <div style="font-size:2rem">🔍</div>
   <div>
     <h1>Reconcile — Print Order vs तैयार माल</h1>
-    <p>Book code + edition पर छपाई आदेश और तैयार मात्रा का मिलान</p>
+    <p>मिलान database में होता है — v_reconcile view से सीधे</p>
   </div>
 </div>
 
 <div style="background:#1a3a5c;padding:8px 24px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
   <span style="color:#aac;font-size:0.78rem;font-weight:600;margin-right:4px;">GO TO →</span>
-  <a href="dashboard.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#0d3b52;color:white;border:2px solid #3f9dc4;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📊 Dashboard</button></a>
+  <a href="dashboard.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#1f6f4a;color:white;border:2px solid #4dbf90;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📊 Dashboard</button></a>
   <button style="padding:7px 16px;background:#3f3d8f;color:white;border:2px solid #8785d6;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:default;box-shadow:0 0 0 2px white,0 0 0 4px #8785d6;">🔍 Reconcile ✓</button>
   <a href="print_order.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#7b2d5e;color:white;border:2px solid #c470a0;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">🖨️ Print Order</button></a>
   <a href="stm.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#843c0c;color:white;border:2px solid #e07a3a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📋 STM Entry</button></a>
@@ -93,18 +161,31 @@ tr.r-na td { background: #f6f6f9; }
   <a href="laghu_ati_laghu.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#6a3d9a;color:white;border:2px solid #b07edd;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📒 Laghu &amp; Ati Laghu</button></a>
 </div>
 
+<div style="background:#233b55;padding:7px 24px;display:flex;gap:9px;align-items:center;flex-wrap:wrap;">
+  <span style="color:#cfe0ee;font-size:0.78rem;font-weight:700;">LOGGED IN →</span>
+  <input type="text" id="opName" readonly
+         style="padding:5px 11px;border:2px solid #4a6c8c;border-radius:6px;font-size:0.82rem;
+                font-weight:600;background:#eaf3ee;color:#1a3a5c;width:200px;cursor:default;">
+  <span id="opWarn" style="display:none;"></span>
+  <button id="pwdBtn" onclick="pwdShow()" style="display:none;margin-left:auto;padding:5px 12px;
+          background:#2c4360;color:#dce7f0;border:1.5px solid #4a6c8c;border-radius:6px;
+          font-size:0.76rem;font-weight:700;cursor:pointer;">Password</button>
+  <button id="authOut" onclick="authSignOut()" style="display:none;padding:5px 12px;
+          background:#3a5570;color:#dce7f0;border:1.5px solid #56728d;border-radius:6px;
+          font-size:0.76rem;font-weight:700;cursor:pointer;">Logout</button>
+</div>
 <div class="container">
 
   <div class="card">
-    <div class="section-title">📐 मिलान का नियम</div>
+    <div class="section-title">📐 मिलान का नियम (database में)</div>
     <div class="form-body">
       <div class="rule">
         <strong>Print Order quantity</strong> को benchmark मानकर उसी book code + edition की तैयार मात्रा जोड़ी जाती है:<br>
         • <strong>STM</strong> — उस book+edition के सारे rows का <code>Total Quantity</code><br>
         • <strong>Process Entry</strong> — सिर्फ़ <em>अंतिम चरण</em> के तीन processes:
           <code>कटिंग(अजिल्द)</code> <code>सजिल्द तैयारी</code> <code>सजिल्द तैयारी (delux)</code><br>
-        बीच के processes (तार सिलाई, मिसिल, निपिंग आदि) नहीं गिने जाते — वरना हर copy कई बार गिनी जाती।<br><strong>STM और Process दो अलग चरण हैं</strong> — दोनों को जोड़ा नहीं जाता, हर एक अपने आप में Print Order के बराबर होना चाहिए।<br>
-        Edition का मिलान अंक निकालकर होता है, तो <code>2</code> · <code>2nd</code> · <code>II संस्करण</code> एक ही माने जाते हैं।
+        बीच के processes (तार सिलाई, मिसिल, निपिंग आदि) नहीं गिने जाते — वरना हर copy कई बार गिनी जाती।<br><strong>STM और Process दो अलग चरण हैं</strong> — दोनों को जोड़ा नहीं जाता, हर एक अपने आप में Print Order के बराबर होना चाहिए।<br>यह जोड़-घटाव <code>gp.v_reconcile</code> view में होता है, browser में नहीं — तीनों tables पूरी नहीं खींचनी पड़तीं।<br>
+        Edition का मिलान <code>edition_key()</code> से अंक निकालकर होता है, तो <code>2</code> · <code>2nd</code> · <code>II संस्करण</code> एक ही माने जाते हैं।
       </div>
     </div>
   </div>
@@ -164,7 +245,207 @@ tr.r-na td { background: #f6f6f9; }
 </div>
 
 <script>
-let SHEET_URL = 'https://script.google.com/macros/s/AKfycbzLRy_h1XwQAippIHMGhyYDe0P322ZlnBNstmSqDnPKzUTThex6YSxamKi4MJLNXDlLSQ/exec';
+// ── SUPABASE ─────────────────────────────────────────────────────
+const SB_URL = 'https://agntdlbaspqjwaiyoxnp.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnbnRkbGJhc3BxandhaXlveG5wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyMTY1OTAsImV4cCI6MjEwMDc5MjU5MH0.MDNjTUAQ5weRLDSVxG_84W8TOMSuEq_6tsfJjxl07hw';   // Settings → API Keys → anon public
+const SB_PAGE = 1000;                   // Data API "Max rows" setting
+const SB_HEAD = { apikey: SB_KEY, 'Accept-Profile': 'gp' };
+// ── AUTH ─────────────────────────────────────────────────────────
+// Supabase Auth सीधे REST से — कोई बाहरी library नहीं, तो offline/CDN
+// की कोई निर्भरता नहीं। Token localStorage में रहता है और ज़रूरत पड़ने
+// पर अपने आप refresh हो जाता है।
+const AUTH_KEY = 'gp_session';
+let session = null;   // { access_token, refresh_token, expires_at, user }
+
+function authLoad() {
+  try { session = JSON.parse(localStorage.getItem(AUTH_KEY) || 'null'); }
+  catch (e) { session = null; }
+}
+function authSave(s) {
+  session = s;
+  try {
+    if (s) localStorage.setItem(AUTH_KEY, JSON.stringify(s));
+    else localStorage.removeItem(AUTH_KEY);
+  } catch (e) {}
+}
+function authName() {
+  if (!session || !session.user) return '';
+  const m = session.user.user_metadata || {};
+  return (m.full_name && String(m.full_name).trim())
+      || String(session.user.email || '').split('@')[0];
+}
+
+async function authSignIn(email, password) {
+  const res = await fetch(SB_URL + '/auth/v1/token?grant_type=password', {
+    method: 'POST',
+    headers: { apikey: SB_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email, password: password })
+  });
+  const d = await res.json();
+  if (!res.ok) throw new Error(d.error_description || d.msg || d.message || 'Login नहीं हुआ');
+  authSave({ access_token: d.access_token, refresh_token: d.refresh_token,
+             expires_at: Date.now() + (d.expires_in || 3600) * 1000, user: d.user });
+}
+
+async function authRefresh() {
+  if (!session || !session.refresh_token) return false;
+  const res = await fetch(SB_URL + '/auth/v1/token?grant_type=refresh_token', {
+    method: 'POST',
+    headers: { apikey: SB_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ refresh_token: session.refresh_token })
+  });
+  if (!res.ok) { authSave(null); return false; }
+  const d = await res.json();
+  authSave({ access_token: d.access_token, refresh_token: d.refresh_token,
+             expires_at: Date.now() + (d.expires_in || 3600) * 1000,
+             user: d.user || session.user });
+  return true;
+}
+
+// एक मिनट से कम बचा हो तो पहले ही refresh कर लो
+async function authToken() {
+  if (!session) return null;
+  if (session.expires_at && Date.now() > session.expires_at - 60000) {
+    if (!(await authRefresh())) return null;
+  }
+  return session.access_token;
+}
+
+function authShowGate(msg) {
+  const g = document.getElementById('authGate');
+  g.style.display = 'flex';
+  if (msg) {
+    const m = document.getElementById('authMsg');
+    m.style.display = 'block'; m.textContent = msg;
+  }
+  const e = document.getElementById('authEmail');
+  if (e) e.focus();
+}
+function authHideGate() { document.getElementById('authGate').style.display = 'none'; }
+
+function pwdWire() {
+  const s = document.getElementById('pwdSave');
+  if (s) s.addEventListener('click', pwdChange);
+  ['pwdNew','pwdNew2'].forEach(function (id) {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') pwdChange(); });
+  });
+}
+
+function authWireGate() {
+  const btn = document.getElementById('authBtn');
+  const msg = document.getElementById('authMsg');
+  async function attempt() {
+    const email = document.getElementById('authEmail').value.trim();
+    const pass  = document.getElementById('authPass').value;
+    if (!email || !pass) { msg.style.display = 'block'; msg.textContent = 'Email और Password दोनों भरें।'; return; }
+    btn.disabled = true; btn.textContent = 'Login हो रहा है...';
+    msg.style.display = 'none';
+    try {
+      await authSignIn(email, pass);
+      document.getElementById('authPass').value = '';
+      authHideGate();
+      authPaintUser();
+      await run();
+    } catch (err) {
+      msg.style.display = 'block'; msg.textContent = '⚠️ ' + err.message;
+    } finally {
+      btn.disabled = false; btn.textContent = 'Login';
+    }
+  }
+  btn.addEventListener('click', attempt);
+  ['authEmail','authPass'].forEach(function (id) {
+    document.getElementById(id).addEventListener('keydown', function (ev) {
+      if (ev.key === 'Enter') attempt();
+    });
+  });
+}
+
+
+// ── PASSWORD बदलना ───────────────────────────────────────────────
+// भूला हुआ password यहाँ से नहीं बन सकता: recover email भेजता है, और
+// gitapress.org वाले पते असली inbox नहीं हैं। वो व्यवस्थापक ही
+// Supabase → Authentication → Users से देगा.
+function pwdShow() {
+  if (!session) { authShowGate('पहले login करें।'); return; }
+  document.getElementById('pwdWho').textContent = session.user ? session.user.email : '';
+  document.getElementById('pwdNew').value = '';
+  document.getElementById('pwdNew2').value = '';
+  document.getElementById('pwdMsg').style.display = 'none';
+  document.getElementById('pwdBox').style.display = 'flex';
+  document.getElementById('pwdNew').focus();
+}
+function pwdHide() { document.getElementById('pwdBox').style.display = 'none'; }
+
+function pwdSay(text, ok) {
+  const m = document.getElementById('pwdMsg');
+  m.style.display = 'block';
+  m.textContent = text;
+  m.style.background = ok ? '#e8f5e9' : '#fff3e0';
+  m.style.color      = ok ? '#1b5e20' : '#bf360c';
+}
+
+async function pwdChange() {
+  const a = document.getElementById('pwdNew').value;
+  const b = document.getElementById('pwdNew2').value;
+  if (a.length < 6) { pwdSay('Password कम से कम 6 अक्षर का हो।', false); return; }
+  if (a !== b)      { pwdSay('दोनों Password एक जैसे नहीं हैं।', false); return; }
+  const tok = await authToken();
+  if (!tok) { pwdHide(); authShowGate('Session खत्म हो गया — दोबारा login करें।'); return; }
+  const btn = document.getElementById('pwdSave');
+  btn.disabled = true; btn.textContent = 'बदल रहे हैं...';
+  try {
+    const res = await fetch(SB_URL + '/auth/v1/user', {
+      method: 'PUT',
+      headers: { apikey: SB_KEY, Authorization: 'Bearer ' + tok, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: a })
+    });
+    const d = await res.json();
+    if (!res.ok) throw new Error(d.error_description || d.msg || d.message || 'नहीं बदला');
+    pwdSay('✅ Password बदल गया — अगली बार इसी से login करें।', true);
+    setTimeout(pwdHide, 1800);
+  } catch (err) {
+    pwdSay('⚠️ ' + err.message, false);
+  } finally {
+    btn.disabled = false; btn.textContent = 'बदलें';
+  }
+}
+
+function authSignOut() {
+  if (session && session.access_token) {
+    fetch(SB_URL + '/auth/v1/logout', {
+      method: 'POST',
+      headers: { apikey: SB_KEY, Authorization: 'Bearer ' + session.access_token }
+    }).catch(function () {});
+  }
+  authSave(null);
+  location.reload();
+}
+
+// नाम अब टाइप नहीं होता — जिस खाते से login है वही दिखता है
+function authPaintUser() {
+  const el = document.getElementById('opName');
+  if (el) {
+    el.value = authName();
+    el.readOnly = true;
+    el.style.background = '#eaf3ee';
+    el.style.cursor = 'default';
+    el.title = session && session.user ? session.user.email : '';
+  }
+  const w = document.getElementById('opWarn');
+  if (w) w.style.display = 'none';
+  const out = document.getElementById('authOut');
+  if (out) out.style.display = 'inline-block';
+  const pb = document.getElementById('pwdBtn');
+  if (pb) pb.style.display = 'inline-block';
+}
+function operatorName() { return authName(); }
+function requireOperator() {
+  if (session && authName()) return true;
+  authShowGate('पहले login करें।');
+  return false;
+}
+
 
 const FINAL_PROCESSES = ['कटिंग(अजिल्द)', 'सजिल्द तैयारी', 'सजिल्द तैयारी (delux)'];
 let rows = [];   // reconciliation result
@@ -190,71 +471,67 @@ function edKey(s) {
   return m ? m[1] : t.toLowerCase();
 }
 
-async function fetchSheet(name) {
-  const res  = await fetch(SHEET_URL + '?sheet=' + encodeURIComponent(name));
-  const data = await res.json();
-  if (data.status !== 'success') throw new Error(name + ': ' + (data.message || 'read failed'));
-  return data.records || [];
+async function sbGet(path) {
+  if (!(await authToken())) { authShowGate('Session खत्म हो गया — दोबारा login करें।'); throw new Error('login चाहिए'); }
+  const out = [];
+  for (let offset = 0; ; offset += SB_PAGE) {
+    const res = await fetch(SB_URL + '/rest/v1/' + path +
+                            (path.indexOf('?') === -1 ? '?' : '&') +
+                            'limit=' + SB_PAGE + '&offset=' + offset, {
+      headers: { apikey: SB_KEY, Authorization: 'Bearer ' + (await authToken()),
+                 'Accept-Profile': 'gp' }
+    });
+    if (!res.ok) {
+      let msg = res.status + ' ' + res.statusText;
+      try { const e = await res.json(); if (e.message) msg = e.message; } catch (x) {}
+      throw new Error(msg);
+    }
+    const page = await res.json();
+    out.push.apply(out, page);
+    // Max rows सीमा से कम आया => आखिरी page
+    if (page.length < SB_PAGE) return out;
+  }
 }
 
 async function run() {
   clearLog();
   document.getElementById('kpis').style.display = 'none';
-  setStatus('info', '📡 Print Order, STM और Process Entry पढ़ रहे हैं...');
-  let po, stm, pe;
-  try {
-    const got = await Promise.all([
-      fetchSheet('Print Order'), fetchSheet('STM'), fetchSheet('Process Entry')
-    ]);
-    po = got[0]; stm = got[1]; pe = got[2];
-  } catch (err) { setStatus('err', '⚠️ ' + err.message); return; }
-  log('Print Order rows: ' + po.length + '   STM rows: ' + stm.length + '   Process Entry rows: ' + pe.length);
-
-  const map = new Map();
-  function slot(code, ed, name) {
-    const k = code + '|' + edKey(ed);
-    if (!map.has(k)) map.set(k, {
-      code: code, name: name || '', edition: String(ed == null ? '' : ed).trim(),
-      po: 0, stm: 0, f0: 0, f1: 0, f2: 0, hasPO: false
-    });
-    const o = map.get(k);
-    if (!o.name && name) o.name = name;
-    return o;
+  if (!SB_KEY || SB_KEY.length < 40) {
+    setStatus('err', '⚠️ इस file में SB_KEY भरना बाकी है (Settings → API Keys → anon public)।');
+    return;
   }
-  po.forEach(function (r) {
-    const code = String(r['Book Code'] || '').trim(); if (!code) return;
-    const o = slot(code, r['Current Edition'], r['Name']);
-    o.po += n(r['Current Edition Quantity']); o.hasPO = true;
-  });
-  stm.forEach(function (r) {
-    const code = String(r['Book Code'] || '').trim(); if (!code) return;
-    slot(code, r['Edition'], r['Name']).stm += n(r['Total Qty']);
-  });
-  let skipped = 0;
-  pe.forEach(function (r) {
-    const code = String(r['Book Code'] || '').trim(); if (!code) return;
-    const i = FINAL_PROCESSES.indexOf(String(r['Process'] || '').trim());
-    if (i === -1) { skipped++; return; }
-    slot(code, r['Edition'], r['Name'])['f' + i] += n(r['Quantity']);
-  });
-  log('Process Entry में बीच के processes छोड़े गए: ' + skipped + ' rows');
+  setStatus('info', '📡 database से मिलान पढ़ रहे हैं...');
+  let data;
+  try {
+    data = await sbGet('v_reconcile?select=*&order=book_code');
+  } catch (err) {
+    setStatus('err', '⚠️ ' + err.message);
+    log('जाँचें: gp schema Data API में exposed है, और anon को grant select मिला है।');
+    return;
+  }
+  log('v_reconcile से आईं rows: ' + data.length);
 
   const RANK  = { both: 0, stm_only: 1, proc_only: 1, no_print_order: 2, match: 3 };
   const ROWST = { match: 'ok', stm_only: 'lo', proc_only: 'hi', both: 'lo', no_print_order: 'na' };
-  rows = Array.from(map.values()).map(function (o) {
-    const proc = o.f0 + o.f1 + o.f2;
-    const st = function (q) { return !o.hasPO ? 'no_po' : (q === o.po ? 'match' : (q < o.po ? 'short' : 'excess')); };
-    const stmSt = st(o.stm), procSt = st(proc);
-    const overall = !o.hasPO ? 'no_print_order'
-      : (stmSt === 'match' && procSt === 'match') ? 'match'
-      : (stmSt !== 'match' && procSt !== 'match') ? 'both'
-      : (stmSt !== 'match') ? 'stm_only' : 'proc_only';
+  const _ROWST = ROWST;
+  rows = data.map(function (d) {
     return {
-      code: o.code, name: o.name, edition: o.edition, hasPO: o.hasPO, po: o.po,
-      stm: o.stm, stmVar: o.hasPO ? o.stm - o.po : 0, stmSt: stmSt,
-      f0: o.f0, f1: o.f1, f2: o.f2,
-      proc: proc, procVar: o.hasPO ? proc - o.po : 0, procSt: procSt,
-      overall: overall, rowSt: ROWST[overall]
+      code:    String(d.book_code == null ? '' : d.book_code),
+      name:    d.name || '',
+      edition: d.edition == null ? '' : String(d.edition),
+      hasPO:   d.po_qty !== null && d.po_qty !== undefined,
+      po:      Number(d.po_qty) || 0,
+      stm:     Number(d.stm_qty) || 0,
+      stmVar:  Number(d.stm_variance) || 0,
+      stmSt:   d.po_qty == null ? 'no_po' : d.stm_status,
+      f0:      Number(d.qty_cutting) || 0,
+      f1:      Number(d.qty_hardbound) || 0,
+      f2:      Number(d.qty_hardbound_delux) || 0,
+      proc:    Number(d.proc_qty) || 0,
+      procVar: Number(d.proc_variance) || 0,
+      procSt:  d.po_qty == null ? 'no_po' : d.proc_status,
+      overall: d.status,
+      rowSt:   ROWST[d.status] || 'na'
     };
   });
   rows.sort(function (a, b) {
@@ -374,7 +651,13 @@ async function exportXlsx() {
   a.click(); URL.revokeObjectURL(url);
 }
 
-window.addEventListener('load', () => run());
+window.addEventListener('load', async function () {
+  authLoad(); authWireGate(); pwdWire();
+  if (!session) { authShowGate(); return; }
+  if (!(await authToken())) { authShowGate('Session खत्म हो गया — दोबारा login करें।'); return; }
+  authPaintUser();
+  run();
+});
 </script>
 </body>
 </html>
