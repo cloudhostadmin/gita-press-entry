@@ -367,6 +367,7 @@ option   { font-weight: 400; color: #333; }
   <option value="Kartikey-01(Gajendra Pratap singh)">Kartikey-01(Gajendra Pratap singh)</option>
   <option value="Kartikey-02(Jogender Gour)">Kartikey-02(Jogender Gour)</option>
   <option value="Kartikey-03(Jagdish Yadav (RB))">Kartikey-03(Jagdish Yadav (RB))</option>
+  <option value="Kartikey-04(KPA)">Kartikey-04(KPA)</option>
 </optgroup>
 <optgroup label="वैभव शर्मा (Vaibhav Sharma)">
   <option value="Vaibhav-01(Jai Prakash Prajapati)">Vaibhav-01(Jai Prakash Prajapati)</option>
@@ -379,6 +380,7 @@ option   { font-weight: 400; color: #333; }
   <option value="Anand-02(Kranti Kumar)">Anand-02(Kranti Kumar)</option>
   <option value="Anand-03(Makkhan)">Anand-03(Makkhan)</option>
   <option value="Anand-04(Manoj Kumar (RB))">Anand-04(Manoj Kumar (RB))</option>
+  <option value="Anand-05(Akhilesh Chaturvedi (RB))">Anand-05(Akhilesh Chaturvedi (RB))</option>
 </optgroup>
 <optgroup label="नारायण प्रसाद पारीक (Narayan Prasad Pareek)">
   <option value="Narayan-01(Ravinder Yadav)">Narayan-01(Ravinder Yadav)</option>
@@ -387,6 +389,7 @@ option   { font-weight: 400; color: #333; }
 </optgroup>
 <optgroup label="By Machine">
   <option value="By Machine">By Machine</option>
+  <option value="Channel">Channel</option>
 </optgroup>
 
         </select>
@@ -870,11 +873,17 @@ async function fetchBook(code) {
   }
 }
 
-// ── By Machine चुनने पर पाँच fields अपने आप ────────────────────────
+// ── मशीन वाले contractor ─────────────────────────────────────────
+// 'By Machine' group के सभी विकल्प — इन पर पाँच fields अपने आप भरते हैं
+// और row main_entry के बजाय by_machine table में जाती है.
+// नया मशीन विकल्प जोड़ें तो उसका नाम यहाँ भी डालना होगा.
+const BY_MACHINE = ['By Machine', 'Channel'];
+function isByMachine(v) { return BY_MACHINE.indexOf(v) !== -1; }
+
 // Panni और Box जान-बूझकर नहीं छूते — वो किताब के हिसाब से भरते हैं,
 // contractor के हिसाब से नहीं
 function onContractorChange(val) {
-  if (val === 'By Machine') {
+  if (isByMachine(val)) {
     setRadio('dhala',    'Yes');
     setRadio('headtail', 'Head & Tail');
     setRadio('bookmark', 'Yes');
@@ -893,7 +902,7 @@ async function saveRecord() {
   if (!document.getElementById('bookName').value) { alert('Book Code नहीं मिला।'); return; }
 
   const contractor = document.getElementById('fContractor').value;
-  const table = (contractor === 'By Machine') ? 'by_machine' : 'main_entry';
+  const table = isByMachine(contractor) ? 'by_machine' : 'main_entry';
 
   const payload = {
     exit_date:  document.getElementById('fExitDate').value || null,
@@ -940,7 +949,7 @@ async function saveRecord() {
   renderTable();
   loadToday();
   setSyncStatus('synced', 'Save हुआ — S.N. ' + saved.id + ' (' +
-    (table === 'by_machine' ? 'By Machine' : 'Main') + ')');
+    (table === 'by_machine' ? contractor : 'Main') + ')');
   const bar = document.getElementById('statusBar');
   bar.className = 'status-bar status-saved';
   bar.textContent = '✅ Saved! Book Code ' + code + ' — S.N. ' + saved.id;
