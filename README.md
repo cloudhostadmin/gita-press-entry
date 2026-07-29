@@ -28,6 +28,7 @@ Site खोलने पर **Dashboard** आता है — वही `index.
 | `process_entry.html` | `process_entry` — rate master से rate और divisor |
 | `print_order.html` | `print_order` — पिछले edition की history database से |
 | `reconcile.html` | पढ़ता है `v_reconcile` view |
+| `add_book.html` | नई किताब जोड़ना — कोई भी operator, केवल जोड़ना |
 
 SQL files:
 
@@ -36,6 +37,7 @@ SQL files:
 | `supabase_schema.sql` | एक बार, नया project बनाते वक़्त |
 | `supabase_auth_rls.sql` | schema के बाद, **पहला user बना लेने पर** |
 | `seed/*.sql` | masters भरने के लिए — books, contractors, rates, divisors |
+| `supabase_add_book.sql` | operator को books में INSERT की अनुमति + size/page_type views |
 | `supabase_cancel.sql` | रद्द करने की व्यवस्था — columns, policies, `v_cancelled` |
 | `supabase_books_flags.sql` | `books.panni` / `books.box` के झंडे |
 | `supabase_print_order_machine.sql` | `print_order.machine_type` |
@@ -46,14 +48,18 @@ SQL files:
 
 ### नई किताब
 
-Supabase → **Table Editor** → `gp.books` → Insert row:
-`code`, `name`, `juje`, `size`, `page_type`
+**कोई भी operator** — nav में **📖 नई किताब** page से. Size और Page Type
+dropdown से चुनते हैं (सूची database से आती है), इसलिए spelling की गलती की
+गुंजाइश नहीं. Book Code पहले से हो तो form वहीं रोक देता है, और मिलते-जुलते
+नाम भी दिखा देता है ताकि वही किताब दूसरे code पर दोबारा न जुड़े.
 
-GitHub पर कुछ नहीं करना — form अगली बार उसी code पर उठा लेगा।
+Size चुनने पर वो बताता है कि उस size पर कितने processes के rate हैं. शून्य हो
+तो चेतावनी आती है — किताब जुड़ जाएगी पर Process Entry उस पर rate नहीं निकाल
+पाएगा, तब उस size के लिए `gp.process_rate` में rates डालने पड़ेंगे.
 
-`size` वही value होनी चाहिए जो `process_rate` में है (`पुस्तकाकार`,
-`ग्रन्थाकार`, `पाकेट`, `लघु आकार` आदि), वरना Process Entry में उस किताब के
-लिए कोई process नहीं दिखेगा।
+**बदलना या मिटाना** — सिर्फ़ Supabase Table Editor से (dashboard login चाहिए).
+जान-बूझकर operator को नहीं दिया: किसी किताब का `size` बदल देने से उसकी पुरानी
+सारी entries का rate-मिलान बदल जाएगा, और वो चुपचाप होगा.
 
 ### Rate बदलना
 

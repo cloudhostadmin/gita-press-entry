@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>STM Entry — Gita Press</title>
+<title>नई किताब जोड़ें — Gita Press</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: Arial, sans-serif; background: #f0f4f8; min-height: 100vh; }
 
 .header {
-  background: linear-gradient(135deg, #1f6f4a, #2f9d69);
+  background: linear-gradient(135deg, #8a5a12, #c08b2a);
   color: white; padding: 18px 24px;
   display: flex; align-items: center; gap: 14px;
   box-shadow: 0 3px 12px rgba(0,0,0,0.2);
@@ -150,9 +150,27 @@ tr:hover td { background: #fde8d8; cursor: pointer; }
   button { width: 100%; justify-content: center; }
 }
 </style>
+<style>
+.warn-box { margin: 0 18px 16px; padding: 11px 14px; border-radius: 8px;
+  font-size: .84rem; font-weight: 600; display: none; }
+.w-err  { background:#fdecea; color:#a3241a; border-left:4px solid #d9534f; }
+.w-ok   { background:#e8f5e9; color:#1b5e20; border-left:4px solid #4caf50; }
+.w-warn { background:#fff8e1; color:#7a5200; border-left:4px solid #e0a458; }
+.hint2 { font-size:.76rem; color:#7a8a99; font-style:italic; margin-top:3px; }
+.hint2.bad { color:#bf360c; font-style:normal; font-weight:600; }
+.chk2 { display:flex; align-items:center; gap:8px; font-size:.88rem;
+  font-weight:600; color:#8a5a12; }
+.chk2 input { width:17px; height:17px; accent-color:#8a5a12; cursor:pointer; }
+#simBox { display:none; margin:0 18px 16px; border:1px solid #e6dcc6;
+  border-radius:8px; overflow:hidden; }
+#simBox .sb-t { background:#f7f0e0; padding:7px 12px; font-size:.78rem;
+  font-weight:700; color:#7a5200; }
+#simBox table { font-size:.78rem; }
+#simBox th { background:#b08a3c; font-size:.72rem; padding:6px 8px; }
+#simBox td { padding:5px 8px; }
+</style>
 </head>
 <body>
-
 <!-- ── LOGIN GATE ─────────────────────────────────────────────── -->
 <div id="authGate" style="position:fixed;inset:0;z-index:9999;background:#12253a;
      display:none;align-items:center;justify-content:center;padding:20px;">
@@ -219,28 +237,25 @@ tr:hover td { background: #fde8d8; cursor: pointer; }
   </div>
 </div>
 
-
-
 <div class="header">
-  <div style="font-size:2rem">📋</div>
+  <div style="font-size:2rem">📖</div>
   <div>
-    <h1>STM Entry — Gita Press, Gorakhpur</h1>
-    <p>Books database से — कोई data page में embed नहीं</p>
+    <h1>नई किताब जोड़ें — Gita Press, Gorakhpur</h1>
+    <p>जुड़ते ही सभी forms में काम करने लगेगी</p>
   </div>
 </div>
-
 
 <div style="background:#1a3a5c;padding:8px 24px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
   <span style="color:#aac;font-size:0.78rem;font-weight:600;margin-right:4px;">GO TO →</span>
   <a href="index.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#1f6f4a;color:white;border:2px solid #4dbf90;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📊 Dashboard</button></a>
   <a href="reconcile.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#3f3d8f;color:white;border:2px solid #8785d6;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">🔍 Reconcile</button></a>
   <a href="print_order.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#7b2d5e;color:white;border:2px solid #c470a0;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">🖨️ Print Order</button></a>
-  <button style="padding:7px 16px;background:#843c0c;color:white;border:2px solid #e07a3a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:default;box-shadow:0 0 0 2px white,0 0 0 4px #e07a3a;">📋 STM Entry ✓</button>
+  <a href="stm.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#843c0c;color:white;border:2px solid #e07a3a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📋 STM Entry</button></a>
   <a href="process_entry.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#0f6e56;color:white;border:2px solid #3fb99a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">⚙️ Process Entry</button></a>
   <a href="main_entry.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#1F4E79;color:white;border:2px solid #4a90c4;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📚 Main Entry</button></a>
   <a href="soft_bound.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#375623;color:white;border:2px solid #6aaa3a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📗 Soft Bound</button></a>
   <a href="laghu_ati_laghu.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#6a3d9a;color:white;border:2px solid #b07edd;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📒 Laghu &amp; Ati Laghu</button></a>
-  <a href="add_book.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#8a5a12;color:white;border:2px solid #d9a441;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📖 नई किताब</button></a>
+  <button style="padding:7px 16px;background:#8a5a12;color:white;border:2px solid #d9a441;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:default;box-shadow:0 0 0 2px white,0 0 0 4px #d9a441;">📖 नई किताब ✓</button>
 </div>
 <div style="background:#233b55;padding:7px 24px;display:flex;gap:9px;align-items:center;flex-wrap:wrap;">
   <label for="opName" style="color:#cfe0ee;font-size:0.78rem;font-weight:700;margin:0;padding:0;text-align:left;">
@@ -257,172 +272,102 @@ tr:hover td { background: #fde8d8; cursor: pointer; }
           background:#3a5570;color:#dce7f0;border:1.5px solid #56728d;border-radius:6px;
           font-size:0.76rem;font-weight:700;cursor:pointer;">Logout</button>
 </div>
-<div id="syncStatus" style="display:none;font-size:0.85rem;font-weight:600;padding:10px 18px;border-radius:8px;margin:12px 16px 0;"></div>
+<div id="syncStatus" style="display:none;font-size:.85rem;font-weight:600;padding:10px 18px;margin:12px 16px 0;border-radius:8px;"></div>
 
 <div class="container">
 
-  <!-- ENTRY SECTION -->
   <div id="entrySection" class="locked">
-    <div class="lock-overlay">
-      🔒 Google Sheet से connect होने के बाद entry unlock होगी।
-    </div>
+    <div class="lock-overlay">🔒 Login के बाद खुलेगा।</div>
 
-    <!-- BOOK CODE LOOKUP -->
     <div class="card">
-      <div class="section-title blue">🔍 Book Code Lookup</div>
+      <div class="section-title">📖 किताब का ब्यौरा</div>
       <div class="form-body">
         <div class="field-row">
           <label>Book Code <span class="req">*</span></label>
-          <input type="text" id="bookCode" class="book-code-input" disabled
-                 placeholder="Enter Book Code (e.g. 1, 25, 1095)"
-                 oninput="lookupBook()" autocomplete="off">
+          <div>
+            <input type="text" id="fCode" class="book-code-input" autocomplete="off"
+                   placeholder="जैसे 2500" oninput="onCodeInput()">
+            <div class="hint2" id="hCode"></div>
+          </div>
         </div>
         <div class="field-row">
-          <label>Name (Auto)</label>
-          <input type="text" id="bookName" class="auto-field" readonly
-                 placeholder="— auto from Book List —">
+          <label>Name <span class="req">*</span></label>
+          <div>
+            <input type="text" id="fName" autocomplete="off"
+                   placeholder="पूरा नाम" oninput="onNameInput()">
+            <div class="hint2" id="hName"></div>
+          </div>
         </div>
         <div class="field-row">
-          <label>Juje (Auto)</label>
-          <input type="text" id="bookJuje" class="auto-field" readonly
-                 placeholder="— auto from Juje sheet —">
+          <label>Juje</label>
+          <input type="number" id="fJuje" min="0" step="1" placeholder="जुजे की संख्या">
+        </div>
+        <div class="field-row">
+          <label>Size <span class="req">*</span></label>
+          <div>
+            <select id="fSize" onchange="onSizeChange()">
+              <option value="">— पढ़ रहे हैं... —</option>
+            </select>
+            <div class="hint2" id="hSize"></div>
+          </div>
+        </div>
+        <div class="field-row">
+          <label>Page Type</label>
+          <div>
+            <select id="fPageType"><option value="">— पढ़ रहे हैं... —</option></select>
+            <div class="hint2">खाली छोड़ सकते हैं</div>
+          </div>
+        </div>
+        <hr class="divider">
+        <div class="field-row">
+          <label>पन्नी / डिब्बा</label>
+          <div style="display:flex;gap:22px;flex-wrap:wrap;">
+            <label class="chk2"><input type="checkbox" id="fPanni"> पन्नी लगती है</label>
+            <label class="chk2"><input type="checkbox" id="fBox"> डिब्बा लगता है</label>
+          </div>
+        </div>
+        <div class="hint2" style="text-align:right">
+          Main Entry में Panni / Box इन्हीं से अपने आप Yes / No होते हैं
         </div>
       </div>
-      <div class="status-bar status-empty" id="statusBar">
-        ℹ️ Enter a Book Code to begin
-      </div>
-    </div>
-
-    <!-- MANUAL ENTRY -->
-    <div class="card">
-      <div class="section-title orange">✏️ Entry Details</div>
-      <div class="form-body">
-
-        <div class="field-row">
-          <label>Size (Auto)</label>
-          <input type="text" id="bookSize" class="auto-field" readonly
-                 placeholder="— auto from Book Size list —">
+      <div class="warn-box" id="msgBox"></div>
+      <div id="simBox">
+        <div class="sb-t">मिलते-जुलते नाम — कहीं यही किताब पहले से न हो</div>
+        <div style="overflow-x:auto;">
+          <table><thead><tr><th>Code</th><th>Name</th><th>Size</th><th>Juje</th></tr></thead>
+          <tbody id="simBody"></tbody></table>
         </div>
-
-        <div class="field-row">
-          <label>Exit Date</label>
-          <input type="date" id="fExitDate">
-        </div>
-
-        <div class="field-row">
-          <label>Edition (D)</label>
-          <input type="text" id="fEdition" placeholder="e.g. 1st, 2nd, revised...">
-        </div>
-
-        <div class="field-row">
-          <label>Contractor (F)</label>
-          <select id="fContractor">
-            <option value="">— Select Contractor Code —</option>
-            <optgroup label="रवि प्रताप यादव (Ravi Pratap Yadav)">
-              <option value="Ravi-01(Avadh Bihari Chaturvedi)">Ravi-01(Avadh Bihari Chaturvedi)</option>
-              <option value="Ravi-02(Akhilesh Chaturvedi (RB))">Ravi-02(Akhilesh Chaturvedi (RB))</option>
-              <option value="Ravi-03(Subham (RB))">Ravi-03(Subham (RB))</option>
-            </optgroup>
-            <optgroup label="कार्तिकेय पारीक (Kartikey Pareek)">
-              <option value="Kartikey-01(Gajendra Pratap singh)">Kartikey-01(Gajendra Pratap singh)</option>
-              <option value="Kartikey-02(Jogender Gour)">Kartikey-02(Jogender Gour)</option>
-              <option value="Kartikey-03(Jagdish Yadav (RB))">Kartikey-03(Jagdish Yadav (RB))</option>
-              <option value="Kartikey-04(KPA)">Kartikey-04(KPA)</option>
-            </optgroup>
-            <optgroup label="वैभव शर्मा (Vaibhav Sharma)">
-              <option value="Vaibhav-01(Jai Prakash Prajapati)">Vaibhav-01(Jai Prakash Prajapati)</option>
-              <option value="Vaibhav-02(Arvind Kumar Tiwari)">Vaibhav-02(Arvind Kumar Tiwari)</option>
-              <option value="Vaibhav-03(Sanjay Kumar)">Vaibhav-03(Sanjay Kumar)</option>
-              <option value="Vaibhav-04(Virender Mishra)">Vaibhav-04(Virender Mishra)</option>
-            </optgroup>
-            <optgroup label="आनंद शुक्ला (Anand Shukla)">
-              <option value="Anand-01(Vikas)">Anand-01(Vikas)</option>
-              <option value="Anand-02(Kranti Kumar)">Anand-02(Kranti Kumar)</option>
-              <option value="Anand-03(Makkhan)">Anand-03(Makkhan)</option>
-              <option value="Anand-04(Manoj Kumar (RB))">Anand-04(Manoj Kumar (RB))</option>
-              <option value="Anand-05(Akhilesh Chaturvedi (RB))">Anand-05(Akhilesh Chaturvedi (RB))</option>
-            </optgroup>
-            <optgroup label="नारायण प्रसाद पारीक (Narayan Prasad Pareek)">
-              <option value="Narayan-01(Ravinder Yadav)">Narayan-01(Ravinder Yadav)</option>
-              <option value="Narayan-02(Sudhir Kumar Gupta)">Narayan-02(Sudhir Kumar Gupta)</option>
-              <option value="Narayan-03(Neeraj Kumar Singh)">Narayan-03(Neeraj Kumar Singh)</option>
-            </optgroup>
-            <optgroup label="By Machine">
-              <option value="By Machine">By Machine</option>
-              <option value="Channel">Channel</option>
-            </optgroup>
-          </select>
-        </div>
-
-        <div class="field-row">
-          <label>Rate</label>
-          <input type="number" id="fRate" placeholder="0.00" min="0" step="0.01">
-        </div>
-
-        <div class="field-row">
-          <label>Total Quantity</label>
-          <input type="number" id="fTotalQty" placeholder="0" min="0">
-        </div>
-
       </div>
       <div class="btn-row">
-        <button class="btn-save"   onclick="saveRecord()">💾 Save Record</button>
-        <button class="btn-clear"  onclick="clearForm()">🗑️ Clear</button>
-        <button class="btn-export" onclick="exportToExcel()">📥 Export to Excel</button>
+        <button class="btn-save" onclick="saveBook()">💾 किताब जोड़ें</button>
+        <button class="btn-clear" onclick="clearForm()">🗑️ खाली करें</button>
       </div>
     </div>
 
-  </div><!-- /entrySection -->
-
-  <!-- RECORDS TABLE -->
-  <div class="card">
-    <div class="section-title orange">📋 Saved Records This Session</div>
-    <div class="record-count" id="recordCount">0 records saved</div>
-    <div style="overflow-x:auto;">
-      <table>
-        <thead>
-          <tr>
-            <th>S.N.</th><th>Code</th><th>Name</th><th>Juje</th>
-            <th>Size</th><th>Exit Date</th><th>Edition</th>
-            <th>Contractor</th><th>Rate</th><th>Total Qty</th><th>Entry Date</th>
-          </tr>
-        </thead>
-        <tbody id="recordsBody">
-          <tr><td colspan="11" style="text-align:center;color:#aaa;padding:20px;">
-            No records yet. Fill the form and click Save.
-          </td></tr>
-        </tbody>
-      </table>
+    <div class="card">
+      <div class="section-title" style="background:#5a3d5c;">🕐 आज जुड़ी किताबें</div>
+      <div class="record-count">
+        <span id="todayCount">—</span>
+        <button onclick="loadToday()" style="padding:4px 12px;background:#5a3d5c;color:#fff;
+                border:none;border-radius:6px;font-size:.76rem;font-weight:700;cursor:pointer;">
+          🔄 दोबारा पढ़ें</button>
+      </div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead><tr><th>Code</th><th>Name</th><th>Juje</th><th>Size</th>
+            <th>Page Type</th><th>पन्नी</th><th>डिब्बा</th></tr></thead>
+          <tbody id="todayBody">
+            <tr><td colspan="7" style="text-align:center;color:#aaa;padding:18px;">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="padding:0 18px 14px;font-size:.76rem;color:#7a8a99;line-height:1.6;">
+        जुड़ी किताब बदली या मिटाई नहीं जा सकती — गलती हो जाए तो व्यवस्थापक से कहें।
+      </div>
     </div>
+
   </div>
-
-  <!-- ── आज की मेरी entries — रद्द करने के लिए ─────────────────── -->
-  <div class="card">
-    <div class="section-title" style="background:#5a3d5c;">🕐 आज की मेरी entries</div>
-    <div class="record-count">
-      <span id="todayCount">—</span>
-      <button onclick="loadToday()" style="padding:4px 12px;background:#5a3d5c;color:#fff;
-              border:none;border-radius:6px;font-size:.76rem;font-weight:700;cursor:pointer;">
-        🔄 दोबारा पढ़ें</button>
-    </div>
-    <div style="overflow-x:auto;">
-      <table>
-        <thead><tr>
-          <th>S.N.</th><th>Book Code</th><th>Name</th><th>Edition</th>
-          <th class="num">मात्रा</th><th>रद्द करें</th>
-        </tr></thead>
-        <tbody id="todayBody">
-          <tr><td colspan="6" style="text-align:center;color:#aaa;padding:18px;">—</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div style="padding:0 18px 14px;font-size:.76rem;color:#7a8a99;line-height:1.6;">
-      सिर्फ़ आज की, अपनी ही entry रद्द हो सकती है। रद्द row मिटती नहीं — निशान लगा रहता है,
-      और हिसाब में गिनी नहीं जाती। पुरानी entry के लिए व्यवस्थापक से कहें।
-    </div>
-  </div>
-
-</div><!-- /container -->
+</div>
 
 <script>
 // ── SUPABASE ─────────────────────────────────────────────────────
@@ -627,19 +572,6 @@ function requireOperator() {
   return false;
 }
 
-let records = [];
-
-
-function setSyncStatus(state, msg) {
-  const el = document.getElementById('syncStatus');
-  if (!el) return;
-  el.style.display = 'block';
-  if (state === 'loading') { el.textContent = '📡 Connecting...'; el.style.color = '#2e75b6'; el.style.background = '#e3f2fd'; }
-  if (state === 'saving')  { el.textContent = '📡 Saving...';      el.style.color = '#2e75b6'; el.style.background = '#e3f2fd'; }
-  if (state === 'synced')  { el.textContent = '✅ ' + msg;         el.style.color = '#1b5e20'; el.style.background = '#e8f5e9'; }
-  if (state === 'error')   { el.textContent = '⚠️ ' + msg;        el.style.color = '#bf360c'; el.style.background = '#fff3e0'; }
-}
-
 async function sbFetch(path, opts) {
   const o = opts || {};
   const tok = await authToken();
@@ -657,293 +589,278 @@ async function sbFetch(path, opts) {
   return res.status === 204 ? null : res.json();
 }
 
-async function connectDb() {
-  setSyncStatus('loading');
+function setSyncStatus(state, msg) {
+  const el = document.getElementById('syncStatus');
+  if (!el) return;
+  el.style.display = 'block';
+  if (state === 'loading') { el.textContent = '📡 Connecting...'; el.style.color = '#2e75b6'; el.style.background = '#e3f2fd'; }
+  if (state === 'saving')  { el.textContent = '📡 जोड़ रहे हैं...'; el.style.color = '#2e75b6'; el.style.background = '#e3f2fd'; }
+  if (state === 'synced')  { el.textContent = '✅ ' + msg;         el.style.color = '#1b5e20'; el.style.background = '#e8f5e9'; }
+  if (state === 'error')   { el.textContent = '⚠️ ' + msg;        el.style.color = '#bf360c'; el.style.background = '#fff3e0'; }
+}
+
+// ── PASSWORD बदलना ───────────────────────────────────────────────
+// भूला हुआ password यहाँ से नहीं बन सकता: recover email भेजता है, और
+// gitapress.org वाले पते असली inbox नहीं हैं। वो व्यवस्थापक ही
+// Supabase → Authentication → Users से देगा.
+function pwdShow() {
+  if (!session) { authShowGate('पहले login करें।'); return; }
+  document.getElementById('pwdWho').textContent = session.user ? session.user.email : '';
+  document.getElementById('pwdNew').value = '';
+  document.getElementById('pwdNew2').value = '';
+  document.getElementById('pwdMsg').style.display = 'none';
+  document.getElementById('pwdBox').style.display = 'flex';
+  document.getElementById('pwdNew').focus();
+}
+function pwdHide() { document.getElementById('pwdBox').style.display = 'none'; }
+
+function pwdSay(text, ok) {
+  const m = document.getElementById('pwdMsg');
+  m.style.display = 'block';
+  m.textContent = text;
+  m.style.background = ok ? '#e8f5e9' : '#fff3e0';
+  m.style.color      = ok ? '#1b5e20' : '#bf360c';
+}
+
+async function pwdChange() {
+  const a = document.getElementById('pwdNew').value;
+  const b = document.getElementById('pwdNew2').value;
+  if (a.length < 6) { pwdSay('Password कम से कम 6 अक्षर का हो।', false); return; }
+  if (a !== b)      { pwdSay('दोनों Password एक जैसे नहीं हैं।', false); return; }
+  const tok = await authToken();
+  if (!tok) { pwdHide(); authShowGate('Session खत्म हो गया — दोबारा login करें।'); return; }
+  const btn = document.getElementById('pwdSave');
+  btn.disabled = true; btn.textContent = 'बदल रहे हैं...';
   try {
-    await sbFetch('books?select=code&limit=1');
-    setSyncStatus('synced', 'Database से जुड़ गए — entry शुरू करें।');
-    loadToday();
-    document.getElementById('entrySection').classList.remove('locked');
-    document.getElementById('bookCode').disabled = false;
+    const res = await fetch(SB_URL + '/auth/v1/user', {
+      method: 'PUT',
+      headers: { apikey: SB_KEY, Authorization: 'Bearer ' + tok, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: a })
+    });
+    const d = await res.json();
+    if (!res.ok) throw new Error(d.error_description || d.msg || d.message || 'नहीं बदला');
+    pwdSay('✅ Password बदल गया — अगली बार इसी से login करें।', true);
+    setTimeout(pwdHide, 1800);
   } catch (err) {
-    setSyncStatus('error', 'Database से नहीं जुड़ सके: ' + err.message);
+    pwdSay('⚠️ ' + err.message, false);
+  } finally {
+    btn.disabled = false; btn.textContent = 'बदलें';
   }
 }
 
-function getRadio(name) {
-  const el = document.querySelector('input[name="' + name + '"]:checked');
-  return el ? el.value : '';
+
+function authSignOut() {
+  if (session && session.access_token) {
+    fetch(SB_URL + '/auth/v1/logout', {
+      method: 'POST',
+      headers: { apikey: SB_KEY, Authorization: 'Bearer ' + session.access_token }
+    }).catch(function () {});
+  }
+  authSave(null);
+  // Logout के बाद Dashboard पर — वही site का मुख्य page है
+  location.href = 'index.html';
 }
-function clearRadio(name) {
-  document.querySelectorAll('input[name="' + name + '"]').forEach(function (r) { r.checked = false; });
+
+function hint(id, txt, bad) {
+  const el = document.getElementById(id);
+  el.textContent = txt || '';
+  el.className = 'hint2' + (bad ? ' bad' : '');
+}
+function say(kind, txt) {
+  const b = document.getElementById('msgBox');
+  b.style.display = txt ? 'block' : 'none';
+  b.className = 'warn-box ' + (kind === 'ok' ? 'w-ok' : kind === 'warn' ? 'w-warn' : 'w-err');
+  b.textContent = txt || '';
 }
 function inr(v) { return (Number(v) || 0).toLocaleString('en-IN'); }
 
-// ── BOOK LOOKUP (database से) ─────────────────────────────────────
-let codeTimer = null, inflight = 0;
-function lookupBook() {
-  clearTimeout(codeTimer);
-  const code = document.getElementById('bookCode').value.trim();
-  const bar = document.getElementById('statusBar');
-  ['bookName','bookJuje','bookSize'].forEach(function (i) {
-    const el = document.getElementById(i); if (el) el.value = '';
-  });
-  if (!code) {
-    bar.className = 'status-bar status-empty';
-    bar.textContent = 'ℹ️ Enter a Book Code to begin';
-    return;
-  }
-  bar.className = 'status-bar status-empty';
-  bar.textContent = '📡 खोज रहे हैं...';
-  codeTimer = setTimeout(function () { fetchBook(code); }, 350);
-}
-
-async function fetchBook(code) {
-  const bar = document.getElementById('statusBar');
-  const seq = ++inflight;
+// ── size / page_type की सूची database से ─────────────────────────
+// operator टाइप नहीं करता — spelling की गलती की गुंजाइश ही नहीं
+let SIZES = [];
+async function loadLists() {
   try {
-    const rows = await sbFetch('books?code=eq.' + encodeURIComponent(code) +
-                               '&select=code,name,juje,size&limit=1');
-    if (seq !== inflight) return;
-    if (document.getElementById('bookCode').value.trim() !== code) return;
-    const b = (rows || [])[0];
-    if (!b) {
-      bar.className = 'status-bar status-notfound';
-      bar.textContent = '⚠️ Book Code नहीं मिला।';
-      return;
-    }
-    document.getElementById('bookName').value = b.name || '';
-    document.getElementById('bookJuje').value = (b.juje == null ? '' : b.juje);
-    const sz = document.getElementById('bookSize');
-    if (sz) sz.value = b.size || '';
-    bar.className = 'status-bar status-found';
-    bar.textContent = '✅ Book मिली! ब्यौरा भरकर Save करें।';
-  } catch (err) {
-    if (seq !== inflight) return;
-    bar.className = 'status-bar status-notfound';
-    bar.textContent = '⚠️ ' + err.message;
+    SIZES = await sbFetch('v_book_sizes?select=size,rate_processes,books');
+    const s = document.getElementById('fSize');
+    s.innerHTML = '<option value="">— Size चुनें —</option>' + SIZES.map(function (r) {
+      return '<option value="' + r.size + '">' + r.size +
+             '  (' + r.rate_processes + ' process rate, ' + r.books + ' किताबें)</option>';
+    }).join('');
+    const pt = await sbFetch('v_page_types?select=page_type,books');
+    document.getElementById('fPageType').innerHTML =
+      '<option value="">— कोई नहीं —</option>' + (pt || []).map(function (r) {
+        return '<option value="' + r.page_type + '">' + r.page_type + '</option>';
+      }).join('');
+  } catch (err) { say('err', 'सूची नहीं पढ़ी जा सकी: ' + err.message); }
+}
+
+function onSizeChange() {
+  const v = document.getElementById('fSize').value;
+  const row = SIZES.find(function (r) { return r.size === v; });
+  if (!v) { hint('hSize', ''); return; }
+  if (!row || row.rate_processes === 0) {
+    hint('hSize', '⚠️ इस size पर किसी process का rate नहीं है — Process Entry इस किताब पर rate नहीं निकाल पाएगा', true);
+  } else {
+    hint('hSize', row.rate_processes + ' processes के rate मौजूद हैं');
   }
 }
 
-// ── SAVE ─────────────────────────────────────────────────────────
-async function saveRecord() {
-  if (!requireOperator()) return;
-  const code = document.getElementById('bookCode').value.trim();
-  if (!code) { alert('Book Code डालें।'); return; }
-  if (!document.getElementById('bookName').value) { alert('Book Code नहीं मिला।'); return; }
+// ── Book Code पहले से है या नहीं ─────────────────────────────────
+let codeTimer = null, codeOk = false;
+function onCodeInput() {
+  clearTimeout(codeTimer);
+  codeOk = false;
+  const code = document.getElementById('fCode').value.trim();
+  if (!code) { hint('hCode', ''); return; }
+  hint('hCode', 'जाँच रहे हैं...');
+  codeTimer = setTimeout(async function () {
+    try {
+      const r = await sbFetch('books?code=eq.' + encodeURIComponent(code) + '&select=code,name&limit=1');
+      if (document.getElementById('fCode').value.trim() !== code) return;
+      if ((r || []).length) {
+        hint('hCode', '❌ यह code पहले से है — ' + r[0].name, true);
+        codeOk = false;
+      } else {
+        hint('hCode', '✅ यह code खाली है');
+        codeOk = true;
+      }
+    } catch (err) { hint('hCode', err.message, true); }
+  }, 350);
+}
 
-  const nz = function (id) {
-    const el = document.getElementById(id);
-    return (!el || el.value === '') ? null : Number(el.value);
-  };
+// ── मिलते-जुलते नाम — वही किताब दूसरे code पर दोबारा न जुड़े ───────
+let nameTimer = null;
+function onNameInput() {
+  clearTimeout(nameTimer);
+  const nm = document.getElementById('fName').value.trim();
+  document.getElementById('simBox').style.display = 'none';
+  if (nm.length < 3) { hint('hName', ''); return; }
+  nameTimer = setTimeout(async function () {
+    try {
+      const r = await sbFetch('books?name=ilike.*' + encodeURIComponent(nm) +
+                              '*&select=code,name,size,juje&limit=8');
+      if (document.getElementById('fName').value.trim() !== nm) return;
+      if (!(r || []).length) { hint('hName', 'ऐसा कोई नाम पहले नहीं है'); return; }
+      hint('hName', r.length + ' मिलती-जुलती किताबें मिलीं — नीचे देख लें', true);
+      document.getElementById('simBody').innerHTML = r.map(function (b) {
+        return '<tr><td><strong>' + b.code + '</strong></td><td>' + b.name +
+               '</td><td>' + (b.size || '—') + '</td><td>' + (b.juje == null ? '—' : b.juje) + '</td></tr>';
+      }).join('');
+      document.getElementById('simBox').style.display = 'block';
+    } catch (err) { hint('hName', err.message, true); }
+  }, 450);
+}
+
+// ── जोड़ें ────────────────────────────────────────────────────────
+async function saveBook() {
+  if (!requireOperator()) return;
+  const code = document.getElementById('fCode').value.trim();
+  const name = document.getElementById('fName').value.trim();
+  const size = document.getElementById('fSize').value;
+  if (!code) { say('err', 'Book Code भरें।'); return; }
+  if (!name) { say('err', 'Name भरें।'); return; }
+  if (!size) { say('err', 'Size चुनें — यही rate से जुड़ता है।'); return; }
+  if (!codeOk) { say('err', 'यह Book Code पहले से मौजूद है या जाँच बाकी है। बदलकर देखें।'); return; }
+
+  const juje = document.getElementById('fJuje').value;
   const payload = {
-    exit_date:  document.getElementById('fExitDate').value || null,
-    book_code:  code,
-    name:       document.getElementById('bookName').value,
-    juje:       document.getElementById('bookJuje').value || null,
-    size:       (document.getElementById('bookSize') || {}).value || null,
-    edition:    document.getElementById('fEdition').value.trim() || null,
-    contractor: document.getElementById('fContractor').value || null,
-    rate:       nz('fRate'),
-    total_qty:  nz('fTotalQty'),
-    entered_by: operatorName()
+    code: code, name: name,
+    juje: juje === '' ? null : Number(juje),
+    size: size,
+    page_type: document.getElementById('fPageType').value || null,
+    panni: document.getElementById('fPanni').checked,
+    box:   document.getElementById('fBox').checked
   };
 
   setSyncStatus('saving');
   let saved;
   try {
-    const out = await sbFetch('stm', {
+    const out = await sbFetch('books', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Prefer: 'return=representation' },
       body: JSON.stringify(payload)
     });
     saved = (out || [])[0];
   } catch (err) {
-    setSyncStatus('error', 'Save नहीं हुआ: ' + err.message);
+    setSyncStatus('error', 'नहीं जुड़ी: ' + err.message);
+    say('err', err.message);
     return;
   }
-
-  records.push({
-    sn: saved.id, exitDate: saved.exit_date, code: saved.book_code, name: saved.name,
-    juje: saved.juje, size: saved.size, edition: saved.edition,
-    contractor: saved.contractor, rate: saved.rate, totalQty: saved.total_qty,
-    enteredBy: saved.entered_by, entryDate: saved.entry_date
-  });
-  renderTable();
+  const row = SIZES.find(function (r) { return r.size === saved.size; });
+  const n = row ? row.rate_processes : 0;
+  setSyncStatus('synced', 'किताब जुड़ गई — code ' + saved.code);
+  say(n ? 'ok' : 'warn',
+      n ? ('✅ ' + saved.code + ' — ' + saved.name + ' जुड़ गई। इस size पर ' + n +
+           ' processes के rate हैं, तो Process Entry में तुरंत काम करेगी।')
+        : ('⚠️ ' + saved.code + ' जुड़ गई, पर size "' + saved.size +
+           '" पर किसी process का rate नहीं है — Process Entry इस पर rate नहीं निकाल पाएगा। व्यवस्थापक से कहें।'));
+  clearForm(true);
   loadToday();
-  setSyncStatus('synced', 'Save हुआ — S.N. ' + saved.id);
-  const bar = document.getElementById('statusBar');
-  bar.className = 'status-bar status-saved';
-  bar.textContent = '✅ Saved! Book Code ' + code + ' — S.N. ' + saved.id;
-  clearForm();
+  loadLists();          // गिनती ताज़ा हो जाए
 }
 
-function renderTable() {
-  document.getElementById('recordCount').textContent = records.length + ' record(s) saved';
-  const tb = document.getElementById('recordsBody');
-  if (!records.length) {
-    tb.innerHTML = '<tr><td colspan="11" style="text-align:center;color:#aaa;padding:20px;">No records yet.</td></tr>';
-    return;
-  }
-  tb.innerHTML = records.map(function (r, i) {
-    return '<tr onclick="editRecord(' + i + ')" title="Click to reuse">' +
-      '<td>' + r.sn + '</td>' +
-      '<td><strong>' + r.code + '</strong></td>' +
-      '<td title="' + r.name + '">' + String(r.name).substring(0, 20) + (String(r.name).length > 20 ? '…' : '') + '</td>' +
-      '<td>' + (r.juje || '—') + '</td>' +
-      '<td>' + (r.size || '—') + '</td>' +
-      '<td>' + (r.exitDate || '—') + '</td>' +
-      '<td>' + (r.edition || '—') + '</td>' +
-      '<td>' + String(r.contractor || '—').substring(0, 14) + '</td>' +
-      '<td>' + (r.rate == null ? '—' : r.rate) + '</td>' +
-      '<td>' + (r.totalQty == null ? '—' : inr(r.totalQty)) + '</td>' +
-      '<td>' + (r.entryDate || '—') + '</td></tr>';
-  }).join('');
+function clearForm(keepMsg) {
+  ['fCode','fName','fJuje'].forEach(function (i) { document.getElementById(i).value = ''; });
+  document.getElementById('fSize').value = '';
+  document.getElementById('fPageType').value = '';
+  document.getElementById('fPanni').checked = false;
+  document.getElementById('fBox').checked = false;
+  ['hCode','hName','hSize'].forEach(function (i) { hint(i, ''); });
+  document.getElementById('simBox').style.display = 'none';
+  codeOk = false;
+  if (!keepMsg) say('', '');
+  document.getElementById('fCode').focus();
 }
 
-// Saved rows live in the database and RLS allows no UPDATE, so this only
-// re-fills the form for another entry of the same book.
-function editRecord(i) {
-  const r = records[i];
-  document.getElementById('bookCode').value = r.code;
-  lookupBook();
-  document.getElementById('fExitDate').value = r.exitDate || '';
-  document.getElementById('fEdition').value = r.edition || '';
-  document.getElementById('fContractor').value = r.contractor || '';
-  const bar = document.getElementById('statusBar');
-  bar.className = 'status-bar status-saved';
-  bar.textContent = 'ℹ️ S.N. ' + r.sn + ' पहले से दर्ज है — form उसी book के लिए भर दिया, नई entry करें';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function clearForm() {
-  ['bookCode','bookName','bookJuje','fExitDate','fEdition','fRate','fTotalQty']
-    .forEach(function (id) { const el = document.getElementById(id); if (el) el.value = ''; });
-  const sz = document.getElementById('bookSize'); if (sz) sz.value = '';
-  document.getElementById('fContractor').value = '';
-  clearRadio('size');
-  const bar = document.getElementById('statusBar');
-  bar.className = 'status-bar status-empty';
-  bar.textContent = 'ℹ️ Form cleared. नया Book Code डालें।';
-  document.getElementById('bookCode').focus();
-}
-
-// ── आज की मेरी entries + रद्द करना ────────────────────────────────
-// रद्द करने पर row मिटती नहीं — cancelled का झंडा लगता है, कारण और
-// किसने-कब दर्ज होता है। Reconcile और dashboard उसे गिनना छोड़ देते हैं।
-const CANCEL_TABLES = ['stm'];
-const QTY_COL = 'total_qty';
-const EDN_COL = 'edition';
-let todayRows = [];
-
+// ── आज जुड़ी किताबें ──────────────────────────────────────────────
 async function loadToday() {
+  const cnt = document.getElementById('todayCount');
   const body = document.getElementById('todayBody');
-  const cnt  = document.getElementById('todayCount');
   if (!session || !session.user) return;
   cnt.textContent = 'पढ़ रहे हैं...';
-  const uid = session.user.id;
-  const today = new Date();
-  const iso = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') +
-              '-' + String(today.getDate()).padStart(2, '0');
-  todayRows = [];
+  const d = new Date();
+  const iso = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') +
+              '-' + String(d.getDate()).padStart(2, '0');
   try {
-    for (const t of CANCEL_TABLES) {
-      const sel = 'id,book_code,name,' + EDN_COL + ',' + QTY_COL;
-      const rows = await sbFetch(t + '?select=' + sel +
-        '&user_id=eq.' + uid + '&entry_date=eq.' + iso +
-        '&cancelled=is.false&order=id.desc');
-      (rows || []).forEach(function (r) {
-        todayRows.push({ table: t, id: r.id, code: r.book_code, name: r.name || '',
-                         edition: r[EDN_COL], qty: r[QTY_COL] });
-      });
+    const r = await sbFetch('books?created_at=gte.' + iso +
+      '&select=code,name,juje,size,page_type,panni,box&order=created_at.desc&limit=100');
+    cnt.textContent = (r || []).length + ' किताबें आज जुड़ीं';
+    if (!(r || []).length) {
+      body.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#aaa;padding:18px;">आज अभी कोई नहीं</td></tr>';
+      return;
     }
-  } catch (err) {
-    cnt.textContent = '⚠️ ' + err.message;
-    return;
-  }
-  todayRows.sort(function (a, b) { return b.id - a.id; });
-  cnt.textContent = todayRows.length + ' entry आज की (रद्द नहीं हुई)';
-  if (!todayRows.length) {
-    body.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#aaa;padding:18px;">आज अभी कोई entry नहीं</td></tr>';
-    return;
-  }
-  body.innerHTML = todayRows.map(function (r, i) {
-    return '<tr><td>' + r.id + '</td>' +
-      '<td><strong>' + r.code + '</strong></td>' +
-      '<td title="' + r.name + '">' + String(r.name).substring(0, 22) + (String(r.name).length > 22 ? '…' : '') + '</td>' +
-      '<td>' + (r.edition == null || r.edition === '' ? '—' : r.edition) + '</td>' +
-      '<td class="num">' + (r.qty == null ? '—' : inr(r.qty)) + '</td>' +
-      '<td><button onclick="cancelRow(' + i + ')" style="padding:4px 11px;background:#b3372c;' +
-      'color:#fff;border:none;border-radius:5px;font-size:.74rem;font-weight:700;cursor:pointer;">' +
-      'रद्द</button></td></tr>';
-  }).join('');
+    body.innerHTML = r.map(function (b) {
+      return '<tr><td><strong>' + b.code + '</strong></td>' +
+        '<td title="' + b.name + '">' + String(b.name).substring(0, 30) + (String(b.name).length > 30 ? '…' : '') + '</td>' +
+        '<td>' + (b.juje == null ? '—' : b.juje) + '</td>' +
+        '<td>' + (b.size || '—') + '</td>' +
+        '<td>' + (b.page_type || '—') + '</td>' +
+        '<td>' + (b.panni ? 'हाँ' : '—') + '</td>' +
+        '<td>' + (b.box ? 'हाँ' : '—') + '</td></tr>';
+    }).join('');
+  } catch (err) { cnt.textContent = '⚠️ ' + err.message; }
 }
 
-async function cancelRow(i) {
-  const r = todayRows[i];
-  if (!r) return;
-  const reason = prompt('S.N. ' + r.id + ' (Book ' + r.code + ') रद्द करने का कारण लिखें —\n' +
-                        'यह हमेशा दर्ज रहेगा:');
-  if (reason === null) return;
-  if (!reason.trim()) { alert('कारण लिखना ज़रूरी है।'); return; }
-  setSyncStatus('saving');
+async function connectDb() {
+  setSyncStatus('loading');
   try {
-    await sbFetch(r.table + '?id=eq.' + r.id, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', Prefer: 'return=minimal' },
-      body: JSON.stringify({
-        cancelled: true,
-        cancelled_at: new Date().toISOString(),
-        cancelled_by: session.user.id,
-        cancel_reason: reason.trim()
-      })
-    });
+    await sbFetch('books?select=code&limit=1');
+    setSyncStatus('synced', 'Database से जुड़ गए।');
+    document.getElementById('entrySection').classList.remove('locked');
+    await loadLists();
+    loadToday();
+    document.getElementById('fCode').focus();
   } catch (err) {
-    setSyncStatus('error', 'रद्द नहीं हुआ: ' + err.message);
-    return;
+    setSyncStatus('error', 'Database से नहीं जुड़ सके: ' + err.message);
   }
-  setSyncStatus('synced', 'S.N. ' + r.id + ' रद्द हो गई — हिसाब में अब नहीं गिनी जाएगी');
-  await loadToday();
-}
-
-async function exportToExcel() {
-  if (!records.length) { alert('No records to export.'); return; }
-  const headers = ['S.N.','Exit Date','Book Code','Name','Juje','Size','Edition',
-                   'Contractor','Rate','Total Qty','Entered By','Entry Date'];
-  const widths = [6,14,14,38,8,14,12,22,10,12,20,14];
-  const num = function (v) { return v == null ? '' : Number(v); };
-  const wb = new ExcelJS.Workbook();
-  const ws = wb.addWorksheet('STM', { views: [{ state: 'frozen', ySplit: 1 }] });
-  ws.columns = headers.map(function (h, i) { return { header: h, key: h, width: widths[i] }; });
-  const hr = ws.getRow(1); hr.height = 22;
-  hr.eachCell(function (c) {
-    c.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 10, name: 'Arial' };
-    c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F6F4A' } };
-    c.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
-  });
-  records.forEach(function (r, i) {
-    const row = ws.addRow([r.sn, r.exitDate, r.code, r.name, r.juje, r.size, r.edition,
-      r.contractor, num(r.rate), num(r.totalQty), r.enteredBy, r.entryDate]);
-    row.height = 16;
-    if (i % 2 === 0) row.eachCell({ includeEmpty: true }, function (c) {
-      c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE6F4EC' } };
-      c.font = { name: 'Arial', size: 9 };
-    });
-  });
-  ws.autoFilter = { from: 'A1', to: 'L1' };
-  const buf = await wb.xlsx.writeBuffer();
-  const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'STM_' + new Date().toISOString().slice(0, 10) + '.xlsx';
-  a.click(); URL.revokeObjectURL(url);
 }
 
 window.addEventListener('load', async function () {
   authLoad(); authWireGate(); pwdWire();
   if (!session) { authShowGate(); return; }
   if (!(await authToken())) { authShowGate('Session खत्म हो गया — दोबारा login करें।'); return; }
-  authPaintUser(); connectDb(); });
+  authPaintUser();
+  await connectDb();
+});
 </script>
 </body>
 </html>
