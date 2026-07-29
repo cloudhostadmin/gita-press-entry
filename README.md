@@ -16,16 +16,18 @@ Google Sheet और Apps Script **अब इस्तेमाल में न�
 
 `supabase/` folder — यही GitHub पर जाता है:
 
+Site खोलने पर **Dashboard** आता है — वही `index.html` है.
+
 | File | कहाँ लिखता है |
 |---|---|
-| `index.html` | Main Entry — contractor `By Machine` हो तो `by_machine`, वरना `main_entry` |
+| `index.html` | **Dashboard** — आठों tables का date-wise Excel export |
+| `main_entry.html` | Main Entry — contractor `By Machine` या `Channel` हो तो `by_machine`, वरना `main_entry` |
 | `soft_bound.html` | Binding Type से `perfect_binding` या `center_pinning` |
 | `laghu_ati_laghu.html` | `laghu_ati_laghu` |
 | `stm.html` | `stm` |
 | `process_entry.html` | `process_entry` — rate master से rate और divisor |
 | `print_order.html` | `print_order` — पिछले edition की history database से |
 | `reconcile.html` | पढ़ता है `v_reconcile` view |
-| `dashboard.html` | आठों tables का date-wise Excel export |
 
 SQL files:
 
@@ -34,6 +36,10 @@ SQL files:
 | `supabase_schema.sql` | एक बार, नया project बनाते वक़्त |
 | `supabase_auth_rls.sql` | schema के बाद, **पहला user बना लेने पर** |
 | `seed/*.sql` | masters भरने के लिए — books, contractors, rates, divisors |
+| `supabase_cancel.sql` | रद्द करने की व्यवस्था — columns, policies, `v_cancelled` |
+| `supabase_books_flags.sql` | `books.panni` / `books.box` के झंडे |
+| `supabase_print_order_machine.sql` | `print_order.machine_type` |
+| `supabase_clear_trial_data.sql` | ट्रायल data मिटाने के लिए (⚠️ वापस नहीं आता) |
 | `supabase_view_fix.sql` | `v_reconcile` का सुधार (schema में शामिल है, अलग से ज़रूरत नहीं) |
 
 ## रोज़मर्रा के काम
@@ -60,8 +66,16 @@ GitHub पर कुछ नहीं करना — form अगली बा�
 
 ### नया contractor
 
-`gp.contractors` में row: `code`, `group_name`.
-Soft Bound के dropdown में अपने आप आ जाएगा।
+`gp.contractors` में row: `code`, `group_name` — इससे **Soft Bound** में अपने
+आप आ जाएगा.
+
+बाकी चार forms (`main_entry`, `stm`, `laghu_ati_laghu`, `process_entry`) में
+सूची HTML में लिखी है, तो उनमें `<option>` हाथ से जोड़ना पड़ता है. चारों की
+सूची एक जैसी रखें.
+
+`By Machine` group में कोई नया मशीन विकल्प जोड़ें तो `main_entry.html` में
+`BY_MACHINE` सूची में भी उसका नाम डालें — वही तय करती है कि row `by_machine`
+table में जाएगी और पाँच fields अपने आप भरेंगे.
 
 ### नया operator
 
@@ -93,11 +107,43 @@ Authentication → **Users → Add user**
 `auth.uid()` से खुद डालता है और browser से बदली नहीं जा सकती। हिसाब में
 `user_id` देखें।
 
+### गलत entry रद्द करना
+
+**आज की, अपनी entry** — form में नीचे **आज की मेरी entries** card, उसमें
+`रद्द` button. कारण लिखना ज़रूरी है.
+
+**पुरानी entry** — SQL Editor से. uuid कभी हाथ से न लिखें, email से उठाएँ:
+
+```sql
+update gp.process_entry
+set cancelled     = true,
+    cancelled_at  = now(),
+    cancelled_by  = (select id from auth.users where email = 'jitendra@gitapress.org'),
+    cancel_reason = 'गलत quantity — व्यवस्थापक ने रद्द किया'
+where id = 27;
+```
+
+रद्द होने के बाद row मिटती नहीं — निशान लगा रहता है, reconcile और dashboard
+उसे गिनना छोड़ देते हैं. सारी रद्द entries एक जगह:
+
+```sql
+select * from gp.v_cancelled order by cancelled_at desc;
+```
+
+operator की सीमाएँ (जान-बूझकर): अपनी ही entry, उसी दिन की, एक बार रद्द तो
+दोबारा नहीं, और कारण के बिना नहीं. `quantity`/`rate` वो छू ही नहीं सकता —
+UPDATE की अनुमति सिर्फ़ चार cancel columns पर है.
+
 ### edit या delete नहीं हो सकता
 
-RLS में सिर्फ़ SELECT और INSERT की अनुमति है। Session table की row पर click
-करने से **edit नहीं होता** — वो उसी किताब के लिए form भर देता है ताकि अगली
-entry जल्दी हो। सुधार Supabase Table Editor से, जहाँ dashboard login चाहिए।
+किसी value को बदला नहीं जा सकता — केवल रद्द किया जा सकता है (ऊपर देखें).
+Session table की row पर click करने से **edit नहीं होता** — वो उसी किताब के
+लिए form भर देता है ताकि अगली entry जल्दी हो.
+
+सचमुच कोई value सुधारनी हो तो Supabase Table Editor से, जहाँ dashboard login
+चाहिए. ध्यान रखें: `quantity` बदलने पर `total_amount` अपने आप नहीं बदलता, और
+Print Order में `total_quantity_printed` भी नहीं. आम तौर पर पुरानी entry रद्द
+करके नई करना ज़्यादा साफ़ रहता है.
 
 ### Reconcile का नियम
 

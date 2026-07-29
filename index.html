@@ -1,17 +1,16 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Book Data Entry — Gita Press</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<title>Dashboard — Gita Press</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: Arial, sans-serif; background: #f0f4f8; min-height: 100vh; }
 
 .header {
-  background: linear-gradient(135deg, #1F4E79, #2e75b6);
+  background: linear-gradient(135deg, #1f6f4a, #2f9d69);
   color: white; padding: 18px 24px;
   display: flex; align-items: center; gap: 14px;
   box-shadow: 0 3px 12px rgba(0,0,0,0.2);
@@ -19,163 +18,105 @@ body { font-family: Arial, sans-serif; background: #f0f4f8; min-height: 100vh; }
 .header h1 { font-size: 1.3rem; font-weight: 700; }
 .header p  { font-size: 0.82rem; opacity: 0.85; margin-top: 3px; }
 
-.container { max-width: 780px; margin: 24px auto; padding: 0 16px 60px; }
+.container { max-width: 880px; margin: 24px auto; padding: 0 16px 60px; }
 
 .card {
   background: white; border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
   overflow: hidden; margin-bottom: 20px;
 }
-
-#entrySection { position: relative; }
-#entrySection.locked .card {
-  opacity: 0.4; pointer-events: none; filter: grayscale(40%);
-}
-.lock-overlay { display: none; }
-#entrySection.locked .lock-overlay {
-  display: flex; align-items: center; justify-content: center;
-  position: absolute; top: 0; left: 0; right: 0; height: 100%;
-  z-index: 5; text-align: center; padding: 20px;
-  font-size: 0.95rem; font-weight: 700; color: #843c0c;
-  background: rgba(255, 243, 224, 0.92);
-  border: 2px dashed #e0a458; border-radius: 12px;
-}
-
-
-
 .section-title {
-  background: #1F4E79; color: white;
+  background: #0d3b52; color: white;
   padding: 10px 18px; font-size: 0.85rem;
   font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;
 }
-.section-title.green  { background: #375623; }
-.section-title.orange { background: #843c0c; }
-
 .form-body { padding: 16px 18px; }
 
 .field-row {
-  display: grid; grid-template-columns: 170px 1fr;
+  display: grid; grid-template-columns: 150px 1fr;
   gap: 8px 12px; align-items: center; margin-bottom: 13px;
 }
 .field-row:last-child { margin-bottom: 0; }
-
-label {
-  font-size: 0.87rem; color: #1F4E79;
+label.lbl {
+  font-size: 0.87rem; color: #0d3b52;
   font-weight: 600; text-align: right; padding-right: 4px;
 }
-label .req { color: #c00; margin-left: 2px; }
-
-input[type=text], input[type=number], select {
+input[type=date] {
   width: 100%; padding: 8px 11px;
   border: 2px solid #d0dce8; border-radius: 7px;
-  font-size: 0.93rem; font-family: Arial;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  background: #fafdff;
+  font-size: 0.93rem; font-family: Arial; background: #fafdff;
 }
-input:focus, select:focus {
-  outline: none; border-color: #2e75b6;
-  box-shadow: 0 0 0 3px rgba(46,117,182,0.15); background: white;
+input[type=date]:focus {
+  outline: none; border-color: #1a6b8a;
+  box-shadow: 0 0 0 3px rgba(26,107,138,0.15); background: white;
 }
-.auto-field {
-  background: #e8f4fd !important; color: #1a3a5c;
-  border-color: #b0cfe8 !important; font-style: italic;
-}
-.book-code-input {
-  font-size: 1.05rem; font-weight: 700; border-color: #1F4E79 !important;
-}
+.hint { font-size: 0.78rem; color: #7a8a99; font-style: italic; margin-top: 2px; }
 
-/* ── Segmented Control (Yes/No & Head/Tail) ── */
-.seg-wrap {
-  background: #eef2f7; border-radius: 8px;
-  padding: 3px; display: inline-flex; gap: 3px;
-  width: 100%;
+.quick { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.quick button {
+  padding: 5px 12px; font-size: 0.78rem; font-weight: 600;
+  background: #eef4f8; color: #0d3b52; border: 1.5px solid #cfe0ea;
+  border-radius: 20px; cursor: pointer; transition: all .18s;
 }
-.seg-wrap input[type=radio] { display: none; }
-.seg-wrap label {
-  flex: 1; text-align: center;
-  padding: 7px 12px; border-radius: 6px;
-  font-size: 0.88rem; font-weight: 600;
-  color: #6b82a0; cursor: pointer;
-  transition: all 0.18s; margin: 0;
-  user-select: none;
-}
-.seg-wrap label:hover { color: #1F4E79; background: rgba(255,255,255,0.6); }
-.seg-wrap input[type=radio]:checked + label {
-  background: white;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
-  color: #1F4E79; font-weight: 700;
-}
-.seg-wrap input[type=radio]:checked + label.yes-lbl {
-  color: #1a6b2a;
-}
-.seg-wrap input[type=radio]:checked + label.no-lbl {
-  color: #b83232;
-}
-.seg-wrap input[type=radio]:checked + label.na-lbl {
-  color: #6b6b6b;
-}
+.quick button:hover { background: #dceaf2; border-color: #1a6b8a; }
 
-/* Carton field with auto note */
-
-
-.status-bar {
-  padding: 10px 18px; font-size: 0.87rem; font-weight: 600;
-  min-height: 40px; display: flex; align-items: center; gap: 8px;
-  border-top: 1px solid #e8eff6;
+/* Sheet picker */
+.sheet-card {
+  display: grid;
+  grid-template-columns: 22px 12px 1fr auto auto;
+  gap: 10px; align-items: center;
+  padding: 11px 12px; margin-bottom: 8px;
+  border: 2px solid #e3ebf2; border-radius: 9px;
+  background: #fbfdff; cursor: pointer; transition: all .18s;
 }
-.status-found    { background: #e8f5e9; color: #1b5e20; }
-.status-notfound { background: #fff3e0; color: #bf360c; }
-.status-saved    { background: #e3f2fd; color: #0d47a1; }
-.status-empty    { background: #f5f5f5; color: #999; }
+.sheet-card:hover { border-color: #b6d2e2; background: #f4fafd; }
+.sheet-card input[type=checkbox] { width: 17px; height: 17px; cursor: pointer; accent-color: #1a6b8a; }
+.sheet-card .dot { width: 12px; height: 12px; border-radius: 50%; }
+.sheet-card .nm  { font-size: 0.9rem; font-weight: 600; color: #24405c; }
+.sheet-card .cnt {
+  font-size: 0.78rem; font-weight: 700; color: #5b7a94;
+  background: #eef4f8; padding: 3px 10px; border-radius: 20px; min-width: 58px; text-align: center;
+}
+.sheet-card .mini {
+  padding: 5px 13px; font-size: 0.76rem; font-weight: 700;
+  background: #0d3b52; color: white; border: none; border-radius: 6px; cursor: pointer;
+}
+.sheet-card .mini:hover { background: #1a6b8a; }
 
 .btn-row {
   display: flex; gap: 10px; padding: 16px 18px;
   border-top: 1px solid #e8eff6; flex-wrap: wrap;
 }
-button {
-  padding: 10px 22px; border: none; border-radius: 8px;
+button.big {
+  padding: 11px 22px; border: none; border-radius: 8px;
   font-size: 0.93rem; font-weight: 700; cursor: pointer;
   transition: all 0.2s; display: flex; align-items: center; gap: 6px;
 }
-.btn-save   { background: #1F4E79; color: white; }
-.btn-save:hover   { background: #163a5a; transform: translateY(-1px); }
-.btn-clear  { background: #f5f5f5; color: #333; border: 1.5px solid #ddd; }
-.btn-clear:hover  { background: #e8e8e8; }
-.btn-export { background: #375623; color: white; }
-.btn-export:hover { background: #2a3d1a; }
+.btn-primary { background: #0d3b52; color: white; }
+.btn-primary:hover { background: #1a6b8a; transform: translateY(-1px); }
+.btn-second  { background: #1F4E79; color: white; }
+.btn-second:hover { background: #163a5a; }
+.btn-ghost   { background: #f5f5f5; color: #333; border: 1.5px solid #ddd; }
+.btn-ghost:hover { background: #e8e8e8; }
 
-.record-count {
-  padding: 8px 18px; background: #f0f4f8;
-  font-size: 0.82rem; color: #555;
-  border-bottom: 1px solid #e0e8f0;
+.status {
+  margin: 0 18px 16px; padding: 11px 14px; border-radius: 8px;
+  font-size: 0.86rem; font-weight: 600; display: none;
 }
-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
-th {
-  background: #1F4E79; color: white; padding: 8px 10px;
-  text-align: left; font-weight: 600; font-size: 0.78rem; white-space: nowrap;
-}
-td {
-  padding: 7px 10px; border-bottom: 1px solid #eef2f6; color: #333;
-  max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-tr:nth-child(even) td { background: #f7f9fc; }
-tr:hover td { background: #e8f4fd; cursor: pointer; }
+.st-info { background:#e3f2fd; color:#0d47a1; }
+.st-ok   { background:#e8f5e9; color:#1b5e20; }
+.st-err  { background:#fff3e0; color:#bf360c; }
 
-.file-input-area {
-  border: 2px dashed #b0cfe8; border-radius: 8px; padding: 14px;
-  text-align: center; color: #2e75b6; font-size: 0.87rem;
-  cursor: pointer; transition: background 0.2s; margin: 12px 0;
-}
-.file-input-area:hover { background: #e8f4fd; }
-#fileInput { display: none; }
-optgroup { font-weight: 700; color: #1F4E79; }
-option   { font-weight: 400; color: #333; }
+.log { font-size: 0.8rem; color: #55697a; padding: 0 18px 14px; line-height: 1.7; }
+.log div { padding: 2px 0; }
 
-@media (max-width: 520px) {
+@media (max-width: 560px) {
   .field-row { grid-template-columns: 1fr; }
-  label { text-align: left; }
+  label.lbl { text-align: left; }
+  .sheet-card { grid-template-columns: 22px 12px 1fr; row-gap: 6px; }
+  .sheet-card .cnt, .sheet-card .mini { grid-column: 3; justify-self: start; }
   .btn-row { flex-direction: column; }
-  button { width: 100%; justify-content: center; }
+  button.big { width: 100%; justify-content: center; }
 }
 </style>
 </head>
@@ -250,35 +191,30 @@ option   { font-weight: 400; color: #333; }
 
 
 <div class="header">
-  <div style="font-size:2rem">📚</div>
+  <div style="font-size:2rem">📊</div>
   <div>
-    <h1>Main Entry — Gita Press, Gorakhpur</h1>
-    <p>Columns D, F–N &nbsp;|&nbsp; Auto-fills Name, Juje, Panni &amp; Box</p>
+    <h1>Dashboard — Gita Press</h1>
+    <p>किसी भी table का data date-wise Excel में download करें — सीधे database से</p>
   </div>
 </div>
 
-
-
-
 <div style="background:#1a3a5c;padding:8px 24px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
   <span style="color:#aac;font-size:0.78rem;font-weight:600;margin-right:4px;">GO TO →</span>
-  <a href="dashboard.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#1f6f4a;color:white;border:2px solid #4dbf90;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📊 Dashboard</button></a>
+  <button style="padding:7px 16px;background:#1f6f4a;color:white;border:2px solid #4dbf90;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:default;box-shadow:0 0 0 2px white,0 0 0 4px #4dbf90;">📊 Dashboard ✓</button>
   <a href="reconcile.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#3f3d8f;color:white;border:2px solid #8785d6;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">🔍 Reconcile</button></a>
   <a href="print_order.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#7b2d5e;color:white;border:2px solid #c470a0;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">🖨️ Print Order</button></a>
   <a href="stm.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#843c0c;color:white;border:2px solid #e07a3a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📋 STM Entry</button></a>
   <a href="process_entry.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#0f6e56;color:white;border:2px solid #3fb99a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">⚙️ Process Entry</button></a>
-  <button style="padding:7px 16px;background:#1F4E79;color:white;border:2px solid #4a90c4;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:default;box-shadow:0 0 0 2px white,0 0 0 4px #4a90c4;">📚 Main Entry ✓</button>
+  <a href="main_entry.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#1F4E79;color:white;border:2px solid #4a90c4;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📚 Main Entry</button></a>
   <a href="soft_bound.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#375623;color:white;border:2px solid #6aaa3a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📗 Soft Bound</button></a>
   <a href="laghu_ati_laghu.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#6a3d9a;color:white;border:2px solid #b07edd;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📒 Laghu &amp; Ati Laghu</button></a>
 </div>
 <div style="background:#233b55;padding:7px 24px;display:flex;gap:9px;align-items:center;flex-wrap:wrap;">
-  <label for="opName" style="color:#cfe0ee;font-size:0.78rem;font-weight:700;margin:0;padding:0;text-align:left;">
-    ENTRY BY →</label>
-  <input type="text" id="opName" placeholder="अपना नाम लिखें" autocomplete="off"
+  <span style="color:#cfe0ee;font-size:0.78rem;font-weight:700;">LOGGED IN →</span>
+  <input type="text" id="opName" readonly
          style="padding:5px 11px;border:2px solid #4a6c8c;border-radius:6px;font-size:0.82rem;
-                font-weight:600;background:#f7fbfe;color:#1a3a5c;width:200px;">
-  <span id="opWarn" style="color:#ffcf8f;font-size:0.76rem;font-weight:600;display:none;">
-    ⚠️ नाम भरे बिना entry दर्ज नहीं होगी</span>
+                font-weight:600;background:#eaf3ee;color:#1a3a5c;width:200px;cursor:default;">
+  <span id="opWarn" style="display:none;"></span>
   <button id="pwdBtn" onclick="pwdShow()" style="display:none;margin-left:auto;padding:5px 12px;
           background:#2c4360;color:#dce7f0;border:1.5px solid #4a6c8c;border-radius:6px;
           font-size:0.76rem;font-weight:700;cursor:pointer;">Password</button>
@@ -288,271 +224,109 @@ option   { font-weight: 400; color: #333; }
 </div>
 <div class="container">
 
-  <!-- sync status bar (hidden, auto-shown on connect) -->
-  <div id="syncStatus" style="display:none;font-size:0.85rem;font-weight:600;
-       padding:10px 18px;border-radius:8px;margin-bottom:12px;"></div>
-
-  <!-- LOAD FILE -->
+  <!-- DATE RANGE -->
   <div class="card">
-    <div class="section-title orange">📂 Load Existing Excel File (Optional)</div>
+    <div class="section-title">🗓️ Date Range</div>
     <div class="form-body">
-      <div class="file-input-area" onclick="document.getElementById('fileInput').click()">
-        📎 Click to select new_format.xlsm / .xlsx
+      <div class="field-row">
+        <label class="lbl">From Date</label>
+        <div>
+          <input type="date" id="dlFrom">
+        </div>
       </div>
-      <input type="file" id="fileInput" accept=".xlsx,.xlsm,.xls" onchange="loadExcelFile(event)">
-      <div id="fileStatus" style="font-size:0.82rem;color:#375623;margin-top:4px;"></div>
+      <div class="field-row">
+        <label class="lbl">To Date</label>
+        <div>
+          <input type="date" id="dlTo">
+          <div class="hint">दोनों dates खाली छोड़ें तो पूरी sheet download होगी (Entry Date पर filter लगता है)</div>
+        </div>
+      </div>
+      <div class="field-row">
+        <label class="lbl">Quick Select</label>
+        <div class="quick">
+          <button onclick="setRange('today')">आज</button>
+          <button onclick="setRange('7')">पिछले 7 दिन</button>
+          <button onclick="setRange('30')">पिछले 30 दिन</button>
+          <button onclick="setRange('month')">इस महीने</button>
+          <button onclick="setRange('prevmonth')">पिछला महीना</button>
+          <button onclick="setRange('clear')">सब (Clear)</button>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- BOOK CODE LOOKUP + MANUAL ENTRY (locked until Google Sheet connected) -->
-  <div id="entrySection" class="locked">
-    <div id="lockOverlay" class="lock-overlay">
-      🔒 Google Sheet से connect होने के बाद entry unlock होगी।
-    </div>
-
+  <!-- SHEETS -->
   <div class="card">
-    <div class="section-title">🔍 Book Code Lookup</div>
+    <div class="section-title">📄 Sheets</div>
     <div class="form-body">
-      <div class="field-row">
-        <label>Book Code <span class="req">*</span></label>
-        <input type="text" id="bookCode" class="book-code-input" disabled
-               placeholder="Enter Book Code (e.g. 1, 25, 1095)"
-               oninput="lookupBook()" autocomplete="off">
-      </div>
-      <div class="field-row">
-        <label>Name (Auto)</label>
-        <input type="text" id="bookName" class="auto-field" readonly
-               placeholder="— auto from Book List —">
-      </div>
-      <div class="field-row">
-        <label>Juje (Auto)</label>
-        <input type="text" id="bookJuje" class="auto-field" readonly
-               placeholder="— auto from Juje sheet —">
-      </div>
-      <div class="field-row">
-        <label>Size (Auto)</label>
-        <input type="text" id="bookSize" class="auto-field" readonly
-               placeholder="— auto from Book Size list —">
+      <label class="sheet-card" data-sheet="main_entry">
+        <input type="checkbox" class="sheetChk" value="main_entry" checked>
+        <span class="dot" style="background:#1F4E79"></span>
+        <span class="nm">📚 Main</span>
+        <span class="cnt" id="cnt-main_entry">—</span>
+        <button class="mini" onclick="event.preventDefault();downloadOne('main_entry')">Excel</button>
+      </label>
+      <label class="sheet-card" data-sheet="by_machine">
+        <input type="checkbox" class="sheetChk" value="by_machine" checked>
+        <span class="dot" style="background:#375623"></span>
+        <span class="nm">⚙️ By Machine</span>
+        <span class="cnt" id="cnt-by_machine">—</span>
+        <button class="mini" onclick="event.preventDefault();downloadOne('by_machine')">Excel</button>
+      </label>
+      <label class="sheet-card" data-sheet="perfect_binding">
+        <input type="checkbox" class="sheetChk" value="perfect_binding" checked>
+        <span class="dot" style="background:#1F4E79"></span>
+        <span class="nm">📘 Perfect Binding</span>
+        <span class="cnt" id="cnt-perfect_binding">—</span>
+        <button class="mini" onclick="event.preventDefault();downloadOne('perfect_binding')">Excel</button>
+      </label>
+      <label class="sheet-card" data-sheet="center_pinning">
+        <input type="checkbox" class="sheetChk" value="center_pinning" checked>
+        <span class="dot" style="background:#375623"></span>
+        <span class="nm">📎 Center Pinning</span>
+        <span class="cnt" id="cnt-center_pinning">—</span>
+        <button class="mini" onclick="event.preventDefault();downloadOne('center_pinning')">Excel</button>
+      </label>
+      <label class="sheet-card" data-sheet="laghu_ati_laghu">
+        <input type="checkbox" class="sheetChk" value="laghu_ati_laghu" checked>
+        <span class="dot" style="background:#6a3d9a"></span>
+        <span class="nm">📒 Laghu Ati Laghu</span>
+        <span class="cnt" id="cnt-laghu_ati_laghu">—</span>
+        <button class="mini" onclick="event.preventDefault();downloadOne('laghu_ati_laghu')">Excel</button>
+      </label>
+      <label class="sheet-card" data-sheet="stm">
+        <input type="checkbox" class="sheetChk" value="stm" checked>
+        <span class="dot" style="background:#843C0C"></span>
+        <span class="nm">📋 STM</span>
+        <span class="cnt" id="cnt-stm">—</span>
+        <button class="mini" onclick="event.preventDefault();downloadOne('stm')">Excel</button>
+      </label>
+      <label class="sheet-card" data-sheet="process_entry">
+        <input type="checkbox" class="sheetChk" value="process_entry" checked>
+        <span class="dot" style="background:#0F6E56"></span>
+        <span class="nm">⚙️ Process Entry</span>
+        <span class="cnt" id="cnt-process_entry">—</span>
+        <button class="mini" onclick="event.preventDefault();downloadOne('process_entry')">Excel</button>
+      </label>
+      <label class="sheet-card" data-sheet="print_order">
+        <input type="checkbox" class="sheetChk" value="print_order" checked>
+        <span class="dot" style="background:#7B2D5E"></span>
+        <span class="nm">🖨️ Print Order</span>
+        <span class="cnt" id="cnt-print_order">—</span>
+        <button class="mini" onclick="event.preventDefault();downloadOne('print_order')">Excel</button>
+      </label>
+      <div class="quick" style="margin-top:12px;">
+        <button onclick="selectAll(true)">सब चुनें</button>
+        <button onclick="selectAll(false)">सब हटाएँ</button>
+        <button onclick="refreshCounts()">🔄 Counts refresh करें</button>
       </div>
     </div>
-    <div class="status-bar status-empty" id="statusBar">
-      ℹ️ Enter a Book Code above to begin
-    </div>
-  </div>
-
-  <!-- MANUAL ENTRY -->
-  <div class="card">
-    <div class="section-title green">✏️ Manual Entry — Columns D, F–N</div>
-    <div class="form-body">
-
-      <div class="field-row">
-        <label>Exit Date</label>
-        <input type="date" id="fExitDate">
-      </div>
-
-      <div class="field-row">
-        <label>Edition (D)</label>
-        <input type="text" id="fEdition" placeholder="e.g. 1st, 2nd, revised...">
-      </div>
-
-      <div class="field-row">
-        <label>Contractor (F)</label>
-        <select id="fContractor" onchange="onContractorChange(this.value)">
-          <option value="">— Select Contractor Code —</option>
-          <optgroup label="रवि प्रताप यादव (Ravi Pratap Yadav)">
-  <option value="Ravi-01(Avadh Bihari Chaturvedi)">Ravi-01(Avadh Bihari Chaturvedi)</option>
-  <option value="Ravi-02(Akhilesh Chaturvedi (RB))">Ravi-02(Akhilesh Chaturvedi (RB))</option>
-</optgroup>
-<optgroup label="कार्तिकेय पारीक (Kartikey Pareek)">
-  <option value="Kartikey-01(Gajendra Pratap singh)">Kartikey-01(Gajendra Pratap singh)</option>
-  <option value="Kartikey-02(Jogender Gour)">Kartikey-02(Jogender Gour)</option>
-  <option value="Kartikey-03(Jagdish Yadav (RB))">Kartikey-03(Jagdish Yadav (RB))</option>
-  <option value="Kartikey-04(KPA)">Kartikey-04(KPA)</option>
-</optgroup>
-<optgroup label="वैभव शर्मा (Vaibhav Sharma)">
-  <option value="Vaibhav-01(Jai Prakash Prajapati)">Vaibhav-01(Jai Prakash Prajapati)</option>
-  <option value="Vaibhav-02(Arvind Kumar Tiwari)">Vaibhav-02(Arvind Kumar Tiwari)</option>
-  <option value="Vaibhav-03(Sanjay Kumar)">Vaibhav-03(Sanjay Kumar)</option>
-  <option value="Vaibhav-04(Virender Mishra)">Vaibhav-04(Virender Mishra)</option>
-</optgroup>
-<optgroup label="आनंद शुक्ला (Anand Shukla)">
-  <option value="Anand-01(Vikas)">Anand-01(Vikas)</option>
-  <option value="Anand-02(Kranti Kumar)">Anand-02(Kranti Kumar)</option>
-  <option value="Anand-03(Makkhan)">Anand-03(Makkhan)</option>
-  <option value="Anand-04(Manoj Kumar (RB))">Anand-04(Manoj Kumar (RB))</option>
-  <option value="Anand-05(Akhilesh Chaturvedi (RB))">Anand-05(Akhilesh Chaturvedi (RB))</option>
-</optgroup>
-<optgroup label="नारायण प्रसाद पारीक (Narayan Prasad Pareek)">
-  <option value="Narayan-01(Ravinder Yadav)">Narayan-01(Ravinder Yadav)</option>
-  <option value="Narayan-02(Sudhir Kumar Gupta)">Narayan-02(Sudhir Kumar Gupta)</option>
-  <option value="Narayan-03(Neeraj Kumar Singh)">Narayan-03(Neeraj Kumar Singh)</option>
-</optgroup>
-<optgroup label="By Machine">
-  <option value="By Machine">By Machine</option>
-  <option value="Channel">Channel</option>
-</optgroup>
-
-        </select>
-      </div>
-
-      <div class="field-row">
-        <label>Dhala (G)</label>
-        <div class="seg-wrap" id="grp_dhala">
-          <input type="radio" name="dhala" id="dh_yes" value="Yes">
-          <label class="yes-lbl" for="dh_yes">Yes</label>
-          <input type="radio" name="dhala" id="dh_no" value="No">
-          <label class="no-lbl" for="dh_no">No</label>
-          <input type="radio" name="dhala" id="dh_na" value="NA">
-          <label class="na-lbl" for="dh_na">NA</label>
-        </div>
-      </div>
-
-      <div class="field-row">
-        <label>Head / Tail (H)</label>
-        <div class="seg-wrap">
-          <input type="radio" name="headtail" id="ht_head" value="Head">
-          <label for="ht_head">Head</label>
-          <input type="radio" name="headtail" id="ht_tail" value="Tail">
-          <label for="ht_tail">Tail</label>
-          <input type="radio" name="headtail" id="ht_both" value="Head &amp; Tail">
-          <label for="ht_both">Head &amp; Tail</label>
-          <input type="radio" name="headtail" id="ht_no" value="No">
-          <label for="ht_no">No</label>
-        </div>
-      </div>
-
-      <div class="field-row">
-        <label>Book Mark (I)</label>
-        <div class="seg-wrap" id="grp_bookmark">
-          <input type="radio" name="bookmark" id="bm_yes" value="Yes">
-          <label class="yes-lbl" for="bm_yes">Yes</label>
-          <input type="radio" name="bookmark" id="bm_no" value="No">
-          <label class="no-lbl" for="bm_no">No</label>
-          <input type="radio" name="bookmark" id="bm_na" value="NA">
-          <label class="na-lbl" for="bm_na">NA</label>
-        </div>
-      </div>
-
-      <div class="field-row">
-        <label>Binding (J)</label>
-        <div class="seg-wrap" id="grp_binding">
-          <input type="radio" name="binding" id="bd_yes" value="Yes">
-          <label class="yes-lbl" for="bd_yes">Yes</label>
-          <input type="radio" name="binding" id="bd_no" value="No">
-          <label class="no-lbl" for="bd_no">No</label>
-          <input type="radio" name="binding" id="bd_na" value="NA">
-          <label class="na-lbl" for="bd_na">NA</label>
-        </div>
-      </div>
-
-      <div class="field-row">
-        <label>Jacket (K)</label>
-        <div class="seg-wrap" id="grp_jacket">
-          <input type="radio" name="jacket" id="jk_yes" value="Yes">
-          <label class="yes-lbl" for="jk_yes">Yes</label>
-          <input type="radio" name="jacket" id="jk_no" value="No">
-          <label class="no-lbl" for="jk_no">No</label>
-          <input type="radio" name="jacket" id="jk_na" value="NA">
-          <label class="na-lbl" for="jk_na">NA</label>
-        </div>
-      </div>
-
-      <!-- PANNI — auto from Panni sheet -->
-      <div class="field-row">
-        <label>Panni (L)</label>
-        <div class="seg-wrap" id="grp_panni">
-          <input type="radio" name="panni" id="pn_yes" value="Yes">
-          <label class="yes-lbl" for="pn_yes">Yes</label>
-          <input type="radio" name="panni" id="pn_no" value="No">
-          <label class="no-lbl" for="pn_no">No</label>
-          <input type="radio" name="panni" id="pn_na" value="NA">
-          <label class="na-lbl" for="pn_na">NA</label>
-        </div>
-      </div>
-
-      <!-- BOX — auto from Box sheet -->
-      <div class="field-row">
-        <label>Box (M)</label>
-        <div class="seg-wrap" id="grp_box">
-          <input type="radio" name="box" id="bx_yes" value="Yes">
-          <label class="yes-lbl" for="bx_yes">Yes</label>
-          <input type="radio" name="box" id="bx_no" value="No">
-          <label class="no-lbl" for="bx_no">No</label>
-          <input type="radio" name="box" id="bx_na" value="NA">
-          <label class="na-lbl" for="bx_na">NA</label>
-        </div>
-      </div>
-
-
-      <div class="field-row">
-        <label>Rate</label>
-        <input type="number" id="fRate" placeholder="0.00" min="0" step="0.01">
-      </div>
-
-      <div class="field-row">
-        <label>Total Quantity</label>
-        <input type="number" id="fTotalQty" placeholder="0" min="0">
-      </div>
-
-    </div>
-
     <div class="btn-row">
-      <button class="btn-save"   onclick="saveRecord()">💾 Save Record</button>
-      <button class="btn-clear"  onclick="clearForm()">🗑️ Clear</button>
-      <button class="btn-export" onclick="exportToExcel()">📥 Export to Excel</button>
+      <button class="big btn-primary" onclick="downloadCombined()">📥 Selected → एक Excel (multi-tab)</button>
+      <button class="big btn-second"  onclick="downloadSeparate()">📥 Selected → अलग-अलग files</button>
     </div>
-  </div>
-
-  </div><!-- /entrySection -->
-
-  <!-- RECORDS TABLE -->
-  <div class="card">
-    <div class="section-title">📋 Saved Records This Session</div>
-    <div class="record-count" id="recordCount">0 records saved</div>
-    <div style="overflow-x:auto;">
-      <table>
-        <thead>
-          <tr>
-            <th>S.N.</th><th>Exit Date</th><th>Book Code</th><th>Name</th>
-            <th>Edition</th><th>Contractor</th><th>Dhala</th>
-            <th>H/T</th><th>BkMk</th><th>Binding</th>
-            <th>Jacket</th><th>Panni</th><th>Box</th>
-            <th>Rate</th><th>Total Qty</th><th>Entry Date</th>
-          </tr>
-        </thead>
-        <tbody id="recordsBody">
-          <tr><td colspan="16" style="text-align:center;color:#aaa;padding:20px;">
-            No records yet. Fill the form and click Save.
-          </td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- ── आज की मेरी entries — रद्द करने के लिए ─────────────────── -->
-  <div class="card">
-    <div class="section-title" style="background:#5a3d5c;">🕐 आज की मेरी entries</div>
-    <div class="record-count">
-      <span id="todayCount">—</span>
-      <button onclick="loadToday()" style="padding:4px 12px;background:#5a3d5c;color:#fff;
-              border:none;border-radius:6px;font-size:.76rem;font-weight:700;cursor:pointer;">
-        🔄 दोबारा पढ़ें</button>
-    </div>
-    <div style="overflow-x:auto;">
-      <table>
-        <thead><tr>
-          <th>S.N.</th><th>Book Code</th><th>Name</th><th>Edition</th>
-          <th class="num">मात्रा</th><th>रद्द करें</th>
-        </tr></thead>
-        <tbody id="todayBody">
-          <tr><td colspan="6" style="text-align:center;color:#aaa;padding:18px;">—</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div style="padding:0 18px 14px;font-size:.76rem;color:#7a8a99;line-height:1.6;">
-      सिर्फ़ आज की, अपनी ही entry रद्द हो सकती है। रद्द row मिटती नहीं — निशान लगा रहता है,
-      और हिसाब में गिनी नहीं जाती। पुरानी entry के लिए व्यवस्थापक से कहें।
-    </div>
+    <div class="status" id="status"></div>
+    <div class="log" id="log"></div>
   </div>
 
 </div>
@@ -561,7 +335,7 @@ option   { font-weight: 400; color: #333; }
 // ── SUPABASE ─────────────────────────────────────────────────────
 const SB_URL = 'https://agntdlbaspqjwaiyoxnp.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnbnRkbGJhc3BxandhaXlveG5wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyMTY1OTAsImV4cCI6MjEwMDc5MjU5MH0.MDNjTUAQ5weRLDSVxG_84W8TOMSuEq_6tsfJjxl07hw';
-const SB_HEAD = { apikey: SB_KEY, 'Accept-Profile': 'gp', 'Content-Profile': 'gp' };
+const SB_HEAD = { apikey: SB_KEY, 'Accept-Profile': 'gp' };
 
 // ── AUTH ─────────────────────────────────────────────────────────
 // Supabase Auth सीधे REST से — कोई बाहरी library नहीं, तो offline/CDN
@@ -758,376 +532,975 @@ function requireOperator() {
   authShowGate('पहले login करें।');
   return false;
 }
+const SB_PAGE = 1000;                 // Data API "Max rows"
 
-let records = [];
+// हर table के columns और उनके पढ़ने-लायक headers — schema से निकाले गए
+const TABLES = {
+ "main_entry": {
+  "label": "Main",
+  "color": "#1F4E79",
+  "cols": [
+   {
+    "db": "id",
+    "hdr": "S.N."
+   },
+   {
+    "db": "exit_date",
+    "hdr": "Exit Date"
+   },
+   {
+    "db": "book_code",
+    "hdr": "Book Code"
+   },
+   {
+    "db": "name",
+    "hdr": "Name"
+   },
+   {
+    "db": "edition",
+    "hdr": "Edition"
+   },
+   {
+    "db": "juje",
+    "hdr": "Juje"
+   },
+   {
+    "db": "size",
+    "hdr": "Size"
+   },
+   {
+    "db": "contractor",
+    "hdr": "Contractor"
+   },
+   {
+    "db": "dhala",
+    "hdr": "Dhala"
+   },
+   {
+    "db": "head_tail",
+    "hdr": "Head/Tail"
+   },
+   {
+    "db": "book_mark",
+    "hdr": "Book Mark"
+   },
+   {
+    "db": "binding",
+    "hdr": "Binding"
+   },
+   {
+    "db": "jacket",
+    "hdr": "Jacket"
+   },
+   {
+    "db": "panni",
+    "hdr": "Panni"
+   },
+   {
+    "db": "box",
+    "hdr": "Box"
+   },
+   {
+    "db": "rate",
+    "hdr": "Rate"
+   },
+   {
+    "db": "total_qty",
+    "hdr": "Total Qty"
+   },
+   {
+    "db": "entered_by",
+    "hdr": "Entered By"
+   },
+   {
+    "db": "entry_date",
+    "hdr": "Entry Date"
+   },
+   {
+    "db": "cancelled",
+    "hdr": "रद्द"
+   },
+   {
+    "db": "cancel_reason",
+    "hdr": "रद्द का कारण"
+   },
+   {
+    "db": "cancelled_at",
+    "hdr": "रद्द कब"
+   }
+  ]
+ },
+ "by_machine": {
+  "label": "By Machine",
+  "color": "#375623",
+  "cols": [
+   {
+    "db": "id",
+    "hdr": "S.N."
+   },
+   {
+    "db": "exit_date",
+    "hdr": "Exit Date"
+   },
+   {
+    "db": "book_code",
+    "hdr": "Book Code"
+   },
+   {
+    "db": "name",
+    "hdr": "Name"
+   },
+   {
+    "db": "edition",
+    "hdr": "Edition"
+   },
+   {
+    "db": "juje",
+    "hdr": "Juje"
+   },
+   {
+    "db": "size",
+    "hdr": "Size"
+   },
+   {
+    "db": "contractor",
+    "hdr": "Contractor"
+   },
+   {
+    "db": "dhala",
+    "hdr": "Dhala"
+   },
+   {
+    "db": "head_tail",
+    "hdr": "Head/Tail"
+   },
+   {
+    "db": "book_mark",
+    "hdr": "Book Mark"
+   },
+   {
+    "db": "binding",
+    "hdr": "Binding"
+   },
+   {
+    "db": "jacket",
+    "hdr": "Jacket"
+   },
+   {
+    "db": "panni",
+    "hdr": "Panni"
+   },
+   {
+    "db": "box",
+    "hdr": "Box"
+   },
+   {
+    "db": "rate",
+    "hdr": "Rate"
+   },
+   {
+    "db": "total_qty",
+    "hdr": "Total Qty"
+   },
+   {
+    "db": "entered_by",
+    "hdr": "Entered By"
+   },
+   {
+    "db": "entry_date",
+    "hdr": "Entry Date"
+   },
+   {
+    "db": "cancelled",
+    "hdr": "रद्द"
+   },
+   {
+    "db": "cancel_reason",
+    "hdr": "रद्द का कारण"
+   },
+   {
+    "db": "cancelled_at",
+    "hdr": "रद्द कब"
+   }
+  ]
+ },
+ "perfect_binding": {
+  "label": "Perfect Binding",
+  "color": "#1F4E79",
+  "cols": [
+   {
+    "db": "id",
+    "hdr": "S.N."
+   },
+   {
+    "db": "exit_date",
+    "hdr": "Exit Date"
+   },
+   {
+    "db": "book_code",
+    "hdr": "Book Code"
+   },
+   {
+    "db": "name",
+    "hdr": "Name"
+   },
+   {
+    "db": "juje",
+    "hdr": "Juje"
+   },
+   {
+    "db": "edition",
+    "hdr": "Edition"
+   },
+   {
+    "db": "size",
+    "hdr": "Size"
+   },
+   {
+    "db": "gathering",
+    "hdr": "Gathering"
+   },
+   {
+    "db": "gathering_wages",
+    "hdr": "Gathering Wages"
+   },
+   {
+    "db": "gathering_contractor",
+    "hdr": "Gathering Contractor"
+   },
+   {
+    "db": "muller",
+    "hdr": "Muller"
+   },
+   {
+    "db": "muller_wages",
+    "hdr": "Muller Wages"
+   },
+   {
+    "db": "muller_contractor",
+    "hdr": "Muller Contractor"
+   },
+   {
+    "db": "perfect_binding",
+    "hdr": "Perfect Binding"
+   },
+   {
+    "db": "binding_wages",
+    "hdr": "Binding Wages"
+   },
+   {
+    "db": "binding_contractor",
+    "hdr": "Binding Contractor"
+   },
+   {
+    "db": "cut_3side",
+    "hdr": "3 Side Cutting"
+   },
+   {
+    "db": "cut_3side_wages",
+    "hdr": "3 Side Cut Wages"
+   },
+   {
+    "db": "cut_3side_contractor",
+    "hdr": "3 Side Cut Contractor"
+   },
+   {
+    "db": "center_cutting",
+    "hdr": "Center Cutting"
+   },
+   {
+    "db": "center_cut_wages",
+    "hdr": "Center Cut Wages"
+   },
+   {
+    "db": "center_cut_contractor",
+    "hdr": "Center Cut Contractor"
+   },
+   {
+    "db": "shrink_pack",
+    "hdr": "Shrink Pack"
+   },
+   {
+    "db": "shrink_wages",
+    "hdr": "Shrink Wages"
+   },
+   {
+    "db": "shrink_contractor",
+    "hdr": "Shrink Contractor"
+   },
+   {
+    "db": "rate",
+    "hdr": "Rate"
+   },
+   {
+    "db": "total_qty",
+    "hdr": "Total Qty"
+   },
+   {
+    "db": "entered_by",
+    "hdr": "Entered By"
+   },
+   {
+    "db": "entry_date",
+    "hdr": "Entry Date"
+   },
+   {
+    "db": "cancelled",
+    "hdr": "रद्द"
+   },
+   {
+    "db": "cancel_reason",
+    "hdr": "रद्द का कारण"
+   },
+   {
+    "db": "cancelled_at",
+    "hdr": "रद्द कब"
+   }
+  ]
+ },
+ "center_pinning": {
+  "label": "Center Pinning",
+  "color": "#375623",
+  "cols": [
+   {
+    "db": "id",
+    "hdr": "S.N."
+   },
+   {
+    "db": "exit_date",
+    "hdr": "Exit Date"
+   },
+   {
+    "db": "book_code",
+    "hdr": "Book Code"
+   },
+   {
+    "db": "name",
+    "hdr": "Name"
+   },
+   {
+    "db": "juje",
+    "hdr": "Juje"
+   },
+   {
+    "db": "edition",
+    "hdr": "Edition"
+   },
+   {
+    "db": "size",
+    "hdr": "Size"
+   },
+   {
+    "db": "pinning_flowline",
+    "hdr": "Pinning/Flowline"
+   },
+   {
+    "db": "pinning_wages",
+    "hdr": "Pinning Wages"
+   },
+   {
+    "db": "pinning_contractor",
+    "hdr": "Pinning Contractor"
+   },
+   {
+    "db": "shrink_pack",
+    "hdr": "Shrink Pack"
+   },
+   {
+    "db": "shrink_wages",
+    "hdr": "Shrink Wages"
+   },
+   {
+    "db": "shrink_contractor",
+    "hdr": "Shrink Contractor"
+   },
+   {
+    "db": "carton_pack",
+    "hdr": "Carton Pack"
+   },
+   {
+    "db": "carton_wages",
+    "hdr": "Carton Wages"
+   },
+   {
+    "db": "carton_contractor",
+    "hdr": "Carton Contractor"
+   },
+   {
+    "db": "rate",
+    "hdr": "Rate"
+   },
+   {
+    "db": "total_qty",
+    "hdr": "Total Qty"
+   },
+   {
+    "db": "entered_by",
+    "hdr": "Entered By"
+   },
+   {
+    "db": "entry_date",
+    "hdr": "Entry Date"
+   },
+   {
+    "db": "cancelled",
+    "hdr": "रद्द"
+   },
+   {
+    "db": "cancel_reason",
+    "hdr": "रद्द का कारण"
+   },
+   {
+    "db": "cancelled_at",
+    "hdr": "रद्द कब"
+   }
+  ]
+ },
+ "laghu_ati_laghu": {
+  "label": "Laghu Ati Laghu",
+  "color": "#6a3d9a",
+  "cols": [
+   {
+    "db": "id",
+    "hdr": "S.N."
+   },
+   {
+    "db": "exit_date",
+    "hdr": "Exit Date"
+   },
+   {
+    "db": "size",
+    "hdr": "Size"
+   },
+   {
+    "db": "book_code",
+    "hdr": "Book Code"
+   },
+   {
+    "db": "name",
+    "hdr": "Name"
+   },
+   {
+    "db": "juje",
+    "hdr": "Juje"
+   },
+   {
+    "db": "edition",
+    "hdr": "Edition"
+   },
+   {
+    "db": "folding",
+    "hdr": "Folding"
+   },
+   {
+    "db": "folding_wages",
+    "hdr": "Folding Wages"
+   },
+   {
+    "db": "contractor",
+    "hdr": "Contractor"
+   },
+   {
+    "db": "pinning",
+    "hdr": "Pinning"
+   },
+   {
+    "db": "cutting",
+    "hdr": "Cutting"
+   },
+   {
+    "db": "packaging",
+    "hdr": "Packaging"
+   },
+   {
+    "db": "rate",
+    "hdr": "Rate"
+   },
+   {
+    "db": "total_qty",
+    "hdr": "Total Qty"
+   },
+   {
+    "db": "entered_by",
+    "hdr": "Entered By"
+   },
+   {
+    "db": "entry_date",
+    "hdr": "Entry Date"
+   },
+   {
+    "db": "cancelled",
+    "hdr": "रद्द"
+   },
+   {
+    "db": "cancel_reason",
+    "hdr": "रद्द का कारण"
+   },
+   {
+    "db": "cancelled_at",
+    "hdr": "रद्द कब"
+   }
+  ]
+ },
+ "stm": {
+  "label": "STM",
+  "color": "#843C0C",
+  "cols": [
+   {
+    "db": "id",
+    "hdr": "S.N."
+   },
+   {
+    "db": "exit_date",
+    "hdr": "Exit Date"
+   },
+   {
+    "db": "book_code",
+    "hdr": "Book Code"
+   },
+   {
+    "db": "name",
+    "hdr": "Name"
+   },
+   {
+    "db": "juje",
+    "hdr": "Juje"
+   },
+   {
+    "db": "size",
+    "hdr": "Size"
+   },
+   {
+    "db": "edition",
+    "hdr": "Edition"
+   },
+   {
+    "db": "contractor",
+    "hdr": "Contractor"
+   },
+   {
+    "db": "rate",
+    "hdr": "Rate"
+   },
+   {
+    "db": "total_qty",
+    "hdr": "Total Qty"
+   },
+   {
+    "db": "entered_by",
+    "hdr": "Entered By"
+   },
+   {
+    "db": "entry_date",
+    "hdr": "Entry Date"
+   },
+   {
+    "db": "cancelled",
+    "hdr": "रद्द"
+   },
+   {
+    "db": "cancel_reason",
+    "hdr": "रद्द का कारण"
+   },
+   {
+    "db": "cancelled_at",
+    "hdr": "रद्द कब"
+   }
+  ]
+ },
+ "process_entry": {
+  "label": "Process Entry",
+  "color": "#0F6E56",
+  "cols": [
+   {
+    "db": "id",
+    "hdr": "S.N."
+   },
+   {
+    "db": "exit_date",
+    "hdr": "Exit Date"
+   },
+   {
+    "db": "book_code",
+    "hdr": "Book Code"
+   },
+   {
+    "db": "name",
+    "hdr": "Name"
+   },
+   {
+    "db": "edition",
+    "hdr": "Edition"
+   },
+   {
+    "db": "juje",
+    "hdr": "Juje"
+   },
+   {
+    "db": "size",
+    "hdr": "Size"
+   },
+   {
+    "db": "page_type",
+    "hdr": "Page Type"
+   },
+   {
+    "db": "process",
+    "hdr": "Process"
+   },
+   {
+    "db": "machine",
+    "hdr": "Machine"
+   },
+   {
+    "db": "special_option",
+    "hdr": "Special Option"
+   },
+   {
+    "db": "juje_range",
+    "hdr": "Juje Range"
+   },
+   {
+    "db": "rate",
+    "hdr": "Rate"
+   },
+   {
+    "db": "rate_per",
+    "hdr": "Rate Per"
+   },
+   {
+    "db": "quantity",
+    "hdr": "Quantity"
+   },
+   {
+    "db": "total_amount",
+    "hdr": "Total Amount"
+   },
+   {
+    "db": "contractor",
+    "hdr": "Contractor"
+   },
+   {
+    "db": "entered_by",
+    "hdr": "Entered By"
+   },
+   {
+    "db": "entry_date",
+    "hdr": "Entry Date"
+   },
+   {
+    "db": "cancelled",
+    "hdr": "रद्द"
+   },
+   {
+    "db": "cancel_reason",
+    "hdr": "रद्द का कारण"
+   },
+   {
+    "db": "cancelled_at",
+    "hdr": "रद्द कब"
+   }
+  ]
+ },
+ "print_order": {
+  "label": "Print Order",
+  "color": "#7B2D5E",
+  "cols": [
+   {
+    "db": "id",
+    "hdr": "S.N."
+   },
+   {
+    "db": "order_date",
+    "hdr": "Date"
+   },
+   {
+    "db": "bound_type",
+    "hdr": "Bound Type"
+   },
+   {
+    "db": "machine_type",
+    "hdr": "Machine Type"
+   },
+   {
+    "db": "book_code",
+    "hdr": "Book Code"
+   },
+   {
+    "db": "name",
+    "hdr": "Name"
+   },
+   {
+    "db": "size",
+    "hdr": "Size"
+   },
+   {
+    "db": "juje",
+    "hdr": "Juje"
+   },
+   {
+    "db": "last_edition",
+    "hdr": "Last Edition"
+   },
+   {
+    "db": "last_edition_quantity",
+    "hdr": "Last Edition Quantity"
+   },
+   {
+    "db": "last_edition_price",
+    "hdr": "Last Edition Price"
+   },
+   {
+    "db": "current_edition",
+    "hdr": "Current Edition"
+   },
+   {
+    "db": "current_edition_quantity",
+    "hdr": "Current Edition Quantity"
+   },
+   {
+    "db": "current_edition_price",
+    "hdr": "Current Edition Price"
+   },
+   {
+    "db": "value",
+    "hdr": "Value"
+   },
+   {
+    "db": "total_quantity_printed",
+    "hdr": "Total Quantity Printed"
+   },
+   {
+    "db": "entered_by",
+    "hdr": "Entered By"
+   },
+   {
+    "db": "entry_date",
+    "hdr": "Entry Date"
+   },
+   {
+    "db": "cancelled",
+    "hdr": "रद्द"
+   },
+   {
+    "db": "cancel_reason",
+    "hdr": "रद्द का कारण"
+   },
+   {
+    "db": "cancelled_at",
+    "hdr": "रद्द कब"
+   }
+  ]
+ }
+};
+const TABLE_ORDER = ["main_entry", "by_machine", "perfect_binding", "center_pinning", "laghu_ati_laghu", "stm", "process_entry", "print_order"];
 
-
-function setSyncStatus(state, msg) {
-  const el = document.getElementById('syncStatus');
-  if (!el) return;
+function setStatus(kind, msg) {
+  const el = document.getElementById('status');
   el.style.display = 'block';
-  if (state === 'loading') { el.textContent = '📡 Connecting...'; el.style.color = '#2e75b6'; el.style.background = '#e3f2fd'; }
-  if (state === 'saving')  { el.textContent = '📡 Saving...';      el.style.color = '#2e75b6'; el.style.background = '#e3f2fd'; }
-  if (state === 'synced')  { el.textContent = '✅ ' + msg;         el.style.color = '#1b5e20'; el.style.background = '#e8f5e9'; }
-  if (state === 'error')   { el.textContent = '⚠️ ' + msg;        el.style.color = '#bf360c'; el.style.background = '#fff3e0'; }
+  el.className = 'status ' + (kind === 'ok' ? 'st-ok' : kind === 'err' ? 'st-err' : 'st-info');
+  el.textContent = msg;
 }
+function log(msg) {
+  const el = document.getElementById('log');
+  const d = document.createElement('div'); d.textContent = msg; el.appendChild(d);
+}
+function clearLog() { document.getElementById('log').innerHTML = ''; }
+function fmt(v) { return (Number(v) || 0).toLocaleString('en-IN'); }
 
-async function sbFetch(path, opts) {
-  const o = opts || {};
-  const tok = await authToken();
-  if (!tok) { authShowGate('Session खत्म हो गया — दोबारा login करें।'); throw new Error('login चाहिए'); }
-  const res = await fetch(SB_URL + '/rest/v1/' + path, {
-    method: o.method || 'GET',
-    headers: Object.assign({}, SB_HEAD, { Authorization: 'Bearer ' + tok }, o.headers || {}),
-    body: o.body
-  });
-  if (!res.ok) {
-    let msg = res.status + ' ' + res.statusText;
-    try { const e = await res.json(); if (e.message) msg = e.message; if (e.hint) msg += ' — ' + e.hint; } catch (x) {}
-    throw new Error(msg);
+function iso(d) {
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function setRange(kind) {
+  const f = document.getElementById('dlFrom'), t = document.getElementById('dlTo');
+  const now = new Date();
+  if (kind === 'clear')      { f.value = ''; t.value = ''; }
+  else if (kind === 'today') { f.value = iso(now); t.value = iso(now); }
+  else if (kind === '7' || kind === '30') {
+    const d = new Date(now); d.setDate(d.getDate() - (Number(kind) - 1));
+    f.value = iso(d); t.value = iso(now);
   }
-  return res.status === 204 ? null : res.json();
-}
-
-async function connectDb() {
-  setSyncStatus('loading');
-  try {
-    await sbFetch('books?select=code&limit=1');
-    setSyncStatus('synced', 'Database से जुड़ गए — entry शुरू करें।');
-    loadToday();
-    document.getElementById('entrySection').classList.remove('locked');
-    document.getElementById('bookCode').disabled = false;
-  } catch (err) {
-    setSyncStatus('error', 'Database से नहीं जुड़ सके: ' + err.message);
+  else if (kind === 'month') {
+    f.value = iso(new Date(now.getFullYear(), now.getMonth(), 1)); t.value = iso(now);
+  }
+  else if (kind === 'prevmonth') {
+    f.value = iso(new Date(now.getFullYear(), now.getMonth() - 1, 1));
+    t.value = iso(new Date(now.getFullYear(), now.getMonth(), 0));
   }
 }
 
-function getRadio(name) {
-  const el = document.querySelector('input[name="' + name + '"]:checked');
-  return el ? el.value : '';
+function selected() {
+  return Array.from(document.querySelectorAll('.sheetChk')).filter(function (c) { return c.checked; })
+              .map(function (c) { return c.value; });
 }
-function setRadio(name, val) {
-  document.querySelectorAll('input[name="' + name + '"]').forEach(function (r) { r.checked = (r.value === val); });
-}
-function clearRadio(name) {
-  document.querySelectorAll('input[name="' + name + '"]').forEach(function (r) { r.checked = false; });
-}
-function inr(v) { return (Number(v) || 0).toLocaleString('en-IN'); }
-function numOrNull(id) {
-  const el = document.getElementById(id);
-  return (!el || el.value === '') ? null : Number(el.value);
-}
-function txtOrNull(id) {
-  const el = document.getElementById(id);
-  return (!el || el.value.trim() === '') ? null : el.value.trim();
+function selectAll(on) {
+  document.querySelectorAll('.sheetChk').forEach(function (c) { c.checked = on; });
 }
 
-// ── BOOK LOOKUP (database से) ─────────────────────────────────────
-let codeTimer = null, inflight = 0;
-function lookupBook() {
-  clearTimeout(codeTimer);
-  const code = document.getElementById('bookCode').value.trim();
-  const bar = document.getElementById('statusBar');
-  ['bookName','bookJuje','bookSize'].forEach(function (i) {
-    const el = document.getElementById(i); if (el) el.value = '';
-  });
-  clearRadio('panni'); clearRadio('box');
-  
-  if (!code) {
-    bar.className = 'status-bar status-empty';
-    bar.textContent = 'ℹ️ Book Code डालें';
-    return;
-  }
-  bar.className = 'status-bar status-empty';
-  bar.textContent = '📡 खोज रहे हैं...';
-  codeTimer = setTimeout(function () { fetchBook(code); }, 350);
+// entry_date पर filter — dates सीधे ISO में जाती हैं, कोई dd/mm/yyyy बदलाव नहीं
+function dateFilter() {
+  const f = document.getElementById('dlFrom').value;
+  const t = document.getElementById('dlTo').value;
+  if (!f || !t) return '';
+  return '&entry_date=gte.' + f + '&entry_date=lte.' + t;
 }
 
-async function fetchBook(code) {
-  const bar = document.getElementById('statusBar');
-  const seq = ++inflight;
-  try {
-    const rows = await sbFetch('books?code=eq.' + encodeURIComponent(code) +
-                               '&select=code,name,juje,size,panni,box&limit=1');
-    if (seq !== inflight || document.getElementById('bookCode').value.trim() !== code) return;
-    const b = (rows || [])[0];
-    if (!b) {
-      bar.className = 'status-bar status-notfound';
-      bar.textContent = '⚠️ Book Code नहीं मिला।';
-      return;
+async function sbRows(table, countOnly) {
+  const cols = TABLES[table].cols.map(function (c) { return c.db; }).join(',');
+  const out = [];
+  for (let offset = 0; ; offset += SB_PAGE) {
+    const url = SB_URL + '/rest/v1/' + table + '?select=' + (countOnly ? 'id' : cols) +
+                dateFilter() + '&order=id&limit=' + SB_PAGE + '&offset=' + offset;
+    const res = await fetch(url, { headers: Object.assign({}, SB_HEAD, { Authorization: 'Bearer ' + (await authToken()) }) });
+    if (!res.ok) {
+      let msg = res.status + ' ' + res.statusText;
+      try { const e = await res.json(); if (e.message) msg = e.message; } catch (x) {}
+      throw new Error(table + ': ' + msg);
     }
-    document.getElementById('bookName').value = b.name || '';
-    document.getElementById('bookJuje').value = (b.juje == null ? '' : b.juje);
-    const sz = document.getElementById('bookSize');
-    if (sz) sz.value = b.size || '';
-    // Panni और Box किताब के झंडों से — पहले ये HTML में embedded सूचियाँ थीं
-    setRadio('panni', b.panni ? 'Yes' : 'No');
-    setRadio('box',   b.box   ? 'Yes' : 'No');
-    
-    bar.className = 'status-bar status-found';
-    bar.textContent = '✅ Book मिली! ब्यौरा भरकर Save करें।';
-  } catch (err) {
-    if (seq !== inflight) return;
-    bar.className = 'status-bar status-notfound';
-    bar.textContent = '⚠️ ' + err.message;
+    const page = await res.json();
+    out.push.apply(out, page);
+    if (page.length < SB_PAGE) return out;
   }
 }
 
-// ── मशीन वाले contractor ─────────────────────────────────────────
-// 'By Machine' group के सभी विकल्प — इन पर पाँच fields अपने आप भरते हैं
-// और row main_entry के बजाय by_machine table में जाती है.
-// नया मशीन विकल्प जोड़ें तो उसका नाम यहाँ भी डालना होगा.
-const BY_MACHINE = ['By Machine', 'Channel'];
-function isByMachine(v) { return BY_MACHINE.indexOf(v) !== -1; }
-
-// Panni और Box जान-बूझकर नहीं छूते — वो किताब के हिसाब से भरते हैं,
-// contractor के हिसाब से नहीं
-function onContractorChange(val) {
-  if (isByMachine(val)) {
-    setRadio('dhala',    'Yes');
-    setRadio('headtail', 'Head & Tail');
-    setRadio('bookmark', 'Yes');
-    setRadio('binding',  'Yes');
-    setRadio('jacket',   'Yes');
-  }
-}
-
-// ── SAVE ─────────────────────────────────────────────────────────
-// contractor 'By Machine' हो तो row by_machine table में जाती है,
-// वरना main_entry में — पहले Apps Script यही फ़ैसला करता था
-async function saveRecord() {
-  if (!requireOperator()) return;
-  const code = document.getElementById('bookCode').value.trim();
-  if (!code) { alert('Book Code डालें।'); return; }
-  if (!document.getElementById('bookName').value) { alert('Book Code नहीं मिला।'); return; }
-
-  const contractor = document.getElementById('fContractor').value;
-  const table = isByMachine(contractor) ? 'by_machine' : 'main_entry';
-
-  const payload = {
-    exit_date:  document.getElementById('fExitDate').value || null,
-    book_code:  code,
-    name:       document.getElementById('bookName').value,
-    edition:    txtOrNull('fEdition'),
-    juje:       document.getElementById('bookJuje').value || null,
-    size:       document.getElementById('bookSize').value || null,
-    contractor: contractor || null,
-    dhala:      getRadio('dhala')     || null,
-    head_tail:  getRadio('headtail')  || null,
-    book_mark:  getRadio('bookmark')  || null,
-    binding:    getRadio('binding')   || null,
-    jacket:     getRadio('jacket')    || null,
-    panni:      getRadio('panni')     || null,
-    box:        getRadio('box')       || null,
-    rate:       numOrNull('fRate'),
-    total_qty:  numOrNull('fTotalQty'),
-    entered_by: operatorName()
-  };
-
-  setSyncStatus('saving');
-  let saved;
-  try {
-    const out = await sbFetch(table, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Prefer: 'return=representation' },
-      body: JSON.stringify(payload)
-    });
-    saved = (out || [])[0];
-  } catch (err) {
-    setSyncStatus('error', 'Save नहीं हुआ: ' + err.message);
-    return;
-  }
-
-  records.push({
-    sn: saved.id, table: table, exitDate: saved.exit_date, code: saved.book_code,
-    name: saved.name, edition: saved.edition, juje: saved.juje, size: saved.size,
-    contractor: saved.contractor, dhala: saved.dhala, ht: saved.head_tail,
-    bm: saved.book_mark, binding: saved.binding, jacket: saved.jacket,
-    panni: saved.panni, box_yn: saved.box, rate: saved.rate, totalQty: saved.total_qty,
-    enteredBy: saved.entered_by, entryDate: saved.entry_date
+function addSheet(wb, table, rows) {
+  const m = TABLES[table];
+  const ws = wb.addWorksheet(m.label, { views: [{ state: 'frozen', ySplit: 1 }] });
+  ws.columns = m.cols.map(function (c) {
+    return { header: c.hdr, key: c.db, width: c.hdr.length < 10 ? 12 : c.hdr.length + 4 };
   });
-  renderTable();
-  loadToday();
-  setSyncStatus('synced', 'Save हुआ — S.N. ' + saved.id + ' (' +
-    (table === 'by_machine' ? contractor : 'Main') + ')');
-  const bar = document.getElementById('statusBar');
-  bar.className = 'status-bar status-saved';
-  bar.textContent = '✅ Saved! Book Code ' + code + ' — S.N. ' + saved.id;
-  clearForm();
-}
-
-function renderTable() {
-  document.getElementById('recordCount').textContent = records.length + ' record(s) saved';
-  const tb = document.getElementById('recordsBody');
-  if (!records.length) {
-    tb.innerHTML = '<tr><td colspan="16" style="text-align:center;color:#aaa;padding:20px;">No records yet.</td></tr>';
-    return;
-  }
-  const d = function (v) { return (v == null || v === '') ? '—' : v; };
-  tb.innerHTML = records.map(function (r, i) {
-    return '<tr onclick="editRecord(' + i + ')" title="Click to reuse">' +
-      '<td>' + r.sn + '</td>' +
-      '<td>' + d(r.exitDate) + '</td>' +
-      '<td><strong>' + r.code + '</strong></td>' +
-      '<td title="' + r.name + '">' + String(r.name).substring(0, 18) + (String(r.name).length > 18 ? '…' : '') + '</td>' +
-      '<td>' + d(r.edition) + '</td>' +
-      '<td>' + d(r.juje) + '</td>' +
-      '<td>' + d(r.size) + '</td>' +
-      '<td>' + String(d(r.contractor)).substring(0, 14) + '</td>' +
-      '<td>' + d(r.dhala) + '</td>' +
-      '<td>' + d(r.ht) + '</td>' +
-      '<td>' + d(r.bm) + '</td>' +
-      '<td>' + d(r.binding) + '</td>' +
-      '<td>' + d(r.jacket) + '</td>' +
-      '<td>' + d(r.panni) + '</td>' +
-      '<td>' + d(r.box_yn) + '</td>' +
-      '<td>' + d(r.entryDate) + '</td></tr>';
-  }).join('');
-}
-
-// RLS में UPDATE की अनुमति नहीं — यह सिर्फ़ उसी book के लिए form भरता है
-function editRecord(i) {
-  const r = records[i];
-  document.getElementById('bookCode').value = r.code;
-  lookupBook();
-  document.getElementById('fExitDate').value = r.exitDate || '';
-  document.getElementById('fEdition').value = r.edition || '';
-  document.getElementById('fContractor').value = r.contractor || '';
-  const bar = document.getElementById('statusBar');
-  bar.className = 'status-bar status-saved';
-  bar.textContent = 'ℹ️ S.N. ' + r.sn + ' पहले से दर्ज है — form उसी book के लिए भर दिया, नई entry करें';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function clearForm() {
-  ['bookCode','bookName','bookJuje','bookSize','fExitDate','fEdition','fRate','fTotalQty']
-    .forEach(function (id) { const el = document.getElementById(id); if (el) el.value = ''; });
-  document.getElementById('fContractor').value = '';
-  ['dhala','headtail','bookmark','binding','jacket','panni','box'].forEach(clearRadio);
-  const bar = document.getElementById('statusBar');
-  bar.className = 'status-bar status-empty';
-  bar.textContent = 'ℹ️ Form cleared. नया Book Code डालें।';
-  document.getElementById('bookCode').focus();
-}
-
-// ── आज की मेरी entries + रद्द करना ────────────────────────────────
-// रद्द करने पर row मिटती नहीं — cancelled का झंडा लगता है, कारण और
-// किसने-कब दर्ज होता है। Reconcile और dashboard उसे गिनना छोड़ देते हैं।
-const CANCEL_TABLES = ['main_entry', 'by_machine'];
-const QTY_COL = 'total_qty';
-const EDN_COL = 'edition';
-let todayRows = [];
-
-async function loadToday() {
-  const body = document.getElementById('todayBody');
-  const cnt  = document.getElementById('todayCount');
-  if (!session || !session.user) return;
-  cnt.textContent = 'पढ़ रहे हैं...';
-  const uid = session.user.id;
-  const today = new Date();
-  const iso = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') +
-              '-' + String(today.getDate()).padStart(2, '0');
-  todayRows = [];
-  try {
-    for (const t of CANCEL_TABLES) {
-      const sel = 'id,book_code,name,' + EDN_COL + ',' + QTY_COL;
-      const rows = await sbFetch(t + '?select=' + sel +
-        '&user_id=eq.' + uid + '&entry_date=eq.' + iso +
-        '&cancelled=is.false&order=id.desc');
-      (rows || []).forEach(function (r) {
-        todayRows.push({ table: t, id: r.id, code: r.book_code, name: r.name || '',
-                         edition: r[EDN_COL], qty: r[QTY_COL] });
-      });
-    }
-  } catch (err) {
-    cnt.textContent = '⚠️ ' + err.message;
-    return;
-  }
-  todayRows.sort(function (a, b) { return b.id - a.id; });
-  cnt.textContent = todayRows.length + ' entry आज की (रद्द नहीं हुई)';
-  if (!todayRows.length) {
-    body.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#aaa;padding:18px;">आज अभी कोई entry नहीं</td></tr>';
-    return;
-  }
-  body.innerHTML = todayRows.map(function (r, i) {
-    return '<tr><td>' + r.id + '</td>' +
-      '<td><strong>' + r.code + '</strong></td>' +
-      '<td title="' + r.name + '">' + String(r.name).substring(0, 22) + (String(r.name).length > 22 ? '…' : '') + '</td>' +
-      '<td>' + (r.edition == null || r.edition === '' ? '—' : r.edition) + '</td>' +
-      '<td class="num">' + (r.qty == null ? '—' : inr(r.qty)) + '</td>' +
-      '<td><button onclick="cancelRow(' + i + ')" style="padding:4px 11px;background:#b3372c;' +
-      'color:#fff;border:none;border-radius:5px;font-size:.74rem;font-weight:700;cursor:pointer;">' +
-      'रद्द</button></td></tr>';
-  }).join('');
-}
-
-async function cancelRow(i) {
-  const r = todayRows[i];
-  if (!r) return;
-  const reason = prompt('S.N. ' + r.id + ' (Book ' + r.code + ') रद्द करने का कारण लिखें —\n' +
-                        'यह हमेशा दर्ज रहेगा:');
-  if (reason === null) return;
-  if (!reason.trim()) { alert('कारण लिखना ज़रूरी है।'); return; }
-  setSyncStatus('saving');
-  try {
-    await sbFetch(r.table + '?id=eq.' + r.id, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', Prefer: 'return=minimal' },
-      body: JSON.stringify({
-        cancelled: true,
-        cancelled_at: new Date().toISOString(),
-        cancelled_by: session.user.id,
-        cancel_reason: reason.trim()
-      })
-    });
-  } catch (err) {
-    setSyncStatus('error', 'रद्द नहीं हुआ: ' + err.message);
-    return;
-  }
-  setSyncStatus('synced', 'S.N. ' + r.id + ' रद्द हो गई — हिसाब में अब नहीं गिनी जाएगी');
-  await loadToday();
-}
-
-async function exportToExcel() {
-  if (!records.length) { alert('No records to export.'); return; }
-  const headers = ['S.N.','Exit Date','Book Code','Name','Edition','Juje','Size','Contractor',
-                   'Dhala','Head/Tail','Book Mark','Binding','Jacket','Panni','Box',
-                   'Rate','Total Qty','Entered By','Entry Date'];
-  const widths = [6,14,14,38,12,8,14,22,10,14,12,24,10,10,8,10,12,20,14];
-  const num = function (v) { return v == null ? '' : Number(v); };
-  const wb = new ExcelJS.Workbook();
-  const ws = wb.addWorksheet('Main', { views: [{ state: 'frozen', ySplit: 1 }] });
-  ws.columns = headers.map(function (h, i) { return { header: h, key: h, width: widths[i] }; });
-  const hr = ws.getRow(1); hr.height = 22;
+  const hr = ws.getRow(1); hr.height = 24;
+  const argb = 'FF' + m.color.replace('#', '').toUpperCase();
   hr.eachCell(function (c) {
     c.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 10, name: 'Arial' };
-    c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F6F4A' } };
+    c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: argb } };
     c.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
   });
-  records.forEach(function (r, i) {
-    const row = ws.addRow([r.sn, r.exitDate, r.code, r.name, r.edition, r.juje, r.size, r.contractor,
-      r.dhala, r.ht, r.bm, r.binding, r.jacket, r.panni, r.box_yn,
-      num(r.rate), num(r.totalQty), r.enteredBy, r.entryDate]);
+  rows.forEach(function (r, i) {
+    const row = ws.addRow(m.cols.map(function (c) {
+      const v = r[c.db];
+      return (v === null || v === undefined) ? '' : v;
+    }));
     row.height = 16;
-    if (i % 2 === 0) row.eachCell({ includeEmpty: true }, function (c) {
-      c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE6F4EC' } };
+    // रद्द row हल्की लाल — Excel में एक नज़र में दिख जाए
+    if (r.cancelled) {
+      row.eachCell({ includeEmpty: true }, function (c) {
+        c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFBE4E1' } };
+        c.font = { name: 'Arial', size: 9, strike: true, color: { argb: 'FF9A2E22' } };
+      });
+    } else if (i % 2 === 0) row.eachCell({ includeEmpty: true }, function (c) {
+      c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF2F7F4' } };
       c.font = { name: 'Arial', size: 9 };
     });
   });
-  ws.autoFilter = { from: 'A1', to: 'S1' };
+  const last = ws.getColumn(m.cols.length).letter;
+  ws.autoFilter = { from: 'A1', to: last + '1' };
+}
+
+async function saveWb(wb, filename) {
   const buf = await wb.xlsx.writeBuffer();
   const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url; a.download = 'Main_' + new Date().toISOString().slice(0, 10) + '.xlsx';
-  a.click(); URL.revokeObjectURL(url);
+  a.href = url; a.download = filename; a.click();
+  setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+}
+function suffix() {
+  const f = document.getElementById('dlFrom').value, t = document.getElementById('dlTo').value;
+  return (f && t) ? f + '_to_' + t : 'all_' + new Date().toISOString().slice(0, 10);
+}
+function badRange() {
+  const f = document.getElementById('dlFrom').value, t = document.getElementById('dlTo').value;
+  if ((f && !t) || (!f && t)) { setStatus('err', '⚠️ दोनों dates भरें, या दोनों खाली छोड़ें।'); return true; }
+  return false;
+}
+
+async function downloadOne(table) {
+  if (badRange()) return;
+  clearLog();
+  setStatus('info', '📡 "' + TABLES[table].label + '" पढ़ रहे हैं...');
+  try {
+    const rows = await sbRows(table);
+    setCount(table, rows.length);
+    if (!rows.length) { setStatus('err', '⚠️ "' + TABLES[table].label + '" में इस range का कोई record नहीं मिला।'); return; }
+    const wb = new ExcelJS.Workbook();
+    addSheet(wb, table, rows);
+    await saveWb(wb, TABLES[table].label.replace(/ /g, '_') + '_' + suffix() + '.xlsx');
+    setStatus('ok', '✅ "' + TABLES[table].label + '" download हुआ — ' + fmt(rows.length) + ' record(s)');
+  } catch (err) { setStatus('err', '⚠️ ' + err.message); }
+}
+
+async function downloadCombined() {
+  const names = selected();
+  if (!names.length) { setStatus('err', '⚠️ कम से कम एक table चुनें।'); return; }
+  if (badRange()) return;
+  clearLog();
+  setStatus('info', '📡 ' + names.length + ' table(s) पढ़ रहे हैं...');
+  const wb = new ExcelJS.Workbook();
+  let total = 0, added = 0;
+  for (const t of names) {
+    try {
+      const rows = await sbRows(t);
+      setCount(t, rows.length);
+      if (rows.length) { addSheet(wb, t, rows); added++; total += rows.length; log('✅ ' + TABLES[t].label + ' — ' + fmt(rows.length) + ' record(s)'); }
+      else log('— ' + TABLES[t].label + ' — कोई record नहीं');
+    } catch (err) { log('⚠️ ' + err.message); }
+  }
+  if (!added) { setStatus('err', '⚠️ चुने गए किसी भी table में इस range का record नहीं मिला।'); return; }
+  await saveWb(wb, 'GitaPress_Data_' + suffix() + '.xlsx');
+  setStatus('ok', '✅ Download हुआ — ' + added + ' tab(s), कुल ' + fmt(total) + ' record(s)');
+}
+
+async function downloadSeparate() {
+  const names = selected();
+  if (!names.length) { setStatus('err', '⚠️ कम से कम एक table चुनें।'); return; }
+  if (badRange()) return;
+  clearLog();
+  setStatus('info', '📡 ' + names.length + ' file(s) बना रहे हैं...');
+  let files = 0, total = 0;
+  for (const t of names) {
+    try {
+      const rows = await sbRows(t);
+      setCount(t, rows.length);
+      if (!rows.length) { log('— ' + TABLES[t].label + ' — कोई record नहीं'); continue; }
+      const wb = new ExcelJS.Workbook();
+      addSheet(wb, t, rows);
+      await saveWb(wb, TABLES[t].label.replace(/ /g, '_') + '_' + suffix() + '.xlsx');
+      files++; total += rows.length;
+      log('✅ ' + TABLES[t].label + ' — ' + fmt(rows.length) + ' record(s)');
+      await new Promise(function (r) { setTimeout(r, 400); });
+    } catch (err) { log('⚠️ ' + err.message); }
+  }
+  if (!files) { setStatus('err', '⚠️ कोई file नहीं बनी — इस range में record नहीं मिले।'); return; }
+  setStatus('ok', '✅ ' + files + ' file(s) download हुईं — कुल ' + fmt(total) + ' record(s)');
+}
+
+function setCount(table, n) {
+  const el = document.getElementById('cnt-' + table);
+  if (el) el.textContent = fmt(n) + ' rec';
+}
+async function refreshCounts() {
+  if (badRange()) return;
+  clearLog();
+  setStatus('info', '📡 Counts पढ़ रहे हैं...');
+  TABLE_ORDER.forEach(function (t) { setCount(t, 0); });
+  let total = 0;
+  for (const t of TABLE_ORDER) {
+    try { const rows = await sbRows(t, true); setCount(t, rows.length); total += rows.length; }
+    catch (err) {
+      const el = document.getElementById('cnt-' + t); if (el) el.textContent = 'err';
+      log('⚠️ ' + err.message);
+    }
+  }
+  const f = document.getElementById('dlFrom').value, t2 = document.getElementById('dlTo').value;
+  setStatus('ok', '✅ कुल ' + fmt(total) + ' record(s) — ' + ((f && t2) ? (f + ' – ' + t2) : 'पूरा data'));
 }
 
 window.addEventListener('load', async function () {
   authLoad(); authWireGate(); pwdWire();
   if (!session) { authShowGate(); return; }
   if (!(await authToken())) { authShowGate('Session खत्म हो गया — दोबारा login करें।'); return; }
-  authPaintUser(); connectDb(); });
+  authPaintUser(); refreshCounts(); });
 </script>
 </body>
 </html>

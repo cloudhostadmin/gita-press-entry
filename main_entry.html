@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Soft Bound — Gita Press</title>
+<title>Book Data Entry — Gita Press</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
 <style>
@@ -11,7 +11,7 @@
 body { font-family: Arial, sans-serif; background: #f0f4f8; min-height: 100vh; }
 
 .header {
-  background: linear-gradient(135deg, #1f6f4a, #2f9d69);
+  background: linear-gradient(135deg, #1F4E79, #2e75b6);
   color: white; padding: 18px 24px;
   display: flex; align-items: center; gap: 14px;
   box-shadow: 0 3px 12px rgba(0,0,0,0.2);
@@ -19,7 +19,7 @@ body { font-family: Arial, sans-serif; background: #f0f4f8; min-height: 100vh; }
 .header h1 { font-size: 1.3rem; font-weight: 700; }
 .header p  { font-size: 0.82rem; opacity: 0.85; margin-top: 3px; }
 
-.container { max-width: 820px; margin: 24px auto; padding: 0 16px 60px; }
+.container { max-width: 780px; margin: 24px auto; padding: 0 16px 60px; }
 
 .card {
   background: white; border-radius: 12px;
@@ -28,16 +28,20 @@ body { font-family: Arial, sans-serif; background: #f0f4f8; min-height: 100vh; }
 }
 
 #entrySection { position: relative; }
-#entrySection.locked .card { opacity: 0.4; pointer-events: none; filter: grayscale(40%); }
+#entrySection.locked .card {
+  opacity: 0.4; pointer-events: none; filter: grayscale(40%);
+}
 .lock-overlay { display: none; }
 #entrySection.locked .lock-overlay {
   display: flex; align-items: center; justify-content: center;
   position: absolute; top: 0; left: 0; right: 0; height: 100%;
   z-index: 5; text-align: center; padding: 20px;
   font-size: 0.95rem; font-weight: 700; color: #843c0c;
-  background: rgba(255,243,224,0.92);
+  background: rgba(255, 243, 224, 0.92);
   border: 2px dashed #e0a458; border-radius: 12px;
 }
+
+
 
 .section-title {
   background: #1F4E79; color: white;
@@ -46,17 +50,12 @@ body { font-family: Arial, sans-serif; background: #f0f4f8; min-height: 100vh; }
 }
 .section-title.green  { background: #375623; }
 .section-title.orange { background: #843c0c; }
-.section-title.teal   { background: #1a6b6b; }
 
 .form-body { padding: 16px 18px; }
 
 .field-row {
-  display: grid; grid-template-columns: 190px 1fr;
+  display: grid; grid-template-columns: 170px 1fr;
   gap: 8px 12px; align-items: center; margin-bottom: 13px;
-}
-.field-row.wages-row {
-  display: grid; grid-template-columns: 190px 1fr 160px;
-  gap: 8px 12px; align-items: center;
 }
 .field-row:last-child { margin-bottom: 0; }
 
@@ -65,12 +64,8 @@ label {
   font-weight: 600; text-align: right; padding-right: 4px;
 }
 label .req { color: #c00; margin-left: 2px; }
-.wages-label {
-  font-size: 0.78rem; color: #555; font-style: italic;
-  white-space: nowrap;
-}
 
-input[type=text], input[type=number], input[type=date], select {
+input[type=text], input[type=number], select {
   width: 100%; padding: 8px 11px;
   border: 2px solid #d0dce8; border-radius: 7px;
   font-size: 0.93rem; font-family: Arial;
@@ -78,18 +73,18 @@ input[type=text], input[type=number], input[type=date], select {
   background: #fafdff;
 }
 input:focus, select:focus {
-  outline: none; border-color: #375623;
-  box-shadow: 0 0 0 3px rgba(55,86,35,0.15); background: white;
+  outline: none; border-color: #2e75b6;
+  box-shadow: 0 0 0 3px rgba(46,117,182,0.15); background: white;
 }
 .auto-field {
   background: #e8f4fd !important; color: #1a3a5c;
   border-color: #b0cfe8 !important; font-style: italic;
 }
 .book-code-input {
-  font-size: 1.05rem; font-weight: 700; border-color: #375623 !important;
+  font-size: 1.05rem; font-weight: 700; border-color: #1F4E79 !important;
 }
 
-/* Segmented controls */
+/* ── Segmented Control (Yes/No & Head/Tail) ── */
 .seg-wrap {
   background: #eef2f7; border-radius: 8px;
   padding: 3px; display: inline-flex; gap: 3px;
@@ -98,66 +93,30 @@ input:focus, select:focus {
 .seg-wrap input[type=radio] { display: none; }
 .seg-wrap label {
   flex: 1; text-align: center;
-  padding: 7px 10px; border-radius: 6px;
-  font-size: 0.85rem; font-weight: 600;
+  padding: 7px 12px; border-radius: 6px;
+  font-size: 0.88rem; font-weight: 600;
   color: #6b82a0; cursor: pointer;
-  transition: all 0.18s; margin: 0; user-select: none;
+  transition: all 0.18s; margin: 0;
+  user-select: none;
 }
 .seg-wrap label:hover { color: #1F4E79; background: rgba(255,255,255,0.6); }
 .seg-wrap input[type=radio]:checked + label {
-  background: white; box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+  background: white;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
   color: #1F4E79; font-weight: 700;
 }
-.seg-wrap input[type=radio]:checked + label.yes-lbl { color: #1a6b2a; }
-.seg-wrap input[type=radio]:checked + label.no-lbl  { color: #b83232; }
-.seg-wrap input[type=radio]:checked + label.na-lbl  { color: #6b6b6b; }
-.seg-wrap input[type=radio]:checked + label.cb-lbl  { color: #375623; }
-.seg-wrap input[type=radio]:checked + label.dw-lbl  { color: #843c0c; }
-
-/* Binding type selector — large toggle at top */
-.type-wrap {
-  background: #e8f0e8; border-radius: 10px;
-  padding: 4px; display: flex; gap: 4px; width: 100%;
+.seg-wrap input[type=radio]:checked + label.yes-lbl {
+  color: #1a6b2a;
 }
-.type-wrap input[type=radio] { display: none; }
-.type-wrap label {
-  flex: 1; text-align: center;
-  padding: 12px 16px; border-radius: 8px;
-  font-size: 1rem; font-weight: 700;
-  color: #555; cursor: pointer;
-  transition: all 0.2s; margin: 0;
+.seg-wrap input[type=radio]:checked + label.no-lbl {
+  color: #b83232;
 }
-.type-wrap input[type=radio]:checked + label {
-  background: white;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  color: #375623; font-weight: 800;
+.seg-wrap input[type=radio]:checked + label.na-lbl {
+  color: #6b6b6b;
 }
 
-/* Wages mini-seg */
-.wages-seg {
-  background: #f5f5f5; border-radius: 6px;
-  padding: 2px; display: inline-flex; gap: 2px;
-  width: 100%; min-width: 140px;
-  opacity: 0.4; pointer-events: none;
-  transition: opacity 0.2s;
-}
-.wages-seg.active { opacity: 1; pointer-events: all; }
-.wages-seg input[type=radio] { display: none; }
-.wages-seg label {
-  flex: 1; text-align: center;
-  padding: 5px 6px; border-radius: 5px;
-  font-size: 0.75rem; font-weight: 600;
-  color: #888; cursor: pointer;
-  transition: all 0.15s; margin: 0;
-}
-.wages-seg input[type=radio]:checked + label {
-  background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-  color: #375623; font-weight: 700;
-}
+/* Carton field with auto note */
 
-/* Conditional field rows */
-.cond-field { display: none; }
-.cond-field.visible { display: grid; }
 
 .status-bar {
   padding: 10px 18px; font-size: 0.87rem; font-weight: 600;
@@ -178,59 +137,42 @@ button {
   font-size: 0.93rem; font-weight: 700; cursor: pointer;
   transition: all 0.2s; display: flex; align-items: center; gap: 6px;
 }
-.btn-save   { background: #375623; color: white; }
-.btn-save:hover   { background: #2a3d1a; transform: translateY(-1px); }
+.btn-save   { background: #1F4E79; color: white; }
+.btn-save:hover   { background: #163a5a; transform: translateY(-1px); }
 .btn-clear  { background: #f5f5f5; color: #333; border: 1.5px solid #ddd; }
 .btn-clear:hover  { background: #e8e8e8; }
-.btn-export { background: #1F4E79; color: white; }
-.btn-export:hover { background: #163a5a; }
+.btn-export { background: #375623; color: white; }
+.btn-export:hover { background: #2a3d1a; }
 
 .record-count {
   padding: 8px 18px; background: #f0f4f8;
   font-size: 0.82rem; color: #555;
   border-bottom: 1px solid #e0e8f0;
 }
-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
 th {
-  background: #375623; color: white; padding: 8px 10px;
-  text-align: left; font-weight: 600; font-size: 0.75rem; white-space: nowrap;
+  background: #1F4E79; color: white; padding: 8px 10px;
+  text-align: left; font-weight: 600; font-size: 0.78rem; white-space: nowrap;
 }
 td {
   padding: 7px 10px; border-bottom: 1px solid #eef2f6; color: #333;
-  max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 tr:nth-child(even) td { background: #f7f9fc; }
-tr:hover td { background: #eaf5e9; cursor: pointer; }
+tr:hover td { background: #e8f4fd; cursor: pointer; }
 
-.disabled-note {
-  font-size: 0.75rem; color: #aaa; font-style: italic; margin-left: 8px;
+.file-input-area {
+  border: 2px dashed #b0cfe8; border-radius: 8px; padding: 14px;
+  text-align: center; color: #2e75b6; font-size: 0.87rem;
+  cursor: pointer; transition: background 0.2s; margin: 12px 0;
 }
+.file-input-area:hover { background: #e8f4fd; }
+#fileInput { display: none; }
+optgroup { font-weight: 700; color: #1F4E79; }
+option   { font-weight: 400; color: #333; }
 
-
-/* Per-process contractor sub-row */
-.con-sub {
-  display: none;
-  grid-template-columns: 190px 1fr 160px;
-  gap: 6px 12px; align-items: center;
-  margin: -6px 0 10px 0;
-  padding: 6px 12px 8px 0;
-  background: #f8fbf5;
-  border-left: 3px solid #375623;
-  border-radius: 0 0 6px 6px;
-}
-.con-sub.visible { display: grid; }
-.con-sub label {
-  font-size: 0.78rem; color: #375623;
-  font-style: italic; text-align: right;
-  padding-right: 4px;
-}
-.con-sub select {
-  grid-column: 2 / 4;
-  font-size: 0.83rem; padding: 5px 8px;
-  border: 1.5px solid #a8c89a; border-radius: 6px;
-}
 @media (max-width: 520px) {
-  .field-row, .field-row.wages-row { grid-template-columns: 1fr; }
+  .field-row { grid-template-columns: 1fr; }
   label { text-align: left; }
   .btn-row { flex-direction: column; }
   button { width: 100%; justify-content: center; }
@@ -308,10 +250,10 @@ tr:hover td { background: #eaf5e9; cursor: pointer; }
 
 
 <div class="header">
-  <div style="font-size:2rem">📗</div>
+  <div style="font-size:2rem">📚</div>
   <div>
-    <h1>Soft Bound — Gita Press, Gorakhpur</h1>
-    <p>Perfect Binding &amp; Center Pinning &nbsp;|&nbsp; Auto-fills Name &amp; Juje</p>
+    <h1>Main Entry — Gita Press, Gorakhpur</h1>
+    <p>Columns D, F–N &nbsp;|&nbsp; Auto-fills Name, Juje, Panni &amp; Box</p>
   </div>
 </div>
 
@@ -325,8 +267,8 @@ tr:hover td { background: #eaf5e9; cursor: pointer; }
   <a href="print_order.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#7b2d5e;color:white;border:2px solid #c470a0;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">🖨️ Print Order</button></a>
   <a href="stm.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#843c0c;color:white;border:2px solid #e07a3a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📋 STM Entry</button></a>
   <a href="process_entry.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#0f6e56;color:white;border:2px solid #3fb99a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">⚙️ Process Entry</button></a>
-  <a href="main_entry.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#1F4E79;color:white;border:2px solid #4a90c4;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📚 Main Entry</button></a>
-  <button style="padding:7px 16px;background:#375623;color:white;border:2px solid #6aaa3a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:default;box-shadow:0 0 0 2px white,0 0 0 4px #6aaa3a;">📗 Soft Bound ✓</button>
+  <button style="padding:7px 16px;background:#1F4E79;color:white;border:2px solid #4a90c4;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:default;box-shadow:0 0 0 2px white,0 0 0 4px #4a90c4;">📚 Main Entry ✓</button>
+  <a href="soft_bound.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#375623;color:white;border:2px solid #6aaa3a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📗 Soft Bound</button></a>
   <a href="laghu_ati_laghu.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#6a3d9a;color:white;border:2px solid #b07edd;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📒 Laghu &amp; Ati Laghu</button></a>
 </div>
 <div style="background:#233b55;padding:7px 24px;display:flex;gap:9px;align-items:center;flex-wrap:wrap;">
@@ -346,32 +288,28 @@ tr:hover td { background: #eaf5e9; cursor: pointer; }
 </div>
 <div class="container">
 
-  <!-- Sync status -->
-  <div id="syncStatus" style="display:none;font-size:0.85rem;font-weight:600;padding:10px 18px;border-radius:8px;margin-bottom:12px;"></div>
+  <!-- sync status bar (hidden, auto-shown on connect) -->
+  <div id="syncStatus" style="display:none;font-size:0.85rem;font-weight:600;
+       padding:10px 18px;border-radius:8px;margin-bottom:12px;"></div>
 
-  <!-- STEP 1: BINDING TYPE SELECTION -->
+  <!-- LOAD FILE -->
   <div class="card">
-    <div class="section-title green">📌 Step 1 — Select Binding Type</div>
+    <div class="section-title orange">📂 Load Existing Excel File (Optional)</div>
     <div class="form-body">
-      <div class="type-wrap">
-        <input type="radio" name="bindingType" id="bt_pb" value="Perfect Binding">
-        <label for="bt_pb">📘 Perfect Binding</label>
-        <input type="radio" name="bindingType" id="bt_cp" value="Center Pinning">
-        <label for="bt_cp">📎 Center Pinning</label>
+      <div class="file-input-area" onclick="document.getElementById('fileInput').click()">
+        📎 Click to select new_format.xlsm / .xlsx
       </div>
+      <input type="file" id="fileInput" accept=".xlsx,.xlsm,.xls" onchange="loadExcelFile(event)">
+      <div id="fileStatus" style="font-size:0.82rem;color:#375623;margin-top:4px;"></div>
     </div>
   </div>
 
-  <!-- ENTRY SECTION (locked until connected) -->
+  <!-- BOOK CODE LOOKUP + MANUAL ENTRY (locked until Google Sheet connected) -->
   <div id="entrySection" class="locked">
     <div id="lockOverlay" class="lock-overlay">
       🔒 Google Sheet से connect होने के बाद entry unlock होगी।
     </div>
-    <div id="bindingLockOverlay" class="lock-overlay" style="display:none;">
-      📌 पहले ऊपर <strong>Binding Type</strong> select करें — Perfect Binding या Center Pinning।
-    </div>
 
-  <!-- STEP 2: BOOK CODE LOOKUP -->
   <div class="card">
     <div class="section-title">🔍 Book Code Lookup</div>
     <div class="form-body">
@@ -391,256 +329,199 @@ tr:hover td { background: #eaf5e9; cursor: pointer; }
         <input type="text" id="bookJuje" class="auto-field" readonly
                placeholder="— auto from Juje sheet —">
       </div>
-    </div>
-    <div class="status-bar status-empty" id="statusBar">
-      ℹ️ Select Binding Type above, then enter a Book Code
-    </div>
-  </div>
-
-  <!-- STEP 3: MANUAL ENTRY -->
-  <div class="card">
-    <div class="section-title green">✏️ Entry Details</div>
-    <div class="form-body">
-
-      <!-- Screenshot fields first -->
-      <div class="field-row">
-        <label>Exit Date</label>
-        <input type="date" id="fExitDate">
-      </div>
-      <div class="field-row">
-        <label>Edition</label>
-        <input type="text" id="fEdition" placeholder="e.g. 1st, 2nd, revised...">
-      </div>
-
-      <!-- Size (auto from Book Size list) -->
       <div class="field-row">
         <label>Size (Auto)</label>
         <input type="text" id="bookSize" class="auto-field" readonly
                placeholder="— auto from Book Size list —">
       </div>
-
-
+    </div>
+    <div class="status-bar status-empty" id="statusBar">
+      ℹ️ Enter a Book Code above to begin
     </div>
   </div>
 
-  <!-- STEP 4: PROCESS FIELDS -->
-  <div class="card" id="processCard">
-    <div class="section-title teal" id="processTitle">⚙️ Process Fields</div>
-    <div class="form-body" id="processBody">
+  <!-- MANUAL ENTRY -->
+  <div class="card">
+    <div class="section-title green">✏️ Manual Entry — Columns D, F–N</div>
+    <div class="form-body">
 
-      <!-- === PERFECT BINDING FIELDS === -->
-      <div id="pbFields">
+      <div class="field-row">
+        <label>Exit Date</label>
+        <input type="date" id="fExitDate">
+      </div>
 
-        <!-- Gathering — enabled when Juje = 13,14,15,16 -->
-        <div class="field-row wages-row" id="row_pb_gathering">
-          <label>Gathering <span id="note_pb_gathering" class="disabled-note">(Juje 13-16 only)</span></label>
-          <div class="seg-wrap" id="seg_pb_gathering">
-            <input type="radio" name="pb_gathering" id="pb_gath_y" value="Yes">
-            <label class="yes-lbl" for="pb_gath_y">Yes</label>
-            <input type="radio" name="pb_gathering" id="pb_gath_n" value="No">
-            <label class="no-lbl" for="pb_gath_n">No</label>
-            <input type="radio" name="pb_gathering" id="pb_gath_na" value="NA">
-            <label class="na-lbl" for="pb_gath_na">NA</label>
-          </div>
-          <div class="wages-seg" id="ws_pb_gathering" data-proc="pb_gathering">
-            <input type="radio" name="ws_pb_gathering" id="ws_pb_gath_cb" value="Contract Basis">
-            <label class="cb-lbl" for="ws_pb_gath_cb">Contract</label>
-            <input type="radio" name="ws_pb_gathering" id="ws_pb_gath_dw" value="Daily Wages">
-            <label class="dw-lbl" for="ws_pb_gath_dw">Daily Wages</label>
-          </div>
-        </div>
+      <div class="field-row">
+        <label>Edition (D)</label>
+        <input type="text" id="fEdition" placeholder="e.g. 1st, 2nd, revised...">
+      </div>
 
-        <!-- Muller — enabled when Juje = 13,14,15,17 -->
-        <div class="field-row wages-row" id="row_pb_muller">
-          <label>Muller <span id="note_pb_muller" class="disabled-note">(Juje 13-16 only)</span></label>
-          <div class="seg-wrap" id="seg_pb_muller">
-            <input type="radio" name="pb_muller" id="pb_mull_y" value="Yes">
-            <label class="yes-lbl" for="pb_mull_y">Yes</label>
-            <input type="radio" name="pb_muller" id="pb_mull_n" value="No">
-            <label class="no-lbl" for="pb_mull_n">No</label>
-            <input type="radio" name="pb_muller" id="pb_mull_na" value="NA">
-            <label class="na-lbl" for="pb_mull_na">NA</label>
-          </div>
-          <div class="wages-seg" id="ws_pb_muller" data-proc="pb_muller">
-            <input type="radio" name="ws_pb_muller" id="ws_pb_mull_cb" value="Contract Basis">
-            <label class="cb-lbl" for="ws_pb_mull_cb">Contract</label>
-            <input type="radio" name="ws_pb_muller" id="ws_pb_mull_dw" value="Daily Wages">
-            <label class="dw-lbl" for="ws_pb_mull_dw">Daily Wages</label>
-          </div>
-        </div>
+      <div class="field-row">
+        <label>Contractor (F)</label>
+        <select id="fContractor" onchange="onContractorChange(this.value)">
+          <option value="">— Select Contractor Code —</option>
+          <optgroup label="रवि प्रताप यादव (Ravi Pratap Yadav)">
+  <option value="Ravi-01(Avadh Bihari Chaturvedi)">Ravi-01(Avadh Bihari Chaturvedi)</option>
+  <option value="Ravi-02(Akhilesh Chaturvedi (RB))">Ravi-02(Akhilesh Chaturvedi (RB))</option>
+</optgroup>
+<optgroup label="कार्तिकेय पारीक (Kartikey Pareek)">
+  <option value="Kartikey-01(Gajendra Pratap singh)">Kartikey-01(Gajendra Pratap singh)</option>
+  <option value="Kartikey-02(Jogender Gour)">Kartikey-02(Jogender Gour)</option>
+  <option value="Kartikey-03(Jagdish Yadav (RB))">Kartikey-03(Jagdish Yadav (RB))</option>
+  <option value="Kartikey-04(KPA)">Kartikey-04(KPA)</option>
+</optgroup>
+<optgroup label="वैभव शर्मा (Vaibhav Sharma)">
+  <option value="Vaibhav-01(Jai Prakash Prajapati)">Vaibhav-01(Jai Prakash Prajapati)</option>
+  <option value="Vaibhav-02(Arvind Kumar Tiwari)">Vaibhav-02(Arvind Kumar Tiwari)</option>
+  <option value="Vaibhav-03(Sanjay Kumar)">Vaibhav-03(Sanjay Kumar)</option>
+  <option value="Vaibhav-04(Virender Mishra)">Vaibhav-04(Virender Mishra)</option>
+</optgroup>
+<optgroup label="आनंद शुक्ला (Anand Shukla)">
+  <option value="Anand-01(Vikas)">Anand-01(Vikas)</option>
+  <option value="Anand-02(Kranti Kumar)">Anand-02(Kranti Kumar)</option>
+  <option value="Anand-03(Makkhan)">Anand-03(Makkhan)</option>
+  <option value="Anand-04(Manoj Kumar (RB))">Anand-04(Manoj Kumar (RB))</option>
+  <option value="Anand-05(Akhilesh Chaturvedi (RB))">Anand-05(Akhilesh Chaturvedi (RB))</option>
+</optgroup>
+<optgroup label="नारायण प्रसाद पारीक (Narayan Prasad Pareek)">
+  <option value="Narayan-01(Ravinder Yadav)">Narayan-01(Ravinder Yadav)</option>
+  <option value="Narayan-02(Sudhir Kumar Gupta)">Narayan-02(Sudhir Kumar Gupta)</option>
+  <option value="Narayan-03(Neeraj Kumar Singh)">Narayan-03(Neeraj Kumar Singh)</option>
+</optgroup>
+<optgroup label="By Machine">
+  <option value="By Machine">By Machine</option>
+  <option value="Channel">Channel</option>
+</optgroup>
 
-        <div class="field-row wages-row">
-          <label>Perfect Binding</label>
-          <div class="seg-wrap">
-            <input type="radio" name="pb_binding" id="pb_bind_y" value="Yes">
-            <label class="yes-lbl" for="pb_bind_y">Yes</label>
-            <input type="radio" name="pb_binding" id="pb_bind_n" value="No">
-            <label class="no-lbl" for="pb_bind_n">No</label>
-            <input type="radio" name="pb_binding" id="pb_bind_na" value="NA">
-            <label class="na-lbl" for="pb_bind_na">NA</label>
-          </div>
-          <div class="wages-seg" id="ws_pb_binding" data-proc="pb_binding">
-            <input type="radio" name="ws_pb_binding" id="ws_pb_bind_cb" value="Contract Basis">
-            <label class="cb-lbl" for="ws_pb_bind_cb">Contract</label>
-            <input type="radio" name="ws_pb_binding" id="ws_pb_bind_dw" value="Daily Wages">
-            <label class="dw-lbl" for="ws_pb_bind_dw">Daily Wages</label>
-          </div>
-        </div>
+        </select>
+      </div>
 
-        <div class="field-row wages-row">
-          <label>3 Side Cutting</label>
-          <div class="seg-wrap">
-            <input type="radio" name="pb_3cut" id="pb_3cut_y" value="Yes">
-            <label class="yes-lbl" for="pb_3cut_y">Yes</label>
-            <input type="radio" name="pb_3cut" id="pb_3cut_n" value="No">
-            <label class="no-lbl" for="pb_3cut_n">No</label>
-            <input type="radio" name="pb_3cut" id="pb_3cut_na" value="NA">
-            <label class="na-lbl" for="pb_3cut_na">NA</label>
-          </div>
-          <div class="wages-seg" id="ws_pb_3cut" data-proc="pb_3cut">
-            <input type="radio" name="ws_pb_3cut" id="ws_pb_3cut_cb" value="Contract Basis">
-            <label class="cb-lbl" for="ws_pb_3cut_cb">Contract</label>
-            <input type="radio" name="ws_pb_3cut" id="ws_pb_3cut_dw" value="Daily Wages">
-            <label class="dw-lbl" for="ws_pb_3cut_dw">Daily Wages</label>
-          </div>
-        </div>
-
-        <div class="field-row wages-row">
-          <label>Center Cutting</label>
-          <div class="seg-wrap">
-            <input type="radio" name="pb_ccut" id="pb_ccut_y" value="Yes">
-            <label class="yes-lbl" for="pb_ccut_y">Yes</label>
-            <input type="radio" name="pb_ccut" id="pb_ccut_n" value="No">
-            <label class="no-lbl" for="pb_ccut_n">No</label>
-            <input type="radio" name="pb_ccut" id="pb_ccut_na" value="NA">
-            <label class="na-lbl" for="pb_ccut_na">NA</label>
-          </div>
-          <div class="wages-seg" id="ws_pb_ccut" data-proc="pb_ccut">
-            <input type="radio" name="ws_pb_ccut" id="ws_pb_ccut_cb" value="Contract Basis">
-            <label class="cb-lbl" for="ws_pb_ccut_cb">Contract</label>
-            <input type="radio" name="ws_pb_ccut" id="ws_pb_ccut_dw" value="Daily Wages">
-            <label class="dw-lbl" for="ws_pb_ccut_dw">Daily Wages</label>
-          </div>
-        </div>
-
-        <div class="field-row wages-row">
-          <label>Shrink Pack</label>
-          <div class="seg-wrap">
-            <input type="radio" name="pb_shrink" id="pb_shrink_y" value="Yes">
-            <label class="yes-lbl" for="pb_shrink_y">Yes</label>
-            <input type="radio" name="pb_shrink" id="pb_shrink_n" value="No">
-            <label class="no-lbl" for="pb_shrink_n">No</label>
-            <input type="radio" name="pb_shrink" id="pb_shrink_na" value="NA">
-            <label class="na-lbl" for="pb_shrink_na">NA</label>
-          </div>
-          <div class="wages-seg" id="ws_pb_shrink" data-proc="pb_shrink">
-            <input type="radio" name="ws_pb_shrink" id="ws_pb_shrink_cb" value="Contract Basis">
-            <label class="cb-lbl" for="ws_pb_shrink_cb">Contract</label>
-            <input type="radio" name="ws_pb_shrink" id="ws_pb_shrink_dw" value="Daily Wages">
-            <label class="dw-lbl" for="ws_pb_shrink_dw">Daily Wages</label>
-          </div>
-        </div>
-
-      </div><!-- /pbFields -->
-
-      <!-- === CENTER PINNING FIELDS === -->
-      <div id="cpFields" style="display:none;">
-
-        <div class="field-row wages-row">
-          <label>Pinning / Flowline</label>
-          <div class="seg-wrap">
-            <input type="radio" name="cp_pinning" id="cp_pin_y" value="Yes">
-            <label class="yes-lbl" for="cp_pin_y">Yes</label>
-            <input type="radio" name="cp_pinning" id="cp_pin_n" value="No">
-            <label class="no-lbl" for="cp_pin_n">No</label>
-            <input type="radio" name="cp_pinning" id="cp_pin_na" value="NA">
-            <label class="na-lbl" for="cp_pin_na">NA</label>
-          </div>
-          <div class="wages-seg" id="ws_cp_pinning" data-proc="cp_pinning">
-            <input type="radio" name="ws_cp_pinning" id="ws_cp_pin_cb" value="Contract Basis">
-            <label class="cb-lbl" for="ws_cp_pin_cb">Contract</label>
-            <input type="radio" name="ws_cp_pinning" id="ws_cp_pin_dw" value="Daily Wages">
-            <label class="dw-lbl" for="ws_cp_pin_dw">Daily Wages</label>
-          </div>
-        </div>
-
-        <div class="field-row wages-row">
-          <label>Shrink Pack</label>
-          <div class="seg-wrap">
-            <input type="radio" name="cp_shrink" id="cp_shrink_y" value="Yes">
-            <label class="yes-lbl" for="cp_shrink_y">Yes</label>
-            <input type="radio" name="cp_shrink" id="cp_shrink_n" value="No">
-            <label class="no-lbl" for="cp_shrink_n">No</label>
-            <input type="radio" name="cp_shrink" id="cp_shrink_na" value="NA">
-            <label class="na-lbl" for="cp_shrink_na">NA</label>
-          </div>
-          <div class="wages-seg" id="ws_cp_shrink" data-proc="cp_shrink">
-            <input type="radio" name="ws_cp_shrink" id="ws_cp_shrink_cb" value="Contract Basis">
-            <label class="cb-lbl" for="ws_cp_shrink_cb">Contract</label>
-            <input type="radio" name="ws_cp_shrink" id="ws_cp_shrink_dw" value="Daily Wages">
-            <label class="dw-lbl" for="ws_cp_shrink_dw">Daily Wages</label>
-          </div>
-        </div>
-
-        <div class="field-row wages-row">
-          <label>Carton Pack</label>
-          <div class="seg-wrap">
-            <input type="radio" name="cp_carton" id="cp_cart_y" value="Yes">
-            <label class="yes-lbl" for="cp_cart_y">Yes</label>
-            <input type="radio" name="cp_carton" id="cp_cart_n" value="No">
-            <label class="no-lbl" for="cp_cart_n">No</label>
-            <input type="radio" name="cp_carton" id="cp_cart_na" value="NA">
-            <label class="na-lbl" for="cp_cart_na">NA</label>
-          </div>
-          <div class="wages-seg" id="ws_cp_carton" data-proc="cp_carton">
-            <input type="radio" name="ws_cp_carton" id="ws_cp_cart_cb" value="Contract Basis">
-            <label class="cb-lbl" for="ws_cp_cart_cb">Contract</label>
-            <input type="radio" name="ws_cp_carton" id="ws_cp_cart_dw" value="Daily Wages">
-            <label class="dw-lbl" for="ws_cp_cart_dw">Daily Wages</label>
-          </div>
-        </div>
-
-      </div><!-- /cpFields -->
-
-      <!-- Common footer fields -->
-      <div style="border-top:1px solid #e8eff6; margin-top:14px; padding-top:14px;">
-        <div class="field-row">
-          <label>Rate</label>
-          <input type="number" id="fRate" placeholder="0.00" min="0" step="0.01">
-        </div>
-        <div class="field-row">
-          <label>Total Quantity</label>
-          <input type="number" id="fTotalQty" placeholder="0" min="0">
+      <div class="field-row">
+        <label>Dhala (G)</label>
+        <div class="seg-wrap" id="grp_dhala">
+          <input type="radio" name="dhala" id="dh_yes" value="Yes">
+          <label class="yes-lbl" for="dh_yes">Yes</label>
+          <input type="radio" name="dhala" id="dh_no" value="No">
+          <label class="no-lbl" for="dh_no">No</label>
+          <input type="radio" name="dhala" id="dh_na" value="NA">
+          <label class="na-lbl" for="dh_na">NA</label>
         </div>
       </div>
 
-    </div><!-- /form-body -->
+      <div class="field-row">
+        <label>Head / Tail (H)</label>
+        <div class="seg-wrap">
+          <input type="radio" name="headtail" id="ht_head" value="Head">
+          <label for="ht_head">Head</label>
+          <input type="radio" name="headtail" id="ht_tail" value="Tail">
+          <label for="ht_tail">Tail</label>
+          <input type="radio" name="headtail" id="ht_both" value="Head &amp; Tail">
+          <label for="ht_both">Head &amp; Tail</label>
+          <input type="radio" name="headtail" id="ht_no" value="No">
+          <label for="ht_no">No</label>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <label>Book Mark (I)</label>
+        <div class="seg-wrap" id="grp_bookmark">
+          <input type="radio" name="bookmark" id="bm_yes" value="Yes">
+          <label class="yes-lbl" for="bm_yes">Yes</label>
+          <input type="radio" name="bookmark" id="bm_no" value="No">
+          <label class="no-lbl" for="bm_no">No</label>
+          <input type="radio" name="bookmark" id="bm_na" value="NA">
+          <label class="na-lbl" for="bm_na">NA</label>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <label>Binding (J)</label>
+        <div class="seg-wrap" id="grp_binding">
+          <input type="radio" name="binding" id="bd_yes" value="Yes">
+          <label class="yes-lbl" for="bd_yes">Yes</label>
+          <input type="radio" name="binding" id="bd_no" value="No">
+          <label class="no-lbl" for="bd_no">No</label>
+          <input type="radio" name="binding" id="bd_na" value="NA">
+          <label class="na-lbl" for="bd_na">NA</label>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <label>Jacket (K)</label>
+        <div class="seg-wrap" id="grp_jacket">
+          <input type="radio" name="jacket" id="jk_yes" value="Yes">
+          <label class="yes-lbl" for="jk_yes">Yes</label>
+          <input type="radio" name="jacket" id="jk_no" value="No">
+          <label class="no-lbl" for="jk_no">No</label>
+          <input type="radio" name="jacket" id="jk_na" value="NA">
+          <label class="na-lbl" for="jk_na">NA</label>
+        </div>
+      </div>
+
+      <!-- PANNI — auto from Panni sheet -->
+      <div class="field-row">
+        <label>Panni (L)</label>
+        <div class="seg-wrap" id="grp_panni">
+          <input type="radio" name="panni" id="pn_yes" value="Yes">
+          <label class="yes-lbl" for="pn_yes">Yes</label>
+          <input type="radio" name="panni" id="pn_no" value="No">
+          <label class="no-lbl" for="pn_no">No</label>
+          <input type="radio" name="panni" id="pn_na" value="NA">
+          <label class="na-lbl" for="pn_na">NA</label>
+        </div>
+      </div>
+
+      <!-- BOX — auto from Box sheet -->
+      <div class="field-row">
+        <label>Box (M)</label>
+        <div class="seg-wrap" id="grp_box">
+          <input type="radio" name="box" id="bx_yes" value="Yes">
+          <label class="yes-lbl" for="bx_yes">Yes</label>
+          <input type="radio" name="box" id="bx_no" value="No">
+          <label class="no-lbl" for="bx_no">No</label>
+          <input type="radio" name="box" id="bx_na" value="NA">
+          <label class="na-lbl" for="bx_na">NA</label>
+        </div>
+      </div>
+
+
+      <div class="field-row">
+        <label>Rate</label>
+        <input type="number" id="fRate" placeholder="0.00" min="0" step="0.01">
+      </div>
+
+      <div class="field-row">
+        <label>Total Quantity</label>
+        <input type="number" id="fTotalQty" placeholder="0" min="0">
+      </div>
+
+    </div>
 
     <div class="btn-row">
       <button class="btn-save"   onclick="saveRecord()">💾 Save Record</button>
       <button class="btn-clear"  onclick="clearForm()">🗑️ Clear</button>
       <button class="btn-export" onclick="exportToExcel()">📥 Export to Excel</button>
     </div>
-  </div><!-- /process card -->
+  </div>
 
   </div><!-- /entrySection -->
 
   <!-- RECORDS TABLE -->
   <div class="card">
-    <div class="section-title green">📋 Saved Records This Session</div>
+    <div class="section-title">📋 Saved Records This Session</div>
     <div class="record-count" id="recordCount">0 records saved</div>
     <div style="overflow-x:auto;">
       <table>
         <thead>
           <tr>
-            <th>S.N.</th><th>Type</th><th>Code</th><th>Name</th>
-            <th>Exit Date</th><th>Edition</th><th>Size</th>
-            <th>Process Fields</th>
+            <th>S.N.</th><th>Exit Date</th><th>Book Code</th><th>Name</th>
+            <th>Edition</th><th>Contractor</th><th>Dhala</th>
+            <th>H/T</th><th>BkMk</th><th>Binding</th>
+            <th>Jacket</th><th>Panni</th><th>Box</th>
             <th>Rate</th><th>Total Qty</th><th>Entry Date</th>
           </tr>
         </thead>
         <tbody id="recordsBody">
-          <tr><td colspan="12" style="text-align:center;color:#aaa;padding:20px;">
+          <tr><td colspan="16" style="text-align:center;color:#aaa;padding:20px;">
             No records yet. Fill the form and click Save.
           </td></tr>
         </tbody>
@@ -674,7 +555,7 @@ tr:hover td { background: #eaf5e9; cursor: pointer; }
     </div>
   </div>
 
-</div><!-- /container -->
+</div>
 
 <script>
 // ── SUPABASE ─────────────────────────────────────────────────────
@@ -915,16 +796,8 @@ async function connectDb() {
     await sbFetch('books?select=code&limit=1');
     setSyncStatus('synced', 'Database से जुड़ गए — entry शुरू करें।');
     loadToday();
-    dbConnected = true;
-    const lo = document.getElementById('lockOverlay');
-    if (lo) lo.style.display = 'none';
-    const bl = document.getElementById('bindingLockOverlay');
-    if (bl) bl.style.display = '';
-    if (document.querySelector('input[name="bindingType"]:checked')) {
-      document.getElementById('entrySection').classList.remove('locked');
-      if (bl) bl.style.display = 'none';
-      document.getElementById('bookCode').disabled = false;
-    }
+    document.getElementById('entrySection').classList.remove('locked');
+    document.getElementById('bookCode').disabled = false;
   } catch (err) {
     setSyncStatus('error', 'Database से नहीं जुड़ सके: ' + err.message);
   }
@@ -959,6 +832,7 @@ function lookupBook() {
   ['bookName','bookJuje','bookSize'].forEach(function (i) {
     const el = document.getElementById(i); if (el) el.value = '';
   });
+  clearRadio('panni'); clearRadio('box');
   
   if (!code) {
     bar.className = 'status-bar status-empty';
@@ -975,7 +849,7 @@ async function fetchBook(code) {
   const seq = ++inflight;
   try {
     const rows = await sbFetch('books?code=eq.' + encodeURIComponent(code) +
-                               '&select=code,name,juje,size&limit=1');
+                               '&select=code,name,juje,size,panni,box&limit=1');
     if (seq !== inflight || document.getElementById('bookCode').value.trim() !== code) return;
     const b = (rows || [])[0];
     if (!b) {
@@ -987,7 +861,10 @@ async function fetchBook(code) {
     document.getElementById('bookJuje').value = (b.juje == null ? '' : b.juje);
     const sz = document.getElementById('bookSize');
     if (sz) sz.value = b.size || '';
-    applyConditionalFields();
+    // Panni और Box किताब के झंडों से — पहले ये HTML में embedded सूचियाँ थीं
+    setRadio('panni', b.panni ? 'Yes' : 'No');
+    setRadio('box',   b.box   ? 'Yes' : 'No');
+    
     bar.className = 'status-bar status-found';
     bar.textContent = '✅ Book मिली! ब्यौरा भरकर Save करें।';
   } catch (err) {
@@ -997,183 +874,56 @@ async function fetchBook(code) {
   }
 }
 
-// ── CONTRACTOR LIST (database से — एक बार) ─────────────────────────
-let CONTRACTORS = [];
-async function loadContractors() {
-  try {
-    const rows = await sbFetch('contractors?select=code,group_name&order=group_name,code');
-    const byGroup = {};
-    (rows || []).forEach(function (r) {
-      const g = r.group_name || 'अन्य';
-      (byGroup[g] = byGroup[g] || []).push(r.code);
-    });
-    CONTRACTORS = Object.keys(byGroup).map(function (g) { return { g: g, o: byGroup[g] }; });
-  } catch (err) { console.warn('contractors not loaded:', err); }
-}
-function buildContractorOptions() {
-  return '<option value="">— Select Contractor —</option>' +
-    CONTRACTORS.map(function (g) {
-      return '<optgroup label="' + g.g + '">' +
-        g.o.map(function (o) { return '<option value="' + o + '">' + o + '</option>'; }).join('') +
-        '</optgroup>';
-    }).join('');
-}
+// ── मशीन वाले contractor ─────────────────────────────────────────
+// 'By Machine' group के सभी विकल्प — इन पर पाँच fields अपने आप भरते हैं
+// और row main_entry के बजाय by_machine table में जाती है.
+// नया मशीन विकल्प जोड़ें तो उसका नाम यहाँ भी डालना होगा.
+const BY_MACHINE = ['By Machine', 'Channel'];
+function isByMachine(v) { return BY_MACHINE.indexOf(v) !== -1; }
 
-// हर wages-seg के नीचे उसका contractor sub-row बनाओ
-function buildContractorSubRows() {
-  document.querySelectorAll('.wages-seg[data-proc]').forEach(function (wsEl) {
-    const proc = wsEl.dataset.proc;
-    if (document.getElementById('con_' + proc)) return;
-    const div = document.createElement('div');
-    div.className = 'con-sub';
-    div.id = 'con_' + proc;
-    div.innerHTML = '<label>↳ Contractor</label><select id="cs_' + proc + '">' +
-                    buildContractorOptions() + '</select><div></div>';
-    const parentRow = wsEl.closest('.field-row');
-    if (parentRow && parentRow.parentNode) parentRow.parentNode.insertBefore(div, parentRow.nextSibling);
-  });
-}
-
-function bindWagesToggle(radioName, wagesId) {
-  const wsEl = document.getElementById(wagesId);
-  const proc = wsEl && wsEl.dataset ? wsEl.dataset.proc : null;
-  document.querySelectorAll('input[name="' + radioName + '"]').forEach(function (r) {
-    r.addEventListener('change', function () {
-      if (r.value === 'Yes') { wsEl.classList.add('active'); }
-      else {
-        wsEl.classList.remove('active');
-        wsEl.querySelectorAll('input[type=radio]').forEach(function (w) { w.checked = false; });
-        const con = proc ? document.getElementById('con_' + proc) : null;
-        const cs  = proc ? document.getElementById('cs_'  + proc) : null;
-        if (con) con.classList.remove('visible');
-        if (cs)  cs.value = '';
-      }
-    });
-  });
-  if (wsEl) wsEl.querySelectorAll('input[type=radio]').forEach(function (r) {
-    r.addEventListener('change', function () {
-      const con = proc ? document.getElementById('con_' + proc) : null;
-      const cs  = proc ? document.getElementById('cs_'  + proc) : null;
-      if (!con) return;
-      if (r.value === 'Contract Basis') { con.classList.add('visible'); }
-      else { con.classList.remove('visible'); if (cs) cs.value = ''; }
-    });
-  });
-}
-
-const wagesBindings = [
-  ['pb_gathering','ws_pb_gathering'], ['pb_muller','ws_pb_muller'],
-  ['pb_binding','ws_pb_binding'],     ['pb_3cut','ws_pb_3cut'],
-  ['pb_ccut','ws_pb_ccut'],           ['pb_shrink','ws_pb_shrink'],
-  ['cp_pinning','ws_cp_pinning'],     ['cp_shrink','ws_cp_shrink'],
-  ['cp_carton','ws_cp_carton']
-];
-
-function getContractor(proc) {
-  const el = document.getElementById('cs_' + proc);
-  return el ? (el.value || null) : null;
-}
-
-// ── BINDING TYPE ─────────────────────────────────────────────────
-let dbConnected = false;
-document.querySelectorAll('input[name="bindingType"]').forEach(function (r) {
-  r.addEventListener('change', function () {
-    const isPB = r.value === 'Perfect Binding';
-    document.getElementById('pbFields').style.display = isPB ? 'block' : 'none';
-    document.getElementById('cpFields').style.display = isPB ? 'none' : 'block';
-    document.getElementById('processTitle').textContent =
-      isPB ? '⚙️ Perfect Binding — Process Fields' : '⚙️ Center Pinning — Process Fields';
-    if (dbConnected) {
-      document.getElementById('entrySection').classList.remove('locked');
-      const bl = document.getElementById('bindingLockOverlay');
-      if (bl) bl.style.display = 'none';
-      document.getElementById('bookCode').disabled = false;
-      document.getElementById('bookCode').focus();
-    }
-    applyConditionalFields();
-  });
-});
-
-// Gathering और Muller सिर्फ़ Juje 13–16 पर लागू
-const GATHERING_JUJE = ['13','14','15','16'];
-const MULLER_JUJE    = ['13','14','15','16'];
-function applyConditionalFields() {
-  const juje = String(document.getElementById('bookJuje').value).trim();
-  const isPB = (document.querySelector('input[name="bindingType"]:checked') || {}).value === 'Perfect Binding';
-  [['gathering', GATHERING_JUJE, 'seg_pb_gathering', 'note_pb_gathering', 'pb_gathering', 'ws_pb_gathering'],
-   ['muller',    MULLER_JUJE,    'seg_pb_muller',    'note_pb_muller',    'pb_muller',    'ws_pb_muller']]
-  .forEach(function (x) {
-    const ok = x[1].indexOf(juje) !== -1;
-    const seg = document.getElementById(x[2]);
-    const nt  = document.getElementById(x[3]);
-    const enable = isPB && ok;
-    if (seg) { seg.style.opacity = enable ? '1' : '0.35'; seg.style.pointerEvents = enable ? 'all' : 'none'; }
-    if (nt) nt.style.display = ok ? 'none' : 'inline';
-    if (!enable) {
-      clearRadio(x[4]);
-      const ws = document.getElementById(x[5]);
-      if (ws) ws.classList.remove('active');
-      const con = document.getElementById('con_' + x[4]);
-      if (con) con.classList.remove('visible');
-      const cs = document.getElementById('cs_' + x[4]);
-      if (cs) cs.value = '';
-    }
-  });
+// Panni और Box जान-बूझकर नहीं छूते — वो किताब के हिसाब से भरते हैं,
+// contractor के हिसाब से नहीं
+function onContractorChange(val) {
+  if (isByMachine(val)) {
+    setRadio('dhala',    'Yes');
+    setRadio('headtail', 'Head & Tail');
+    setRadio('bookmark', 'Yes');
+    setRadio('binding',  'Yes');
+    setRadio('jacket',   'Yes');
+  }
 }
 
 // ── SAVE ─────────────────────────────────────────────────────────
+// contractor 'By Machine' हो तो row by_machine table में जाती है,
+// वरना main_entry में — पहले Apps Script यही फ़ैसला करता था
 async function saveRecord() {
   if (!requireOperator()) return;
-  const bindingType = getRadio('bindingType');
-  if (!bindingType) { alert('पहले Binding Type चुनें।'); return; }
   const code = document.getElementById('bookCode').value.trim();
   if (!code) { alert('Book Code डालें।'); return; }
   if (!document.getElementById('bookName').value) { alert('Book Code नहीं मिला।'); return; }
 
-  const isPB  = bindingType === 'Perfect Binding';
-  const table = isPB ? 'perfect_binding' : 'center_pinning';
-  const base = {
-    exit_date: document.getElementById('fExitDate').value || null,
-    book_code: code,
-    name:      document.getElementById('bookName').value,
-    juje:      document.getElementById('bookJuje').value || null,
-    edition:   txtOrNull('fEdition'),
-    size:      document.getElementById('bookSize').value || null,
-    rate:      numOrNull('fRate'),
-    total_qty: numOrNull('fTotalQty'),
+  const contractor = document.getElementById('fContractor').value;
+  const table = isByMachine(contractor) ? 'by_machine' : 'main_entry';
+
+  const payload = {
+    exit_date:  document.getElementById('fExitDate').value || null,
+    book_code:  code,
+    name:       document.getElementById('bookName').value,
+    edition:    txtOrNull('fEdition'),
+    juje:       document.getElementById('bookJuje').value || null,
+    size:       document.getElementById('bookSize').value || null,
+    contractor: contractor || null,
+    dhala:      getRadio('dhala')     || null,
+    head_tail:  getRadio('headtail')  || null,
+    book_mark:  getRadio('bookmark')  || null,
+    binding:    getRadio('binding')   || null,
+    jacket:     getRadio('jacket')    || null,
+    panni:      getRadio('panni')     || null,
+    box:        getRadio('box')       || null,
+    rate:       numOrNull('fRate'),
+    total_qty:  numOrNull('fTotalQty'),
     entered_by: operatorName()
   };
-  const proc = isPB ? {
-    gathering: getRadio('pb_gathering') || null,
-    gathering_wages: getRadio('ws_pb_gathering') || null,
-    gathering_contractor: getContractor('pb_gathering'),
-    muller: getRadio('pb_muller') || null,
-    muller_wages: getRadio('ws_pb_muller') || null,
-    muller_contractor: getContractor('pb_muller'),
-    perfect_binding: getRadio('pb_binding') || null,
-    binding_wages: getRadio('ws_pb_binding') || null,
-    binding_contractor: getContractor('pb_binding'),
-    cut_3side: getRadio('pb_3cut') || null,
-    cut_3side_wages: getRadio('ws_pb_3cut') || null,
-    cut_3side_contractor: getContractor('pb_3cut'),
-    center_cutting: getRadio('pb_ccut') || null,
-    center_cut_wages: getRadio('ws_pb_ccut') || null,
-    center_cut_contractor: getContractor('pb_ccut'),
-    shrink_pack: getRadio('pb_shrink') || null,
-    shrink_wages: getRadio('ws_pb_shrink') || null,
-    shrink_contractor: getContractor('pb_shrink')
-  } : {
-    pinning_flowline: getRadio('cp_pinning') || null,
-    pinning_wages: getRadio('ws_cp_pinning') || null,
-    pinning_contractor: getContractor('cp_pinning'),
-    shrink_pack: getRadio('cp_shrink') || null,
-    shrink_wages: getRadio('ws_cp_shrink') || null,
-    shrink_contractor: getContractor('cp_shrink'),
-    carton_pack: getRadio('cp_carton') || null,
-    carton_wages: getRadio('ws_cp_carton') || null,
-    carton_contractor: getContractor('cp_carton')
-  };
-  const payload = Object.assign({}, base, proc);
 
   setSyncStatus('saving');
   let saved;
@@ -1190,21 +940,20 @@ async function saveRecord() {
   }
 
   records.push({
-    sn: saved.id, bindingType: bindingType, code: saved.book_code, name: saved.name,
-    juje: saved.juje, edition: saved.edition, size: saved.size,
-    exitDate: saved.exit_date, rate: saved.rate, totalQty: saved.total_qty,
-    binding: isPB ? saved.perfect_binding : null,
-    cut3side: isPB ? saved.cut_3side : null,
-    pinning: isPB ? null : saved.pinning_flowline,
-    carton: isPB ? null : saved.carton_pack,
-    enteredBy: saved.entered_by, entryDate: saved.entry_date, raw: saved
+    sn: saved.id, table: table, exitDate: saved.exit_date, code: saved.book_code,
+    name: saved.name, edition: saved.edition, juje: saved.juje, size: saved.size,
+    contractor: saved.contractor, dhala: saved.dhala, ht: saved.head_tail,
+    bm: saved.book_mark, binding: saved.binding, jacket: saved.jacket,
+    panni: saved.panni, box_yn: saved.box, rate: saved.rate, totalQty: saved.total_qty,
+    enteredBy: saved.entered_by, entryDate: saved.entry_date
   });
   renderTable();
   loadToday();
-  setSyncStatus('synced', 'Save हुआ — S.N. ' + saved.id + ' (' + bindingType + ')');
+  setSyncStatus('synced', 'Save हुआ — S.N. ' + saved.id + ' (' +
+    (table === 'by_machine' ? contractor : 'Main') + ')');
   const bar = document.getElementById('statusBar');
   bar.className = 'status-bar status-saved';
-  bar.textContent = '✅ Saved! ' + code + ' — S.N. ' + saved.id;
+  bar.textContent = '✅ Saved! Book Code ' + code + ' — S.N. ' + saved.id;
   clearForm();
 }
 
@@ -1212,35 +961,39 @@ function renderTable() {
   document.getElementById('recordCount').textContent = records.length + ' record(s) saved';
   const tb = document.getElementById('recordsBody');
   if (!records.length) {
-    tb.innerHTML = '<tr><td colspan="11" style="text-align:center;color:#aaa;padding:20px;">No records yet.</td></tr>';
+    tb.innerHTML = '<tr><td colspan="16" style="text-align:center;color:#aaa;padding:20px;">No records yet.</td></tr>';
     return;
   }
   const d = function (v) { return (v == null || v === '') ? '—' : v; };
   tb.innerHTML = records.map(function (r, i) {
-    const summary = (r.bindingType === 'Perfect Binding')
-      ? ('Bind:' + d(r.binding) + ' 3Cut:' + d(r.cut3side))
-      : ('Pin:' + d(r.pinning) + ' Cart:' + d(r.carton));
     return '<tr onclick="editRecord(' + i + ')" title="Click to reuse">' +
       '<td>' + r.sn + '</td>' +
-      '<td style="font-weight:600">' + (r.bindingType === 'Perfect Binding' ? 'PB' : 'CP') + '</td>' +
+      '<td>' + d(r.exitDate) + '</td>' +
       '<td><strong>' + r.code + '</strong></td>' +
       '<td title="' + r.name + '">' + String(r.name).substring(0, 18) + (String(r.name).length > 18 ? '…' : '') + '</td>' +
-      '<td>' + d(r.exitDate) + '</td>' +
       '<td>' + d(r.edition) + '</td>' +
+      '<td>' + d(r.juje) + '</td>' +
       '<td>' + d(r.size) + '</td>' +
-      '<td>' + summary + '</td>' +
-      '<td>' + (r.rate == null ? '—' : r.rate) + '</td>' +
-      '<td>' + (r.totalQty == null ? '—' : inr(r.totalQty)) + '</td>' +
+      '<td>' + String(d(r.contractor)).substring(0, 14) + '</td>' +
+      '<td>' + d(r.dhala) + '</td>' +
+      '<td>' + d(r.ht) + '</td>' +
+      '<td>' + d(r.bm) + '</td>' +
+      '<td>' + d(r.binding) + '</td>' +
+      '<td>' + d(r.jacket) + '</td>' +
+      '<td>' + d(r.panni) + '</td>' +
+      '<td>' + d(r.box_yn) + '</td>' +
       '<td>' + d(r.entryDate) + '</td></tr>';
   }).join('');
 }
 
+// RLS में UPDATE की अनुमति नहीं — यह सिर्फ़ उसी book के लिए form भरता है
 function editRecord(i) {
   const r = records[i];
   document.getElementById('bookCode').value = r.code;
   lookupBook();
   document.getElementById('fExitDate').value = r.exitDate || '';
   document.getElementById('fEdition').value = r.edition || '';
+  document.getElementById('fContractor').value = r.contractor || '';
   const bar = document.getElementById('statusBar');
   bar.className = 'status-bar status-saved';
   bar.textContent = 'ℹ️ S.N. ' + r.sn + ' पहले से दर्ज है — form उसी book के लिए भर दिया, नई entry करें';
@@ -1250,15 +1003,8 @@ function editRecord(i) {
 function clearForm() {
   ['bookCode','bookName','bookJuje','bookSize','fExitDate','fEdition','fRate','fTotalQty']
     .forEach(function (id) { const el = document.getElementById(id); if (el) el.value = ''; });
-  ['pb_gathering','pb_muller','pb_binding','pb_3cut','pb_ccut','pb_shrink',
-   'ws_pb_gathering','ws_pb_muller','ws_pb_binding','ws_pb_3cut','ws_pb_ccut','ws_pb_shrink',
-   'cp_pinning','cp_shrink','cp_carton',
-   'ws_cp_pinning','ws_cp_shrink','ws_cp_carton'].forEach(clearRadio);
-  document.querySelectorAll('.wages-seg').forEach(function (el) { el.classList.remove('active'); });
-  document.querySelectorAll('.con-sub').forEach(function (el) {
-    el.classList.remove('visible');
-    const s = el.querySelector('select'); if (s) s.value = '';
-  });
+  document.getElementById('fContractor').value = '';
+  ['dhala','headtail','bookmark','binding','jacket','panni','box'].forEach(clearRadio);
   const bar = document.getElementById('statusBar');
   bar.className = 'status-bar status-empty';
   bar.textContent = 'ℹ️ Form cleared. नया Book Code डालें।';
@@ -1268,7 +1014,7 @@ function clearForm() {
 // ── आज की मेरी entries + रद्द करना ────────────────────────────────
 // रद्द करने पर row मिटती नहीं — cancelled का झंडा लगता है, कारण और
 // किसने-कब दर्ज होता है। Reconcile और dashboard उसे गिनना छोड़ देते हैं।
-const CANCEL_TABLES = ['perfect_binding', 'center_pinning'];
+const CANCEL_TABLES = ['main_entry', 'by_machine'];
 const QTY_COL = 'total_qty';
 const EDN_COL = 'edition';
 let todayRows = [];
@@ -1345,58 +1091,36 @@ async function cancelRow(i) {
 
 async function exportToExcel() {
   if (!records.length) { alert('No records to export.'); return; }
-  const pbH = ['S.N.','Exit Date','Book Code','Name','Juje','Edition','Size',
-    'Gathering','Gathering Wages','Gathering Contractor','Muller','Muller Wages','Muller Contractor',
-    'Perfect Binding','Binding Wages','Binding Contractor',
-    '3 Side Cutting','3 Side Cut Wages','3 Side Cut Contractor',
-    'Center Cutting','Center Cut Wages','Center Cut Contractor',
-    'Shrink Pack','Shrink Wages','Shrink Contractor','Rate','Total Qty','Entered By','Entry Date'];
-  const cpH = ['S.N.','Exit Date','Book Code','Name','Juje','Edition','Size',
-    'Pinning/Flowline','Pinning Wages','Pinning Contractor',
-    'Shrink Pack','Shrink Wages','Shrink Contractor',
-    'Carton Pack','Carton Wages','Carton Contractor','Rate','Total Qty','Entered By','Entry Date'];
+  const headers = ['S.N.','Exit Date','Book Code','Name','Edition','Juje','Size','Contractor',
+                   'Dhala','Head/Tail','Book Mark','Binding','Jacket','Panni','Box',
+                   'Rate','Total Qty','Entered By','Entry Date'];
+  const widths = [6,14,14,38,12,8,14,22,10,14,12,24,10,10,8,10,12,20,14];
+  const num = function (v) { return v == null ? '' : Number(v); };
   const wb = new ExcelJS.Workbook();
-  function sheet(name, headers, rows, argb, tint) {
-    if (!rows.length) return;
-    const ws = wb.addWorksheet(name, { views: [{ state: 'frozen', ySplit: 1 }] });
-    ws.columns = headers.map(function (h) { return { header: h, key: h, width: h.length < 10 ? 12 : h.length + 4 }; });
-    const hr = ws.getRow(1); hr.height = 24;
-    hr.eachCell(function (c) {
-      c.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 10, name: 'Arial' };
-      c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: argb } };
-      c.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
+  const ws = wb.addWorksheet('Main', { views: [{ state: 'frozen', ySplit: 1 }] });
+  ws.columns = headers.map(function (h, i) { return { header: h, key: h, width: widths[i] }; });
+  const hr = ws.getRow(1); hr.height = 22;
+  hr.eachCell(function (c) {
+    c.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 10, name: 'Arial' };
+    c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F6F4A' } };
+    c.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
+  });
+  records.forEach(function (r, i) {
+    const row = ws.addRow([r.sn, r.exitDate, r.code, r.name, r.edition, r.juje, r.size, r.contractor,
+      r.dhala, r.ht, r.bm, r.binding, r.jacket, r.panni, r.box_yn,
+      num(r.rate), num(r.totalQty), r.enteredBy, r.entryDate]);
+    row.height = 16;
+    if (i % 2 === 0) row.eachCell({ includeEmpty: true }, function (c) {
+      c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE6F4EC' } };
+      c.font = { name: 'Arial', size: 9 };
     });
-    rows.forEach(function (r, i) {
-      const s = r.raw;
-      const vals = (name === 'Perfect Binding')
-        ? [s.id, s.exit_date, s.book_code, s.name, s.juje, s.edition, s.size,
-           s.gathering, s.gathering_wages, s.gathering_contractor,
-           s.muller, s.muller_wages, s.muller_contractor,
-           s.perfect_binding, s.binding_wages, s.binding_contractor,
-           s.cut_3side, s.cut_3side_wages, s.cut_3side_contractor,
-           s.center_cutting, s.center_cut_wages, s.center_cut_contractor,
-           s.shrink_pack, s.shrink_wages, s.shrink_contractor,
-           s.rate, s.total_qty, s.entered_by, s.entry_date]
-        : [s.id, s.exit_date, s.book_code, s.name, s.juje, s.edition, s.size,
-           s.pinning_flowline, s.pinning_wages, s.pinning_contractor,
-           s.shrink_pack, s.shrink_wages, s.shrink_contractor,
-           s.carton_pack, s.carton_wages, s.carton_contractor,
-           s.rate, s.total_qty, s.entered_by, s.entry_date];
-      const row = ws.addRow(vals);
-      row.height = 16;
-      if (i % 2 === 0) row.eachCell({ includeEmpty: true }, function (c) {
-        c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: tint } };
-        c.font = { name: 'Arial', size: 9 };
-      });
-    });
-  }
-  sheet('Perfect Binding', pbH, records.filter(function (r) { return r.bindingType === 'Perfect Binding'; }), 'FF1F6F4A', 'FFE6F4EC');
-  sheet('Center Pinning',  cpH, records.filter(function (r) { return r.bindingType === 'Center Pinning'; }),  'FF2F9D69', 'FFEAF7F0');
+  });
+  ws.autoFilter = { from: 'A1', to: 'S1' };
   const buf = await wb.xlsx.writeBuffer();
   const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url; a.download = 'SoftBound_' + new Date().toISOString().slice(0, 10) + '.xlsx';
+  a.href = url; a.download = 'Main_' + new Date().toISOString().slice(0, 10) + '.xlsx';
   a.click(); URL.revokeObjectURL(url);
 }
 
@@ -1404,12 +1128,7 @@ window.addEventListener('load', async function () {
   authLoad(); authWireGate(); pwdWire();
   if (!session) { authShowGate(); return; }
   if (!(await authToken())) { authShowGate('Session खत्म हो गया — दोबारा login करें।'); return; }
-  authPaintUser();
-  await loadContractors();
-  buildContractorSubRows();
-  wagesBindings.forEach(function (x) { bindWagesToggle(x[0], x[1]); });
-  await connectDb();
-});
+  authPaintUser(); connectDb(); });
 </script>
 </body>
 </html>
