@@ -648,6 +648,32 @@ tr:hover td { background: #eaf5e9; cursor: pointer; }
     </div>
   </div>
 
+  <!-- ── आज की मेरी entries — रद्द करने के लिए ─────────────────── -->
+  <div class="card">
+    <div class="section-title" style="background:#5a3d5c;">🕐 आज की मेरी entries</div>
+    <div class="record-count">
+      <span id="todayCount">—</span>
+      <button onclick="loadToday()" style="padding:4px 12px;background:#5a3d5c;color:#fff;
+              border:none;border-radius:6px;font-size:.76rem;font-weight:700;cursor:pointer;">
+        🔄 दोबारा पढ़ें</button>
+    </div>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr>
+          <th>S.N.</th><th>Book Code</th><th>Name</th><th>Edition</th>
+          <th class="num">मात्रा</th><th>रद्द करें</th>
+        </tr></thead>
+        <tbody id="todayBody">
+          <tr><td colspan="6" style="text-align:center;color:#aaa;padding:18px;">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="padding:0 18px 14px;font-size:.76rem;color:#7a8a99;line-height:1.6;">
+      सिर्फ़ आज की, अपनी ही entry रद्द हो सकती है। रद्द row मिटती नहीं — निशान लगा रहता है,
+      और हिसाब में गिनी नहीं जाती। पुरानी entry के लिए व्यवस्थापक से कहें।
+    </div>
+  </div>
+
 </div><!-- /container -->
 
 <script>
@@ -887,6 +913,7 @@ async function connectDb() {
   try {
     await sbFetch('books?select=code&limit=1');
     setSyncStatus('synced', 'Database से जुड़ गए — entry शुरू करें।');
+    loadToday();
     dbConnected = true;
     const lo = document.getElementById('lockOverlay');
     if (lo) lo.style.display = 'none';
@@ -1172,6 +1199,7 @@ async function saveRecord() {
     enteredBy: saved.entered_by, entryDate: saved.entry_date, raw: saved
   });
   renderTable();
+  loadToday();
   setSyncStatus('synced', 'Save हुआ — S.N. ' + saved.id + ' (' + bindingType + ')');
   const bar = document.getElementById('statusBar');
   bar.className = 'status-bar status-saved';
@@ -1234,6 +1262,84 @@ function clearForm() {
   bar.className = 'status-bar status-empty';
   bar.textContent = 'ℹ️ Form cleared. नया Book Code डालें।';
   document.getElementById('bookCode').focus();
+}
+
+// ── आज की मेरी entries + रद्द करना ────────────────────────────────
+// रद्द करने पर row मिटती नहीं — cancelled का झंडा लगता है, कारण और
+// किसने-कब दर्ज होता है। Reconcile और dashboard उसे गिनना छोड़ देते हैं।
+const CANCEL_TABLES = ['perfect_binding', 'center_pinning'];
+const QTY_COL = 'total_qty';
+const EDN_COL = 'edition';
+let todayRows = [];
+
+async function loadToday() {
+  const body = document.getElementById('todayBody');
+  const cnt  = document.getElementById('todayCount');
+  if (!session || !session.user) return;
+  cnt.textContent = 'पढ़ रहे हैं...';
+  const uid = session.user.id;
+  const today = new Date();
+  const iso = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') +
+              '-' + String(today.getDate()).padStart(2, '0');
+  todayRows = [];
+  try {
+    for (const t of CANCEL_TABLES) {
+      const sel = 'id,book_code,name,' + EDN_COL + ',' + QTY_COL;
+      const rows = await sbFetch(t + '?select=' + sel +
+        '&user_id=eq.' + uid + '&entry_date=eq.' + iso +
+        '&cancelled=is.false&order=id.desc');
+      (rows || []).forEach(function (r) {
+        todayRows.push({ table: t, id: r.id, code: r.book_code, name: r.name || '',
+                         edition: r[EDN_COL], qty: r[QTY_COL] });
+      });
+    }
+  } catch (err) {
+    cnt.textContent = '⚠️ ' + err.message;
+    return;
+  }
+  todayRows.sort(function (a, b) { return b.id - a.id; });
+  cnt.textContent = todayRows.length + ' entry आज की (रद्द नहीं हुई)';
+  if (!todayRows.length) {
+    body.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#aaa;padding:18px;">आज अभी कोई entry नहीं</td></tr>';
+    return;
+  }
+  body.innerHTML = todayRows.map(function (r, i) {
+    return '<tr><td>' + r.id + '</td>' +
+      '<td><strong>' + r.code + '</strong></td>' +
+      '<td title="' + r.name + '">' + String(r.name).substring(0, 22) + (String(r.name).length > 22 ? '…' : '') + '</td>' +
+      '<td>' + (r.edition == null || r.edition === '' ? '—' : r.edition) + '</td>' +
+      '<td class="num">' + (r.qty == null ? '—' : inr(r.qty)) + '</td>' +
+      '<td><button onclick="cancelRow(' + i + ')" style="padding:4px 11px;background:#b3372c;' +
+      'color:#fff;border:none;border-radius:5px;font-size:.74rem;font-weight:700;cursor:pointer;">' +
+      'रद्द</button></td></tr>';
+  }).join('');
+}
+
+async function cancelRow(i) {
+  const r = todayRows[i];
+  if (!r) return;
+  const reason = prompt('S.N. ' + r.id + ' (Book ' + r.code + ') रद्द करने का कारण लिखें —\n' +
+                        'यह हमेशा दर्ज रहेगा:');
+  if (reason === null) return;
+  if (!reason.trim()) { alert('कारण लिखना ज़रूरी है।'); return; }
+  setSyncStatus('saving');
+  try {
+    await sbFetch(r.table + '?id=eq.' + r.id, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify({
+        cancelled: true,
+        cancelled_at: new Date().toISOString(),
+        cancelled_by: session.user.id,
+        cancel_reason: reason.trim()
+      })
+    });
+  } catch (err) {
+    setSyncStatus('error', 'रद्द नहीं हुआ: ' + err.message);
+    return;
+  }
+  setSyncStatus('synced', 'S.N. ' + r.id + ' रद्द हो गई — हिसाब में अब नहीं गिनी जाएगी');
+  await loadToday();
 }
 
 async function exportToExcel() {

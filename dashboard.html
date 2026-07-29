@@ -616,6 +616,18 @@ const TABLES = {
    {
     "db": "entry_date",
     "hdr": "Entry Date"
+   },
+   {
+    "db": "cancelled",
+    "hdr": "रद्द"
+   },
+   {
+    "db": "cancel_reason",
+    "hdr": "रद्द का कारण"
+   },
+   {
+    "db": "cancelled_at",
+    "hdr": "रद्द कब"
    }
   ]
  },
@@ -698,6 +710,18 @@ const TABLES = {
    {
     "db": "entry_date",
     "hdr": "Entry Date"
+   },
+   {
+    "db": "cancelled",
+    "hdr": "रद्द"
+   },
+   {
+    "db": "cancel_reason",
+    "hdr": "रद्द का कारण"
+   },
+   {
+    "db": "cancelled_at",
+    "hdr": "रद्द कब"
    }
   ]
  },
@@ -820,6 +844,18 @@ const TABLES = {
    {
     "db": "entry_date",
     "hdr": "Entry Date"
+   },
+   {
+    "db": "cancelled",
+    "hdr": "रद्द"
+   },
+   {
+    "db": "cancel_reason",
+    "hdr": "रद्द का कारण"
+   },
+   {
+    "db": "cancelled_at",
+    "hdr": "रद्द कब"
    }
   ]
  },
@@ -906,6 +942,18 @@ const TABLES = {
    {
     "db": "entry_date",
     "hdr": "Entry Date"
+   },
+   {
+    "db": "cancelled",
+    "hdr": "रद्द"
+   },
+   {
+    "db": "cancel_reason",
+    "hdr": "रद्द का कारण"
+   },
+   {
+    "db": "cancelled_at",
+    "hdr": "रद्द कब"
    }
   ]
  },
@@ -980,6 +1028,18 @@ const TABLES = {
    {
     "db": "entry_date",
     "hdr": "Entry Date"
+   },
+   {
+    "db": "cancelled",
+    "hdr": "रद्द"
+   },
+   {
+    "db": "cancel_reason",
+    "hdr": "रद्द का कारण"
+   },
+   {
+    "db": "cancelled_at",
+    "hdr": "रद्द कब"
    }
   ]
  },
@@ -1034,6 +1094,18 @@ const TABLES = {
    {
     "db": "entry_date",
     "hdr": "Entry Date"
+   },
+   {
+    "db": "cancelled",
+    "hdr": "रद्द"
+   },
+   {
+    "db": "cancel_reason",
+    "hdr": "रद्द का कारण"
+   },
+   {
+    "db": "cancelled_at",
+    "hdr": "रद्द कब"
    }
   ]
  },
@@ -1116,6 +1188,18 @@ const TABLES = {
    {
     "db": "entry_date",
     "hdr": "Entry Date"
+   },
+   {
+    "db": "cancelled",
+    "hdr": "रद्द"
+   },
+   {
+    "db": "cancel_reason",
+    "hdr": "रद्द का कारण"
+   },
+   {
+    "db": "cancelled_at",
+    "hdr": "रद्द कब"
    }
   ]
  },
@@ -1194,6 +1278,18 @@ const TABLES = {
    {
     "db": "entry_date",
     "hdr": "Entry Date"
+   },
+   {
+    "db": "cancelled",
+    "hdr": "रद्द"
+   },
+   {
+    "db": "cancel_reason",
+    "hdr": "रद्द का कारण"
+   },
+   {
+    "db": "cancelled_at",
+    "hdr": "रद्द कब"
    }
   ]
  }
@@ -1287,7 +1383,13 @@ function addSheet(wb, table, rows) {
       return (v === null || v === undefined) ? '' : v;
     }));
     row.height = 16;
-    if (i % 2 === 0) row.eachCell({ includeEmpty: true }, function (c) {
+    // रद्द row हल्की लाल — Excel में एक नज़र में दिख जाए
+    if (r.cancelled) {
+      row.eachCell({ includeEmpty: true }, function (c) {
+        c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFBE4E1' } };
+        c.font = { name: 'Arial', size: 9, strike: true, color: { argb: 'FF9A2E22' } };
+      });
+    } else if (i % 2 === 0) row.eachCell({ includeEmpty: true }, function (c) {
       c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF2F7F4' } };
       c.font = { name: 'Arial', size: 9 };
     });
