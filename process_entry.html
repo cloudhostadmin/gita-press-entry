@@ -82,6 +82,15 @@ tr:hover td { background: #e1f5ee; cursor: pointer; }
   .btn-row { flex-direction: column; }
   button { width: 100%; justify-content: center; }
 }
+
+/* कटौती के checkbox */
+.ded-wrap { display:flex; gap:18px; flex-wrap:wrap; align-items:center;
+  background:#fdf3f2; border:1.5px solid #f0cdc7; border-radius:8px; padding:9px 12px; }
+.ded-wrap label { display:flex; align-items:center; gap:7px; margin:0;
+  font-size:.85rem; font-weight:600; color:#8c3325; text-align:left; cursor:pointer; }
+.ded-wrap input { width:17px; height:17px; accent-color:#b3372c; cursor:pointer; }
+.net-field { background:#eef7f1 !important; border-color:#a8d8bd !important;
+  font-weight:700; font-style:normal; color:#12603c; font-size:1rem; }
 </style>
 </head>
 <body>
@@ -268,6 +277,27 @@ tr:hover td { background: #e1f5ee; cursor: pointer; }
           </div>
         </div>
         <div class="field-row">
+          <label>कटौती</label>
+          <div>
+            <div class="ded-wrap">
+              <label><input type="checkbox" class="dedChk" data-amt="15" value="Head &amp; Tail"
+                     onchange="calcTotal()"> Head &amp; Tail (−15)</label>
+              <label><input type="checkbox" class="dedChk" data-amt="10" value="Ribbon"
+                     onchange="calcTotal()"> Ribbon (−10)</label>
+              <label><input type="checkbox" class="dedChk" data-amt="60" value="Dhala"
+                     onchange="calcTotal()"> Dhala (−60)</label>
+            </div>
+            <div class="note" id="noteDed"></div>
+          </div>
+        </div>
+        <div class="field-row">
+          <label>Net Rate ₹</label>
+          <div>
+            <input type="text" id="fNetRate" class="net-field" readonly placeholder="—">
+            <div class="note">कटौती के बाद की दर — Total इसी से बनता है</div>
+          </div>
+        </div>
+        <div class="field-row">
           <label>Rate Per (Auto)</label>
           <input type="text" id="fPer" class="auto-field" readonly placeholder="— process चुनें —">
         </div>
@@ -356,7 +386,7 @@ tr:hover td { background: #e1f5ee; cursor: pointer; }
           <th>Rate</th><th>Per</th><th>Qty</th><th>Total</th><th>Contractor</th><th>Entry</th>
         </tr></thead>
         <tbody id="recordsBody">
-          <tr><td colspan="15" style="text-align:center;color:#aaa;padding:20px;">
+          <tr><td colspan="17" style="text-align:center;color:#aaa;padding:20px;">
             No records yet. Fill the form and click Save.</td></tr>
         </tbody>
       </table>
@@ -683,7 +713,7 @@ function lookupBook() {
   ['fMachine','fSpecial','fRange'].forEach(function (i) { resetSel(i); });
   document.getElementById('fProcess').innerHTML = '<option value="">— पहले Book Code डालें —</option>';
   document.getElementById('fProcess').disabled = true;
-  ['noteProcess','noteMachine','noteSpecial','noteRange','noteRate','noteTotal'].forEach(function (i) { note(i, ''); });
+  ['noteProcess','noteMachine','noteSpecial','noteRange','noteRate','noteTotal','noteDed'].forEach(function (i) { note(i, ''); });
   rateRows = [];
   calcTotal();
   if (!code) {
@@ -834,15 +864,44 @@ function onRange() {
   calcTotal();
 }
 
+// चुनी हुई कटौतियाँ — नाम और कुल रकम
+function deductions() {
+  const picked = Array.prototype.slice.call(document.querySelectorAll('.dedChk'))
+    .filter(function (x) { return x.checked; });
+  return {
+    names:  picked.map(function (x) { return x.value; }).join(', '),
+    amount: picked.reduce(function (a, x) { return a + Number(x.dataset.amt); }, 0)
+  };
+}
+
 function calcTotal() {
-  const r = parseFloat(document.getElementById('fRate').value);
-  const q = parseFloat(document.getElementById('fQty').value);
+  const r  = parseFloat(document.getElementById('fRate').value);
+  const q  = parseFloat(document.getElementById('fQty').value);
   const pv = parseFloat(document.getElementById('fPer').value);
   const per = (!isNaN(pv) && pv > 0) ? pv : 1;
-  const el = document.getElementById('fTotal');
-  if (isNaN(r) || isNaN(q)) { el.value = ''; note('noteTotal', ''); return; }
-  el.value = (r * q / per).toFixed(2);
-  note('noteTotal', per > 1 ? (r + ' × ' + q + ' ÷ ' + per) : (r + ' × ' + q));
+  const el  = document.getElementById('fTotal');
+  const ne  = document.getElementById('fNetRate');
+  const d   = deductions();
+
+  if (isNaN(r)) { ne.value = ''; el.value = ''; note('noteDed', ''); note('noteTotal', ''); return; }
+
+  const net = r - d.amount;
+  ne.value = net.toFixed(2);
+  if (d.amount > 0) {
+    note('noteDed', r + ' − ' + d.amount + ' = ' + net.toFixed(2) + '  (' + d.names + ')',
+         net < 0);
+  } else { note('noteDed', 'कोई कटौती नहीं'); }
+
+  // कटौती दर से ज़्यादा — database भी इसे रोकेगा, यहाँ पहले ही बता देते हैं
+  if (net < 0) {
+    el.value = '';
+    note('noteTotal', 'कटौती (' + d.amount + ') दर (' + r + ') से ज़्यादा है — Save नहीं होगा', true);
+    return;
+  }
+  if (isNaN(q)) { el.value = ''; note('noteTotal', ''); return; }
+  el.value = (net * q / per).toFixed(2);
+  note('noteTotal', per > 1 ? (net.toFixed(2) + ' × ' + q + ' ÷ ' + per)
+                            : (net.toFixed(2) + ' × ' + q));
 }
 
 // ── SAVE ─────────────────────────────────────────────────────────
@@ -854,6 +913,10 @@ async function saveRecord() {
   if (!document.getElementById('fProcess').value) { alert('Binding Process चुनें।'); return; }
   if (document.getElementById('fRate').value === '') { alert('Rate नहीं मिला — process/machine/option की जाँच करें।'); return; }
   if (!document.getElementById('fQty').value) { alert('Quantity डालें।'); return; }
+  const ded = deductions();
+  if (Number(document.getElementById('fRate').value) - ded.amount < 0) {
+    alert('कटौती दर से ज़्यादा है — पहले उसे ठीक करें।'); return;
+  }
 
   const payload = {
     exit_date:      document.getElementById('fExitDate').value || null,
@@ -868,6 +931,8 @@ async function saveRecord() {
     special_option: document.getElementById('fSpecial').value || null,
     juje_range:     rangeLabel(document.getElementById('fRange').value),
     rate:           Number(document.getElementById('fRate').value),
+    deductions:       ded.names || null,
+    deduction_amount: ded.amount,
     rate_per:       Number(document.getElementById('fPer').value) || 1,
     quantity:       Number(document.getElementById('fQty').value),
     total_amount:   Number(document.getElementById('fTotal').value),
@@ -893,7 +958,9 @@ async function saveRecord() {
     sn: saved.id, exitDate: saved.exit_date, code: saved.book_code, name: saved.name,
     edition: saved.edition, juje: saved.juje, size: saved.size, pageType: saved.page_type,
     process: saved.process, machine: saved.machine, specialOption: saved.special_option,
-    jujeRange: saved.juje_range, rate: saved.rate, ratePer: saved.rate_per,
+    jujeRange: saved.juje_range, rate: saved.rate,
+    ded: saved.deductions, dedAmt: saved.deduction_amount, netRate: saved.net_rate,
+    ratePer: saved.rate_per,
     qty: saved.quantity, total: saved.total_amount, contractor: saved.contractor,
     enteredBy: saved.entered_by, entryDate: saved.entry_date
   });
@@ -912,7 +979,7 @@ function renderTable() {
   document.getElementById('grandTotal').textContent = 'Grand Total: ₹' + grand.toFixed(2);
   const tb = document.getElementById('recordsBody');
   if (!records.length) {
-    tb.innerHTML = '<tr><td colspan="15" style="text-align:center;color:#aaa;padding:20px;">No records yet.</td></tr>';
+    tb.innerHTML = '<tr><td colspan="17" style="text-align:center;color:#aaa;padding:20px;">No records yet.</td></tr>';
     return;
   }
   tb.innerHTML = records.map(function (r, i) {
@@ -927,6 +994,8 @@ function renderTable() {
       '<td title="' + (r.specialOption || '') + '">' + String(r.specialOption || '—').substring(0, 12) + '</td>' +
       '<td>' + (r.jujeRange || '—') + '</td>' +
       '<td class="num">' + r.rate + '</td>' +
+      '<td class="num" title="' + (r.ded || '') + '">' + (Number(r.dedAmt) ? '−' + r.dedAmt : '—') + '</td>' +
+      '<td class="num">' + (r.netRate == null ? r.rate : r.netRate) + '</td>' +
       '<td class="num">' + (r.ratePer || 1) + '</td>' +
       '<td class="num">' + inr(r.qty) + '</td>' +
       '<td class="num"><strong>' + r.total + '</strong></td>' +
@@ -950,13 +1019,14 @@ function editRecord(i) {
 }
 
 function clearForm() {
-  ['bookCode','bookName','bookJuje','bookSize','bookPT','fRate','fPer','fQty','fTotal','fExitDate','fEdition']
+  ['bookCode','bookName','bookJuje','bookSize','bookPT','fRate','fPer','fQty','fTotal','fExitDate','fEdition','fNetRate']
     .forEach(function (id) { document.getElementById(id).value = ''; });
+  document.querySelectorAll('.dedChk').forEach(function (x) { x.checked = false; });
   document.getElementById('fContractor').value = '';
   ['fMachine','fSpecial','fRange'].forEach(function (i) { resetSel(i); });
   document.getElementById('fProcess').innerHTML = '<option value="">— पहले Book Code डालें —</option>';
   document.getElementById('fProcess').disabled = true;
-  ['noteProcess','noteMachine','noteSpecial','noteRange','noteRate','noteTotal'].forEach(function (i) { note(i, ''); });
+  ['noteProcess','noteMachine','noteSpecial','noteRange','noteRate','noteTotal','noteDed'].forEach(function (i) { note(i, ''); });
   rateRows = [];
   const bar = document.getElementById('statusBar');
   bar.className = 'status-bar status-empty';
@@ -1046,8 +1116,9 @@ async function exportToExcel() {
   if (!records.length) { alert('No records to export.'); return; }
   const headers = ['S.N.','Exit Date','Book Code','Name','Edition','Juje','Size','Page Type',
                    'Process','Machine','Special Option','Juje Range',
-                   'Rate','Rate Per','Quantity','Total Amount','Contractor','Entered By','Entry Date'];
-  const widths = [6,14,12,36,12,8,16,14,24,20,22,18,10,10,10,14,22,20,14];
+                   'Rate','कटौती','कटौती रकम','Net Rate','Rate Per','Quantity','Total Amount',
+                   'Contractor','Entered By','Entry Date'];
+  const widths = [6,14,12,36,12,8,16,14,24,20,22,18,10,18,12,12,10,10,14,22,20,14];
   const wb = new ExcelJS.Workbook();
   const ws = wb.addWorksheet('Process Entry', { views: [{ state: 'frozen', ySplit: 1 }] });
   ws.columns = headers.map(function (h, i) { return { header: h, key: h, width: widths[i] }; });
@@ -1060,7 +1131,8 @@ async function exportToExcel() {
   records.forEach(function (r, i) {
     const row = ws.addRow([r.sn, r.exitDate, r.code, r.name, r.edition, r.juje, r.size, r.pageType,
       r.process, r.machine, r.specialOption, r.jujeRange,
-      Number(r.rate), Number(r.ratePer), Number(r.qty), Number(r.total),
+      Number(r.rate), r.ded || '', Number(r.dedAmt || 0), Number(r.netRate == null ? r.rate : r.netRate),
+      Number(r.ratePer), Number(r.qty), Number(r.total),
       r.contractor, r.enteredBy, r.entryDate]);
     row.height = 16;
     if (i % 2 === 0) row.eachCell({ includeEmpty: true }, function (c) {
@@ -1069,14 +1141,14 @@ async function exportToExcel() {
     });
   });
   const gr = ws.addRow([]);
-  gr.getCell(15).value = 'Grand Total';
-  gr.getCell(16).value = records.reduce(function (a, r) { return a + (parseFloat(r.total) || 0); }, 0);
-  [15, 16].forEach(function (n) {
+  gr.getCell(18).value = 'Grand Total';
+  gr.getCell(19).value = records.reduce(function (a, r) { return a + (parseFloat(r.total) || 0); }, 0);
+  [18, 19].forEach(function (n) {
     gr.getCell(n).font = { bold: true, size: 10, name: 'Arial' };
     gr.getCell(n).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEAF3DE' } };
   });
-  ['M','O','P'].forEach(function (col) { ws.getColumn(col).numFmt = '0.00'; });
-  ws.autoFilter = { from: 'A1', to: 'S1' };
+  ['M','O','P','R','S'].forEach(function (col) { ws.getColumn(col).numFmt = '0.00'; });
+  ws.autoFilter = { from: 'A1', to: 'V1' };
   const buf = await wb.xlsx.writeBuffer();
   const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
   const url = URL.createObjectURL(blob);
