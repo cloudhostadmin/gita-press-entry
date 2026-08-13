@@ -214,19 +214,19 @@ tr:hover td { background: #e1f5ee; cursor: pointer; }
                  placeholder="Enter Book Code (e.g. 1, 25, 1095)" oninput="lookupBook()">
         </div>
         <div class="field-row">
-          <label>Name (Auto)</label>
+          <label>Name (Auto) <span class="req">*</span></label>
           <input type="text" id="bookName" class="auto-field" readonly placeholder="— auto —">
         </div>
         <div class="field-row">
-          <label>Juje (Auto)</label>
+          <label>Juje (Auto) <span class="req">*</span></label>
           <input type="text" id="bookJuje" class="auto-field" readonly placeholder="— auto —">
         </div>
         <div class="field-row">
-          <label>Size (Auto)</label>
+          <label>Size (Auto) <span class="req">*</span></label>
           <input type="text" id="bookSize" class="auto-field" readonly placeholder="— auto —">
         </div>
         <div class="field-row">
-          <label>Page Type (Auto)</label>
+          <label>Page Type (Auto) <span class="req">*</span></label>
           <input type="text" id="bookPT" class="auto-field" readonly placeholder="— auto —">
         </div>
       </div>
@@ -246,21 +246,21 @@ tr:hover td { background: #e1f5ee; cursor: pointer; }
           </div>
         </div>
         <div class="field-row">
-          <label>Machine</label>
+          <label>Machine <span class="req">*</span></label>
           <div>
             <select id="fMachine" disabled onchange="onMachine()"><option value="">—</option></select>
             <div class="note" id="noteMachine"></div>
           </div>
         </div>
         <div class="field-row">
-          <label>Special Option</label>
+          <label>Special Option <span class="req">*</span></label>
           <div>
             <select id="fSpecial" disabled onchange="onSpecial()"><option value="">—</option></select>
             <div class="note" id="noteSpecial"></div>
           </div>
         </div>
         <div class="field-row">
-          <label>Juje Range</label>
+          <label>Juje Range <span class="req">*</span></label>
           <div>
             <select id="fRange" disabled onchange="onRange()"><option value="">—</option></select>
             <div class="note" id="noteRange"></div>
@@ -270,14 +270,14 @@ tr:hover td { background: #e1f5ee; cursor: pointer; }
         <hr class="divider">
 
         <div class="field-row">
-          <label>Rate (Auto) ₹</label>
+          <label>Rate (Auto) ₹ <span class="req">*</span></label>
           <div>
             <input type="text" id="fRate" class="rate-field" readonly placeholder="— process चुनें —">
             <div class="note" id="noteRate"></div>
           </div>
         </div>
         <div class="field-row">
-          <label>कटौती</label>
+          <label>कटौती <span style="font-weight:400;font-size:.76rem;color:#7a8a99">(जो लगे)</span></label>
           <div>
             <div class="ded-wrap">
               <label><input type="checkbox" class="dedChk" data-amt="15" value="Head &amp; Tail"
@@ -316,15 +316,15 @@ tr:hover td { background: #e1f5ee; cursor: pointer; }
         <hr class="divider">
 
         <div class="field-row">
-          <label>Exit Date</label>
+          <label>Exit Date <span class="req">*</span></label>
           <input type="date" id="fExitDate">
         </div>
         <div class="field-row">
-          <label>Edition</label>
+          <label>Edition <span class="req">*</span></label>
           <input type="text" id="fEdition" placeholder="e.g. 1st, 2nd, revised...">
         </div>
         <div class="field-row">
-          <label>Contractor</label>
+          <label>Contractor <span class="req">*</span></label>
           <select id="fContractor">
             <option value="">— Select Contractor Code —</option>
             <optgroup label="रवि प्रताप यादव (Ravi Pratap Yadav)">
@@ -907,28 +907,58 @@ function calcTotal() {
 // ── SAVE ─────────────────────────────────────────────────────────
 async function saveRecord() {
   if (!requireOperator()) return;
+  // सारे fields ज़रूरी हैं — कटौती को छोड़कर, जो न लगे तो न लगे
   const code = document.getElementById('bookCode').value.trim();
   if (!code) { alert('Book Code डालें।'); return; }
   if (!document.getElementById('bookName').value) { alert('Book Code नहीं मिला।'); return; }
-  if (!document.getElementById('fProcess').value) { alert('Binding Process चुनें।'); return; }
-  if (document.getElementById('fRate').value === '') { alert('Rate नहीं मिला — process/machine/option की जाँच करें।'); return; }
-  if (!document.getElementById('fQty').value) { alert('Quantity डालें।'); return; }
+
+  // ये auto भरते हैं — खाली हों तो किताब का ब्यौरा gp.books में अधूरा है
+  const autoMissing = [
+    ['bookJuje', 'Juje'], ['bookSize', 'Size'], ['bookPT', 'Page Type']
+  ].filter(function (x) { return !String(document.getElementById(x[0]).value).trim(); })
+   .map(function (x) { return x[1]; });
+  if (autoMissing.length) {
+    alert('इस किताब का ' + autoMissing.join(', ') + ' database में दर्ज नहीं है।\n' +
+          'व्यवस्थापक से कहकर gp.books में पूरा कराएँ — तब तक entry नहीं हो सकती।');
+    return;
+  }
+
+  const need = [
+    ['fProcess', 'Binding Process'], ['fMachine', 'Machine'],
+    ['fSpecial', 'Special Option'],  ['fRange',   'Juje Range'],
+    ['fQty',     'Quantity'],        ['fExitDate','Exit Date'],
+    ['fEdition', 'Edition'],         ['fContractor','Contractor']
+  ];
+  for (var i = 0; i < need.length; i++) {
+    const el = document.getElementById(need[i][0]);
+    if (!String(el.value).trim()) {
+      alert(need[i][1] + ' भरें — सभी खाने ज़रूरी हैं।');
+      el.focus();
+      return;
+    }
+  }
+  if (document.getElementById('fRate').value === '') {
+    alert('Rate नहीं मिला — process / machine / option की जाँच करें।'); return;
+  }
+  if (Number(document.getElementById('fQty').value) <= 0) {
+    alert('Quantity शून्य से ज़्यादा होनी चाहिए।'); return;
+  }
   const ded = deductions();
   if (Number(document.getElementById('fRate').value) - ded.amount < 0) {
     alert('कटौती दर से ज़्यादा है — पहले उसे ठीक करें।'); return;
   }
 
   const payload = {
-    exit_date:      document.getElementById('fExitDate').value || null,
+    exit_date:      document.getElementById('fExitDate').value,
     book_code:      code,
     name:           document.getElementById('bookName').value,
-    edition:        document.getElementById('fEdition').value.trim() || null,
+    edition:        document.getElementById('fEdition').value.trim(),
     juje:           document.getElementById('bookJuje').value || null,
     size:           document.getElementById('bookSize').value || null,
     page_type:      document.getElementById('bookPT').value || null,
     process:        document.getElementById('fProcess').value,
-    machine:        document.getElementById('fMachine').value || null,
-    special_option: document.getElementById('fSpecial').value || null,
+    machine:        document.getElementById('fMachine').value,
+    special_option: document.getElementById('fSpecial').value,
     juje_range:     rangeLabel(document.getElementById('fRange').value),
     rate:           Number(document.getElementById('fRate').value),
     deductions:       ded.names || null,
@@ -936,7 +966,7 @@ async function saveRecord() {
     rate_per:       Number(document.getElementById('fPer').value) || 1,
     quantity:       Number(document.getElementById('fQty').value),
     total_amount:   Number(document.getElementById('fTotal').value),
-    contractor:     document.getElementById('fContractor').value || null,
+    contractor:     document.getElementById('fContractor').value,
     entered_by:     operatorName()
   };
 
