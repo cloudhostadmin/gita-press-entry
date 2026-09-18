@@ -302,6 +302,13 @@ tr:hover td { background: #e1f5ee; cursor: pointer; }
           <input type="text" id="fPer" class="auto-field" readonly placeholder="— process चुनें —">
         </div>
         <div class="field-row">
+          <label>Juje गुणक (Auto)</label>
+          <div>
+            <input type="text" id="fJujeMult" class="auto-field" readonly placeholder="1">
+            <div class="note" id="noteJujeMult"></div>
+          </div>
+        </div>
+        <div class="field-row">
           <label>Quantity <span class="req">*</span></label>
           <input type="number" id="fQty" min="0" step="1" placeholder="0" oninput="calcTotal()">
         </div>
@@ -392,10 +399,11 @@ tr:hover td { background: #e1f5ee; cursor: pointer; }
         <thead><tr>
           <th>S.N.</th><th>Code</th><th>Name</th><th>Edn.</th><th>Size</th><th>Process</th>
           <th>Machine</th><th>Sp. Option</th><th>Range</th>
-          <th>Rate</th><th>Per</th><th>Qty</th><th>Total</th><th>Contractor</th><th>Entry</th>
+          <th>Rate</th><th>कटौती</th><th>Net</th><th>जुजे×</th><th>Per</th><th>Qty</th><th>Total</th>
+          <th>Contractor</th><th>Entry</th>
         </tr></thead>
         <tbody id="recordsBody">
-          <tr><td colspan="17" style="text-align:center;color:#aaa;padding:20px;">
+          <tr><td colspan="18" style="text-align:center;color:#aaa;padding:20px;">
             No records yet. Fill the form and click Save.</td></tr>
         </tbody>
       </table>
@@ -639,6 +647,7 @@ let records = [];
 // whole cascade runs locally so the dropdowns stay instant
 let rateRows = [];
 let perCount = {};      // process -> divisor
+let usesJuje = {};      // process -> दर प्रति-जुजे है या नहीं
 
 
 function setSyncStatus(state, msg) {
@@ -671,9 +680,12 @@ async function sbFetch(path, opts) {
 async function connectDb() {
   setSyncStatus('loading');
   try {
-    const pc = await sbFetch('process_per_count?select=process,per_count');
-    perCount = {};
-    (pc || []).forEach(function (r) { perCount[r.process] = Number(r.per_count) || 1; });
+    const pc = await sbFetch('process_per_count?select=process,per_count,uses_juje');
+    perCount = {}; usesJuje = {};
+    (pc || []).forEach(function (r) {
+      perCount[r.process] = Number(r.per_count) || 1;
+      usesJuje[r.process] = !!r.uses_juje;
+    });
     setSyncStatus('synced', 'Database से जुड़ गए — ' + Object.keys(perCount).length + ' processes के divisor मिले।');
     loadToday();
     document.getElementById('entrySection').classList.remove('locked');
@@ -722,7 +734,7 @@ function lookupBook() {
   ['fMachine','fSpecial','fRange'].forEach(function (i) { resetSel(i); });
   document.getElementById('fProcess').innerHTML = '<option value="">— पहले Book Code डालें —</option>';
   document.getElementById('fProcess').disabled = true;
-  ['noteProcess','noteMachine','noteSpecial','noteRange','noteRate','noteTotal','noteDed'].forEach(function (i) { note(i, ''); });
+  ['noteProcess','noteMachine','noteSpecial','noteRange','noteRate','noteTotal','noteDed','noteJujeMult'].forEach(function (i) { note(i, ''); });
   rateRows = [];
   calcTotal();
   if (!code) {
@@ -868,6 +880,13 @@ function onRange() {
   rf.value = row ? row.rate : '';
   const per = perCount[p] || 1;
   document.getElementById('fPer').value = row ? per : '';
+  // कुछ processes की दर प्रति-जुजे है — वहाँ मात्रा को जुजे से गुणा करना पड़ता है
+  const jn = Number(document.getElementById('bookJuje').value);
+  const mult = (row && usesJuje[p] && jn > 0) ? jn : 1;
+  document.getElementById('fJujeMult').value = row ? mult : '';
+  note('noteJujeMult', !row ? ''
+       : (usesJuje[p] ? 'इस process की दर प्रति-जुजे है — किताब के ' + jn + ' जुजे से गुणा'
+                      : 'इस process पर गुणक नहीं लगता'));
   note('noteRate', !row ? 'इस combination का rate नहीं मिला'
        : (per > 1 ? 'rate master से — प्रति ' + per + ' नग' : 'rate master से — प्रति नग'), !row);
   calcTotal();
@@ -908,9 +927,12 @@ function calcTotal() {
     return;
   }
   if (isNaN(q)) { el.value = ''; note('noteTotal', ''); return; }
-  el.value = (net * q / per).toFixed(2);
-  note('noteTotal', per > 1 ? (net.toFixed(2) + ' × ' + q + ' ÷ ' + per)
-                            : (net.toFixed(2) + ' × ' + q));
+  const mv = parseFloat(document.getElementById('fJujeMult').value);
+  const mult = (!isNaN(mv) && mv > 0) ? mv : 1;
+  el.value = (net * q * mult / per).toFixed(2);
+  note('noteTotal', net.toFixed(2) + ' × ' + q +
+       (mult > 1 ? ' × ' + mult + ' जुजे' : '') +
+       (per > 1 ? ' ÷ ' + per : ''));
 }
 
 // ── SAVE ─────────────────────────────────────────────────────────
@@ -973,6 +995,7 @@ async function saveRecord() {
     deductions:       ded.names || null,
     deduction_amount: ded.amount,
     rate_per:       Number(document.getElementById('fPer').value) || 1,
+    juje_multiplier: Number(document.getElementById('fJujeMult').value) || 1,
     quantity:       Number(document.getElementById('fQty').value),
     total_amount:   Number(document.getElementById('fTotal').value),
     contractor:     document.getElementById('fContractor').value,
@@ -999,7 +1022,7 @@ async function saveRecord() {
     process: saved.process, machine: saved.machine, specialOption: saved.special_option,
     jujeRange: saved.juje_range, rate: saved.rate,
     ded: saved.deductions, dedAmt: saved.deduction_amount, netRate: saved.net_rate,
-    ratePer: saved.rate_per,
+    ratePer: saved.rate_per, jujeMult: saved.juje_multiplier,
     qty: saved.quantity, total: saved.total_amount, contractor: saved.contractor,
     enteredBy: saved.entered_by, entryDate: saved.entry_date
   });
@@ -1018,7 +1041,7 @@ function renderTable() {
   document.getElementById('grandTotal').textContent = 'Grand Total: ₹' + grand.toFixed(2);
   const tb = document.getElementById('recordsBody');
   if (!records.length) {
-    tb.innerHTML = '<tr><td colspan="17" style="text-align:center;color:#aaa;padding:20px;">No records yet.</td></tr>';
+    tb.innerHTML = '<tr><td colspan="18" style="text-align:center;color:#aaa;padding:20px;">No records yet.</td></tr>';
     return;
   }
   tb.innerHTML = records.map(function (r, i) {
@@ -1035,6 +1058,7 @@ function renderTable() {
       '<td class="num">' + r.rate + '</td>' +
       '<td class="num" title="' + (r.ded || '') + '">' + (Number(r.dedAmt) ? '−' + r.dedAmt : '—') + '</td>' +
       '<td class="num">' + (r.netRate == null ? r.rate : r.netRate) + '</td>' +
+      '<td class="num">' + (Number(r.jujeMult) > 1 ? '×' + r.jujeMult : '—') + '</td>' +
       '<td class="num">' + (r.ratePer || 1) + '</td>' +
       '<td class="num">' + inr(r.qty) + '</td>' +
       '<td class="num"><strong>' + r.total + '</strong></td>' +
@@ -1058,7 +1082,7 @@ function editRecord(i) {
 }
 
 function clearForm() {
-  ['bookCode','bookName','bookJuje','bookSize','bookPT','fRate','fPer','fQty','fTotal','fExitDate','fEdition','fNetRate']
+  ['bookCode','bookName','bookJuje','bookSize','bookPT','fRate','fPer','fQty','fTotal','fExitDate','fEdition','fNetRate','fJujeMult']
     .forEach(function (id) { document.getElementById(id).value = ''; });
   document.querySelectorAll('.dedChk').forEach(function (x) { x.checked = false; });
   document.getElementById('fContractor').value = '';
@@ -1155,9 +1179,9 @@ async function exportToExcel() {
   if (!records.length) { alert('No records to export.'); return; }
   const headers = ['S.N.','Exit Date','Book Code','Name','Edition','Juje','Size','Page Type',
                    'Process','Machine','Special Option','Juje Range',
-                   'Rate','कटौती','कटौती रकम','Net Rate','Rate Per','Quantity','Total Amount',
+                   'Rate','कटौती','कटौती रकम','Net Rate','जुजे गुणक','Rate Per','Quantity','Total Amount',
                    'Contractor','Entered By','Entry Date'];
-  const widths = [6,14,12,36,12,8,16,14,24,20,22,18,10,18,12,12,10,10,14,22,20,14];
+  const widths = [6,14,12,36,12,8,16,14,24,20,22,18,10,18,12,12,12,10,10,14,22,20,14];
   const wb = new ExcelJS.Workbook();
   const ws = wb.addWorksheet('Process Entry', { views: [{ state: 'frozen', ySplit: 1 }] });
   ws.columns = headers.map(function (h, i) { return { header: h, key: h, width: widths[i] }; });
@@ -1171,7 +1195,7 @@ async function exportToExcel() {
     const row = ws.addRow([r.sn, r.exitDate, r.code, r.name, r.edition, r.juje, r.size, r.pageType,
       r.process, r.machine, r.specialOption, r.jujeRange,
       Number(r.rate), r.ded || '', Number(r.dedAmt || 0), Number(r.netRate == null ? r.rate : r.netRate),
-      Number(r.ratePer), Number(r.qty), Number(r.total),
+      Number(r.jujeMult || 1), Number(r.ratePer), Number(r.qty), Number(r.total),
       r.contractor, r.enteredBy, r.entryDate]);
     row.height = 16;
     if (i % 2 === 0) row.eachCell({ includeEmpty: true }, function (c) {
@@ -1180,14 +1204,14 @@ async function exportToExcel() {
     });
   });
   const gr = ws.addRow([]);
-  gr.getCell(18).value = 'Grand Total';
-  gr.getCell(19).value = records.reduce(function (a, r) { return a + (parseFloat(r.total) || 0); }, 0);
-  [18, 19].forEach(function (n) {
+  gr.getCell(19).value = 'Grand Total';
+  gr.getCell(20).value = records.reduce(function (a, r) { return a + (parseFloat(r.total) || 0); }, 0);
+  [19, 20].forEach(function (n) {
     gr.getCell(n).font = { bold: true, size: 10, name: 'Arial' };
     gr.getCell(n).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEAF3DE' } };
   });
-  ['M','O','P','R','S'].forEach(function (col) { ws.getColumn(col).numFmt = '0.00'; });
-  ws.autoFilter = { from: 'A1', to: 'V1' };
+  ['M','O','P','S','T'].forEach(function (col) { ws.getColumn(col).numFmt = '0.00'; });
+  ws.autoFilter = { from: 'A1', to: 'W1' };
   const buf = await wb.xlsx.writeBuffer();
   const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
   const url = URL.createObjectURL(blob);
