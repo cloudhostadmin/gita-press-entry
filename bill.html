@@ -186,6 +186,71 @@ tr.sub td { background:#f7edf0 !important; font-weight:700; color:#6b2338; }
   #billSheet { display:block !important; }
   @page { size:A4; margin:12mm; }
 }
+
+/* ── filter की सज्जा — base CSS के width:100% और display:flex को यहीं रोका है ── */
+.filters { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:14px 16px; align-items:end; }
+.fg { min-width:0; display:flex; flex-direction:column; gap:5px; }
+.fg > label { font-size:.76rem; font-weight:700; letter-spacing:.2px;
+  text-align:left; margin:0; padding:0; text-transform:uppercase; opacity:.85; }
+.fg select, .fg input { width:100%; min-width:0; padding:9px 12px;
+  border:1.5px solid #dde5ee; border-radius:9px; font-size:.92rem;
+  background:#fff; transition:border-color .15s, box-shadow .15s; }
+.fg select:hover, .fg input:hover { border-color:#c3d0de; }
+
+.btn-row2 { display:flex; gap:10px; flex-wrap:wrap; margin-top:18px;
+  padding-top:16px; border-top:1px solid #eef2f6; }
+.btn-row2 button { display:inline-flex; width:auto; align-items:center; gap:7px;
+  padding:10px 20px; border-radius:9px; font-size:.9rem; font-weight:700;
+  border:none; cursor:pointer; transition:transform .12s, box-shadow .12s, background .15s; }
+.btn-row2 button:hover { transform:translateY(-1px); box-shadow:0 3px 10px rgba(0,0,0,.13); }
+
+.quick { display:flex; gap:7px; flex-wrap:wrap; align-items:center; margin-top:14px; }
+.quick .qlbl { font-size:.74rem; font-weight:700; opacity:.6;
+  text-transform:uppercase; letter-spacing:.3px; margin-right:2px; }
+.quick button { display:inline-flex; width:auto; padding:5px 13px; border-radius:20px;
+  font-size:.78rem; font-weight:600; cursor:pointer; transition:all .15s; }
+
+.fg > label { color:#8a4a5e; }
+.fg select:focus, .fg input:focus { outline:none; border-color:#6b2338;
+  box-shadow:0 0 0 3px rgba(107,35,56,.12); }
+.btn-row2 .b-main { background:#6b2338; color:#fff; }
+.btn-row2 .b-main:hover { background:#54192b; }
+.btn-row2 .b-print { background:#f4eef0; color:#6b2338; border:1.5px solid #e3d2d8; }
+.btn-row2 .b-print:hover { background:#ece0e4; }
+.btn-row2 .b-xl { background:#1F4E79; color:#fff; }
+.btn-row2 .b-xl:hover { background:#163a5a; }
+.quick button { background:#faf5f6; color:#8a4a5e; border:1.5px solid #ecdde2; }
+.quick button:hover { background:#f2e5e9; border-color:#d9bcc6; color:#6b2338; }
+
+/* ── बिल का कागज़ ── */
+#billSheet { border:1px solid #e6dce0; }
+.bill-head { background:linear-gradient(180deg,#fdf8f9,#fff);
+  border-bottom:none; position:relative; padding:24px 30px 18px; }
+.bill-head::after { content:''; position:absolute; left:0; right:0; bottom:0;
+  height:3px; background:linear-gradient(90deg,#6b2338,#c06a83,#6b2338); }
+.bill-org { font-size:1.6rem; }
+.bill-title { margin-top:14px; padding:5px 20px; border-radius:20px;
+  box-shadow:0 2px 8px rgba(107,35,56,.25); }
+.bill-meta { grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:0; padding:0; border-bottom:1px solid #eee; }
+.bill-meta .row { flex-direction:column; gap:3px; padding:14px 30px;
+  border-right:1px solid #f0eaec; }
+.bill-meta .row:last-child { border-right:none; }
+.bill-meta .k { min-width:0; font-size:.72rem; text-transform:uppercase;
+  letter-spacing:.4px; font-weight:700; opacity:.65; }
+#billSheet thead th { border-bottom:2px solid #54192b; }
+#billSheet tbody tr:nth-child(even) td { background:#fcfafb; }
+#billSheet tbody tr:hover td { background:#faf2f4; }
+.tot-wrap { background:#fdf8f9; border-top:1px solid #f0eaec; padding:18px 30px 12px; }
+.tot { min-width:360px; }
+.tot .line.big { background:#6b2338; color:#fff; border:none; margin-top:10px;
+  padding:12px 16px; border-radius:9px; box-shadow:0 3px 10px rgba(107,35,56,.25); }
+.words { background:#fdf8f9; padding:0 30px 20px; font-size:.86rem; }
+.words b { color:#6b2338; font-style:normal; }
+.sign-row { padding:48px 30px 26px; }
+.sign-row div { border-top:1.5px solid #b9a3aa; font-size:.8rem; font-weight:600; }
+@media (max-width:620px) { .tot { min-width:0; width:100%; } }
 </style>
 </head>
 <body>
@@ -322,16 +387,19 @@ tr.sub td { background:#f7edf0 !important; font-weight:700; color:#6b2338; }
           <label>Exit Date — तक</label>
           <input type="date" id="fTo">
         </div>
-        <button class="btn-save" style="background:#6b2338" onclick="run()">🧾 बिल बनाएँ</button>
-        <button class="btn-clear" onclick="window.print()">🖨️ Print</button>
-        <button class="btn-export" onclick="exportXlsx()">📥 Excel</button>
       </div>
       <div class="quick">
+        <span class="qlbl">जल्दी चुनें</span>
         <button onclick="setRange('month')">इस महीने</button>
         <button onclick="setRange('prevmonth')">पिछला महीना</button>
         <button onclick="setRange('7')">पिछले 7 दिन</button>
         <button onclick="setRange('30')">पिछले 30 दिन</button>
-        <button onclick="setRange('clear')">सब (तारीख़ हटाएँ)</button>
+        <button onclick="setRange('clear')">सब</button>
+      </div>
+      <div class="btn-row2">
+        <button class="b-main"  onclick="run()">🧾 बिल बनाएँ</button>
+        <button class="b-print" onclick="window.print()">🖨️ Print</button>
+        <button class="b-xl"    onclick="exportXlsx()">📥 Excel</button>
       </div>
       <div class="note" style="margin-top:10px">
         रद्द entries बिल में नहीं आतीं। Print दबाने पर सिर्फ़ बिल छपेगा, बाकी पन्ना नहीं।
@@ -816,7 +884,7 @@ function render() {
   document.getElementById('tPctLabel').textContent = EXTRA_PCT + '% अतिरिक्त';
   document.getElementById('tPct').textContent      = rs(pct);
   document.getElementById('tFinal').textContent    = rs(final);
-  document.getElementById('bWords').textContent    = 'अक्षरे: ' + inWords(final);
+  document.getElementById('bWords').innerHTML      = '<b>अक्षरे:</b> ' + inWords(final);
 }
 
 async function exportXlsx() {

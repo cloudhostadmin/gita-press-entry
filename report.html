@@ -181,6 +181,40 @@ thead th { position:sticky; top:0; z-index:2; }
 tr.sub td { background:#f7f0e2 !important; font-weight:700; color:#7a4b12; }
 tr.grand td { background:#e8dcc6 !important; font-weight:800; color:#5c3809;
   border-top:2px solid #b8762a; }
+
+/* ── filter की सज्जा — base CSS के width:100% और display:flex को यहीं रोका है ── */
+.filters { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:14px 16px; align-items:end; }
+.fg { min-width:0; display:flex; flex-direction:column; gap:5px; }
+.fg > label { font-size:.76rem; font-weight:700; letter-spacing:.2px;
+  text-align:left; margin:0; padding:0; text-transform:uppercase; opacity:.85; }
+.fg select, .fg input { width:100%; min-width:0; padding:9px 12px;
+  border:1.5px solid #dde5ee; border-radius:9px; font-size:.92rem;
+  background:#fff; transition:border-color .15s, box-shadow .15s; }
+.fg select:hover, .fg input:hover { border-color:#c3d0de; }
+
+.btn-row2 { display:flex; gap:10px; flex-wrap:wrap; margin-top:18px;
+  padding-top:16px; border-top:1px solid #eef2f6; }
+.btn-row2 button { display:inline-flex; width:auto; align-items:center; gap:7px;
+  padding:10px 20px; border-radius:9px; font-size:.9rem; font-weight:700;
+  border:none; cursor:pointer; transition:transform .12s, box-shadow .12s, background .15s; }
+.btn-row2 button:hover { transform:translateY(-1px); box-shadow:0 3px 10px rgba(0,0,0,.13); }
+
+.quick { display:flex; gap:7px; flex-wrap:wrap; align-items:center; margin-top:14px; }
+.quick .qlbl { font-size:.74rem; font-weight:700; opacity:.6;
+  text-transform:uppercase; letter-spacing:.3px; margin-right:2px; }
+.quick button { display:inline-flex; width:auto; padding:5px 13px; border-radius:20px;
+  font-size:.78rem; font-weight:600; cursor:pointer; transition:all .15s; }
+
+.fg > label { color:#8a6a34; }
+.fg select:focus, .fg input:focus { outline:none; border-color:#7a4b12;
+  box-shadow:0 0 0 3px rgba(122,75,18,.12); }
+.btn-row2 .b-main { background:#7a4b12; color:#fff; }
+.btn-row2 .b-main:hover { background:#5f3a0d; }
+.btn-row2 .b-xl { background:#1F4E79; color:#fff; }
+.btn-row2 .b-xl:hover { background:#163a5a; }
+.quick button { background:#faf6ef; color:#8a6a34; border:1.5px solid #ece0cd; }
+.quick button:hover { background:#f2e9da; border-color:#dbc9a8; color:#7a4b12; }
 </style>
 </head>
 <body>
@@ -307,16 +341,19 @@ tr.grand td { background:#e8dcc6 !important; font-weight:800; color:#5c3809;
           <label>Exit Date — तक</label>
           <input type="date" id="fTo">
         </div>
-        <button class="btn-save" style="background:#7a4b12" onclick="run()">🔄 रिपोर्ट बनाएँ</button>
-        <button class="btn-export" onclick="exportXlsx()">📥 Excel</button>
       </div>
       <div class="quick">
+        <span class="qlbl">जल्दी चुनें</span>
         <button onclick="setRange('today')">आज</button>
         <button onclick="setRange('7')">पिछले 7 दिन</button>
         <button onclick="setRange('30')">पिछले 30 दिन</button>
         <button onclick="setRange('month')">इस महीने</button>
         <button onclick="setRange('prevmonth')">पिछला महीना</button>
-        <button onclick="setRange('clear')">सब (तारीख़ हटाएँ)</button>
+        <button onclick="setRange('clear')">सब</button>
+      </div>
+      <div class="btn-row2">
+        <button class="b-main" onclick="run()">🔄 रिपोर्ट बनाएँ</button>
+        <button class="b-xl"   onclick="exportXlsx()">📥 Excel</button>
       </div>
       <div class="note" style="margin-top:10px">
         रद्द हो चुकी entries इसमें नहीं गिनी जातीं। दोनों तारीख़ें खाली छोड़ें तो पूरा समय।
