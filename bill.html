@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>STM Entry — Gita Press</title>
+<title>बिल — Gita Press</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: Arial, sans-serif; background: #f0f4f8; min-height: 100vh; }
 
 .header {
-  background: linear-gradient(135deg, #1f6f4a, #2f9d69);
+  background: linear-gradient(135deg, #6b2338, #96374f);
   color: white; padding: 18px 24px;
   display: flex; align-items: center; gap: 14px;
   box-shadow: 0 3px 12px rgba(0,0,0,0.2);
@@ -150,9 +150,45 @@ tr:hover td { background: #fde8d8; cursor: pointer; }
   button { width: 100%; justify-content: center; }
 }
 </style>
+<style>
+#billSheet { display:none; background:#fff; }
+.bill-head { border-bottom:3px double #6b2338; padding:20px 26px 16px; }
+.bill-org { font-size:1.45rem; font-weight:800; color:#6b2338; letter-spacing:.3px; }
+.bill-sub { font-size:.82rem; color:#6a6a6a; margin-top:2px; }
+.bill-title { display:inline-block; margin-top:12px; padding:4px 16px; background:#6b2338;
+  color:#fff; border-radius:5px; font-size:.9rem; font-weight:700; letter-spacing:1px; }
+.bill-meta { display:grid; grid-template-columns:1fr 1fr; gap:6px 26px;
+  padding:16px 26px; font-size:.88rem; }
+.bill-meta .row { display:flex; gap:8px; }
+.bill-meta .k { color:#6a6a6a; min-width:118px; }
+.bill-meta .v { font-weight:700; color:#1f1f1f; }
+.bill-meta .big { font-size:1.05rem; color:#6b2338; }
+#billSheet table { font-size:.8rem; }
+#billSheet th { background:#6b2338; color:#fff; font-size:.74rem; padding:7px 8px;
+  position:static; white-space:nowrap; }
+#billSheet td { padding:5px 8px; border-bottom:1px solid #eee; }
+tr.sub td { background:#f7edf0 !important; font-weight:700; color:#6b2338; }
+.tot-wrap { display:flex; justify-content:flex-end; padding:16px 26px 8px; }
+.tot { min-width:340px; }
+.tot .line { display:flex; justify-content:space-between; padding:6px 0;
+  font-size:.92rem; border-bottom:1px solid #eee; }
+.tot .line.big { font-size:1.15rem; font-weight:800; color:#6b2338;
+  border-top:2px solid #6b2338; border-bottom:none; margin-top:6px; padding-top:10px; }
+.words { padding:4px 26px 18px; font-size:.84rem; color:#444; font-style:italic; }
+.sign-row { display:flex; justify-content:space-between; gap:40px;
+  padding:42px 26px 24px; font-size:.84rem; color:#444; }
+.sign-row div { border-top:1px solid #999; padding-top:6px; min-width:180px; text-align:center; }
+@media print {
+  body { background:#fff; }
+  .noprint { display:none !important; }
+  .container { max-width:100%; margin:0; padding:0; }
+  .card { box-shadow:none; border-radius:0; margin:0; }
+  #billSheet { display:block !important; }
+  @page { size:A4; margin:12mm; }
+}
+</style>
 </head>
 <body>
-
 <!-- ── LOGIN GATE ─────────────────────────────────────────────── -->
 <div id="authGate" style="position:fixed;inset:0;z-index:9999;background:#12253a;
      display:none;align-items:center;justify-content:center;padding:20px;">
@@ -219,25 +255,23 @@ tr:hover td { background: #fde8d8; cursor: pointer; }
   </div>
 </div>
 
-
-
-<div class="header">
-  <div style="font-size:2rem">📋</div>
+<div class="header noprint">
+  <div style="font-size:2rem">🧾</div>
   <div>
-    <h1>STM Entry — Gita Press, Gorakhpur</h1>
-    <p>Books database से — कोई data page में embed नहीं</p>
+    <h1>बिल — Gita Press, Gorakhpur</h1>
+    <p>ठेकेदार समूह का बिल — Process Entry के काम पर</p>
   </div>
 </div>
 
-
+<div class="noprint">
 <div style="background:#1a3a5c;padding:8px 24px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
   <span style="color:#aac;font-size:0.78rem;font-weight:600;margin-right:4px;">GO TO →</span>
   <a href="index.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#1f6f4a;color:white;border:2px solid #4dbf90;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📊 Dashboard</button></a>
   <a href="report.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#7a4b12;color:white;border:2px solid #d49a3f;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📑 रिपोर्ट</button></a>
-  <a href="bill.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#6b2338;color:white;border:2px solid #c06a83;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">🧾 बिल</button></a>
+  <button style="padding:7px 16px;background:#6b2338;color:white;border:2px solid #c06a83;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:default;box-shadow:0 0 0 2px white,0 0 0 4px #c06a83;">🧾 बिल ✓</button>
   <a href="reconcile.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#3f3d8f;color:white;border:2px solid #8785d6;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">🔍 Reconcile</button></a>
   <a href="print_order.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#7b2d5e;color:white;border:2px solid #c470a0;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">🖨️ Print Order</button></a>
-  <button style="padding:7px 16px;background:#843c0c;color:white;border:2px solid #e07a3a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:default;box-shadow:0 0 0 2px white,0 0 0 4px #e07a3a;">📋 STM Entry ✓</button>
+  <a href="stm.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#843c0c;color:white;border:2px solid #e07a3a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📋 STM Entry</button></a>
   <a href="process_entry.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#0f6e56;color:white;border:2px solid #3fb99a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">⚙️ Process Entry</button></a>
   <a href="main_entry.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#1F4E79;color:white;border:2px solid #4a90c4;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📚 Main Entry</button></a>
   <a href="soft_bound.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#375623;color:white;border:2px solid #6aaa3a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📗 Soft Bound</button></a>
@@ -259,187 +293,102 @@ tr:hover td { background: #fde8d8; cursor: pointer; }
           background:#3a5570;color:#dce7f0;border:1.5px solid #56728d;border-radius:6px;
           font-size:0.76rem;font-weight:700;cursor:pointer;">Logout</button>
 </div>
-<div id="syncStatus" style="display:none;font-size:0.85rem;font-weight:600;padding:10px 18px;border-radius:8px;margin:12px 16px 0;"></div>
+</div>
+<div id="syncStatus" class="noprint" style="display:none;font-size:.85rem;font-weight:600;padding:10px 18px;margin:12px 16px 0;border-radius:8px;"></div>
 
-<div class="container">
+<div class="container" style="max-width:1220px;">
 
-  <!-- ENTRY SECTION -->
-  <div id="entrySection" class="locked">
-    <div class="lock-overlay">
-      🔒 Google Sheet से connect होने के बाद entry unlock होगी।
-    </div>
-
-    <!-- BOOK CODE LOOKUP -->
-    <div class="card">
-      <div class="section-title blue">🔍 Book Code Lookup</div>
-      <div class="form-body">
-        <div class="field-row">
-          <label>Book Code <span class="req">*</span></label>
-          <input type="text" id="bookCode" class="book-code-input" disabled
-                 placeholder="Enter Book Code (e.g. 1, 25, 1095)"
-                 oninput="lookupBook()" autocomplete="off">
+  <div class="card noprint">
+    <div class="section-title" style="background:#6b2338;">⚙️ बिल का ब्यौरा</div>
+    <div class="form-body">
+      <div class="filters">
+        <div class="fg">
+          <label>ठेकेदार का मुख्य समूह <span class="req">*</span></label>
+          <select id="fGroup"><option value="">— पढ़ रहे हैं... —</option></select>
         </div>
-        <div class="field-row">
-          <label>Name (Auto)</label>
-          <input type="text" id="bookName" class="auto-field" readonly
-                 placeholder="— auto from Book List —">
+        <div class="fg">
+          <label>Bill No. <span class="req">*</span></label>
+          <input type="text" id="fBillNo" placeholder="जैसे GP/2026-27/014">
         </div>
-        <div class="field-row">
-          <label>Juje (Auto)</label>
-          <input type="text" id="bookJuje" class="auto-field" readonly
-                 placeholder="— auto from Juje sheet —">
+        <div class="fg">
+          <label>Issue Date <span class="req">*</span></label>
+          <input type="date" id="fIssue">
         </div>
+        <div class="fg">
+          <label>Exit Date — से</label>
+          <input type="date" id="fFrom">
+        </div>
+        <div class="fg">
+          <label>Exit Date — तक</label>
+          <input type="date" id="fTo">
+        </div>
+        <button class="btn-save" style="background:#6b2338" onclick="run()">🧾 बिल बनाएँ</button>
+        <button class="btn-clear" onclick="window.print()">🖨️ Print</button>
+        <button class="btn-export" onclick="exportXlsx()">📥 Excel</button>
       </div>
-      <div class="status-bar status-empty" id="statusBar">
-        ℹ️ Enter a Book Code to begin
+      <div class="quick">
+        <button onclick="setRange('month')">इस महीने</button>
+        <button onclick="setRange('prevmonth')">पिछला महीना</button>
+        <button onclick="setRange('7')">पिछले 7 दिन</button>
+        <button onclick="setRange('30')">पिछले 30 दिन</button>
+        <button onclick="setRange('clear')">सब (तारीख़ हटाएँ)</button>
       </div>
-    </div>
-
-    <!-- MANUAL ENTRY -->
-    <div class="card">
-      <div class="section-title orange">✏️ Entry Details</div>
-      <div class="form-body">
-
-        <div class="field-row">
-          <label>Size (Auto)</label>
-          <input type="text" id="bookSize" class="auto-field" readonly
-                 placeholder="— auto from Book Size list —">
-        </div>
-
-        <div class="field-row">
-          <label>Exit Date</label>
-          <input type="date" id="fExitDate">
-        </div>
-
-        <div class="field-row">
-          <label>Edition (D)</label>
-          <input type="text" id="fEdition" placeholder="e.g. 1st, 2nd, revised...">
-        </div>
-
-        <div class="field-row">
-          <label>Contractor (F)</label>
-          <select id="fContractor">
-            <option value="">— Select Contractor Code —</option>
-            <optgroup label="रवि प्रताप यादव (Ravi Pratap Yadav)">
-              <option value="Ravi-01(Avadh Bihari Chaturvedi)">Ravi-01(Avadh Bihari Chaturvedi)</option>
-              <option value="Ravi-02(Akhilesh Chaturvedi (RB))">Ravi-02(Akhilesh Chaturvedi (RB))</option>
-              <option value="Ravi-03(Subham (RB))">Ravi-03(Subham (RB))</option>
-            </optgroup>
-            <optgroup label="कार्तिकेय पारीक (Kartikey Pareek)">
-              <option value="Kartikey-01(Gajendra Pratap singh)">Kartikey-01(Gajendra Pratap singh)</option>
-              <option value="Kartikey-02(Jogender Gour)">Kartikey-02(Jogender Gour)</option>
-              <option value="Kartikey-03(Jagdish Yadav (RB))">Kartikey-03(Jagdish Yadav (RB))</option>
-              <option value="Kartikey-04(KPA)">Kartikey-04(KPA)</option>
-              <option value="Kartikey-05(Narendra Nishad(RB))">Kartikey-05(Narendra Nishad(RB))</option>
-              <option value="Kartikey-06(Mahendra Upadhyay)">Kartikey-06(Mahendra Upadhyay)</option>
-              <option value="Kartikey-07(Santosh Prajapati)">Kartikey-07(Santosh Prajapati)</option>
-              <option value="Kartikey-08(Sanjay Gupta)">Kartikey-08(Sanjay Gupta)</option>
-              <option value="Kartikey-09(Rajesh Yadav)">Kartikey-09(Rajesh Yadav)</option>
-            </optgroup>
-            <optgroup label="वैभव शर्मा (Vaibhav Sharma)">
-              <option value="Vaibhav-01(Jai Prakash Prajapati)">Vaibhav-01(Jai Prakash Prajapati)</option>
-              <option value="Vaibhav-02(Arvind Kumar Tiwari)">Vaibhav-02(Arvind Kumar Tiwari)</option>
-              <option value="Vaibhav-03(Sanjay Kumar)">Vaibhav-03(Sanjay Kumar)</option>
-              <option value="Vaibhav-04(Virender Mishra)">Vaibhav-04(Virender Mishra)</option>
-              <option value="Vaibhav-05(Bajrangi)">Vaibhav-05(Bajrangi)</option>
-            </optgroup>
-            <optgroup label="आनंद शुक्ला (Anand Shukla)">
-              <option value="Anand-01(Vikas)">Anand-01(Vikas)</option>
-              <option value="Anand-02(Kranti Kumar)">Anand-02(Kranti Kumar)</option>
-              <option value="Anand-03(Makkhan)">Anand-03(Makkhan)</option>
-              <option value="Anand-04(Manoj Kumar (RB))">Anand-04(Manoj Kumar (RB))</option>
-              <option value="Anand-05(Akhilesh Chaturvedi (RB))">Anand-05(Akhilesh Chaturvedi (RB))</option>
-              <option value="Anand-06(Vind Kumar)">Anand-06(Vind Kumar)</option>
-              <option value="Anand-07(Aditya Singh)">Anand-07(Aditya Singh)</option>
-              <option value="Anand-08(Ganesh Singh)">Anand-08(Ganesh Singh)</option>
-            </optgroup>
-            <optgroup label="नारायण प्रसाद पारीक (Narayan Prasad Pareek)">
-              <option value="Narayan-01(Ravinder Yadav)">Narayan-01(Ravinder Yadav)</option>
-              <option value="Narayan-02(Sudhir Kumar Gupta)">Narayan-02(Sudhir Kumar Gupta)</option>
-              <option value="Narayan-03(Neeraj Kumar Singh)">Narayan-03(Neeraj Kumar Singh)</option>
-            </optgroup>
-            <optgroup label="By Machine">
-              <option value="By Machine">By Machine</option>
-              <option value="Channel">Channel</option>
-            </optgroup>
-          </select>
-        </div>
-
-        <div class="field-row">
-          <label>Rate</label>
-          <input type="number" id="fRate" placeholder="0.00" min="0" step="0.01">
-        </div>
-
-        <div class="field-row">
-          <label>Total Quantity</label>
-          <input type="number" id="fTotalQty" placeholder="0" min="0">
-        </div>
-
-      </div>
-      <div class="btn-row">
-        <button class="btn-save"   onclick="saveRecord()">💾 Save Record</button>
-        <button class="btn-clear"  onclick="clearForm()">🗑️ Clear</button>
-        <button class="btn-export" onclick="exportToExcel()">📥 Export to Excel</button>
+      <div class="note" style="margin-top:10px">
+        रद्द entries बिल में नहीं आतीं। Print दबाने पर सिर्फ़ बिल छपेगा, बाकी पन्ना नहीं।
       </div>
     </div>
-
-  </div><!-- /entrySection -->
-
-  <!-- RECORDS TABLE -->
-  <div class="card">
-    <div class="section-title orange">📋 Saved Records This Session</div>
-    <div class="record-count" id="recordCount">0 records saved</div>
-    <div style="overflow-x:auto;">
-      <table>
-        <thead>
-          <tr>
-            <th>S.N.</th><th>Code</th><th>Name</th><th>Juje</th>
-            <th>Size</th><th>Exit Date</th><th>Edition</th>
-            <th>Contractor</th><th>Rate</th><th>Total Qty</th><th>Entry Date</th>
-          </tr>
-        </thead>
-        <tbody id="recordsBody">
-          <tr><td colspan="11" style="text-align:center;color:#aaa;padding:20px;">
-            No records yet. Fill the form and click Save.
-          </td></tr>
-        </tbody>
-      </table>
-    </div>
+    <div class="status2" id="status"></div>
   </div>
 
-  <!-- ── आज की मेरी entries — रद्द करने के लिए ─────────────────── -->
-  <div class="card">
-    <div class="section-title" style="background:#5a3d5c;">🕐 आज की मेरी entries</div>
-    <div class="record-count">
-      <span id="todayCount">—</span>
-      <button onclick="loadToday()" style="padding:4px 12px;background:#5a3d5c;color:#fff;
-              border:none;border-radius:6px;font-size:.76rem;font-weight:700;cursor:pointer;">
-        🔄 दोबारा पढ़ें</button>
+  <div class="card" id="billSheet">
+    <div class="bill-head">
+      <div class="bill-org">गीता प्रेस, गोरखपुर</div>
+      <div class="bill-sub">पोस्ट-प्रेस विभाग &nbsp;·&nbsp; ठेकेदार भुगतान</div>
+      <div class="bill-title">बिल / BILL</div>
+    </div>
+    <div class="bill-meta">
+      <div class="row"><span class="k">ठेकेदार समूह</span><span class="v big" id="bGroup">—</span></div>
+      <div class="row"><span class="k">Bill No.</span><span class="v big" id="bNo">—</span></div>
+      <div class="row"><span class="k">कार्य अवधि</span><span class="v" id="bPeriod">—</span></div>
+      <div class="row"><span class="k">Issue Date</span><span class="v" id="bIssue">—</span></div>
     </div>
     <div style="overflow-x:auto;">
       <table>
         <thead><tr>
-          <th>S.N.</th><th>Book Code</th><th>Name</th><th>Edition</th>
-          <th class="num">मात्रा</th><th>रद्द करें</th>
+          <th>क्र.</th><th>Exit Date</th><th>Contractor</th>
+          <th>Book Code</th><th>Name</th><th>Edition</th><th class="num">Juje</th>
+          <th>Process</th><th class="num">Copies</th><th class="num">Rate</th>
+          <th class="num">Amount</th>
         </tr></thead>
-        <tbody id="todayBody">
-          <tr><td colspan="6" style="text-align:center;color:#aaa;padding:18px;">—</td></tr>
+        <tbody id="tbody">
+          <tr><td colspan="11" style="text-align:center;color:#aaa;padding:24px;">—</td></tr>
         </tbody>
       </table>
     </div>
-    <div style="padding:0 18px 14px;font-size:.76rem;color:#7a8a99;line-height:1.6;">
-      सिर्फ़ आज की, अपनी ही entry रद्द हो सकती है। रद्द row मिटती नहीं — निशान लगा रहता है,
-      और हिसाब में गिनी नहीं जाती। पुरानी entry के लिए व्यवस्थापक से कहें।
+    <div class="tot-wrap">
+      <div class="tot">
+        <div class="line"><span>कुल प्रतियाँ</span><span id="tCopies">—</span></div>
+        <div class="line"><span>Grand Total</span><span id="tGrand">—</span></div>
+        <div class="line"><span id="tPctLabel">16% अतिरिक्त</span><span id="tPct">—</span></div>
+        <div class="line big"><span>Final Amount</span><span id="tFinal">—</span></div>
+      </div>
+    </div>
+    <div class="words" id="bWords"></div>
+    <div class="sign-row">
+      <div>ठेकेदार के हस्ताक्षर</div>
+      <div>जाँचकर्ता</div>
+      <div>स्वीकृतकर्ता</div>
     </div>
   </div>
 
-</div><!-- /container -->
+</div>
 
 <script>
-// ── SUPABASE ─────────────────────────────────────────────────────
 const SB_URL = 'https://agntdlbaspqjwaiyoxnp.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnbnRkbGJhc3BxandhaXlveG5wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyMTY1OTAsImV4cCI6MjEwMDc5MjU5MH0.MDNjTUAQ5weRLDSVxG_84W8TOMSuEq_6tsfJjxl07hw';
-const SB_HEAD = { apikey: SB_KEY, 'Accept-Profile': 'gp', 'Content-Profile': 'gp' };
+const SB_HEAD = { apikey: SB_KEY, 'Accept-Profile': 'gp' };
+const SB_PAGE = 1000;
+const EXTRA_PCT = 16;          // Grand Total पर जुड़ने वाला प्रतिशत
 
 // ── AUTH ─────────────────────────────────────────────────────────
 // Supabase Auth सीधे REST से — कोई बाहरी library नहीं, तो offline/CDN
@@ -638,315 +587,313 @@ function requireOperator() {
   return false;
 }
 
-let records = [];
-
+async function sbFetch(path) {
+  const tok = await authToken();
+  if (!tok) { authShowGate('Session खत्म हो गया — दोबारा login करें।'); throw new Error('login चाहिए'); }
+  const out = [];
+  for (let offset = 0; ; offset += SB_PAGE) {
+    const res = await fetch(SB_URL + '/rest/v1/' + path +
+                            (path.indexOf('?') === -1 ? '?' : '&') +
+                            'limit=' + SB_PAGE + '&offset=' + offset, {
+      headers: Object.assign({}, SB_HEAD, { Authorization: 'Bearer ' + tok })
+    });
+    if (!res.ok) {
+      let msg = res.status + ' ' + res.statusText;
+      try { const e = await res.json(); if (e.message) msg = e.message; } catch (x) {}
+      throw new Error(msg);
+    }
+    const page = await res.json();
+    out.push.apply(out, page);
+    if (page.length < SB_PAGE) return out;
+  }
+}
 
 function setSyncStatus(state, msg) {
   const el = document.getElementById('syncStatus');
   if (!el) return;
   el.style.display = 'block';
   if (state === 'loading') { el.textContent = '📡 Connecting...'; el.style.color = '#2e75b6'; el.style.background = '#e3f2fd'; }
-  if (state === 'saving')  { el.textContent = '📡 Saving...';      el.style.color = '#2e75b6'; el.style.background = '#e3f2fd'; }
-  if (state === 'synced')  { el.textContent = '✅ ' + msg;         el.style.color = '#1b5e20'; el.style.background = '#e8f5e9'; }
-  if (state === 'error')   { el.textContent = '⚠️ ' + msg;        el.style.color = '#bf360c'; el.style.background = '#fff3e0'; }
+  if (state === 'synced')  { el.textContent = '✅ ' + msg;  el.style.color = '#1b5e20'; el.style.background = '#e8f5e9'; }
+  if (state === 'error')   { el.textContent = '⚠️ ' + msg; el.style.color = '#bf360c'; el.style.background = '#fff3e0'; }
 }
 
-async function sbFetch(path, opts) {
-  const o = opts || {};
+// ── PASSWORD बदलना ───────────────────────────────────────────────
+// भूला हुआ password यहाँ से नहीं बन सकता: recover email भेजता है, और
+// gitapress.org वाले पते असली inbox नहीं हैं। वो व्यवस्थापक ही
+// Supabase → Authentication → Users से देगा.
+function pwdShow() {
+  if (!session) { authShowGate('पहले login करें।'); return; }
+  document.getElementById('pwdWho').textContent = session.user ? session.user.email : '';
+  document.getElementById('pwdNew').value = '';
+  document.getElementById('pwdNew2').value = '';
+  document.getElementById('pwdMsg').style.display = 'none';
+  document.getElementById('pwdBox').style.display = 'flex';
+  document.getElementById('pwdNew').focus();
+}
+function pwdHide() { document.getElementById('pwdBox').style.display = 'none'; }
+
+function pwdSay(text, ok) {
+  const m = document.getElementById('pwdMsg');
+  m.style.display = 'block';
+  m.textContent = text;
+  m.style.background = ok ? '#e8f5e9' : '#fff3e0';
+  m.style.color      = ok ? '#1b5e20' : '#bf360c';
+}
+
+async function pwdChange() {
+  const a = document.getElementById('pwdNew').value;
+  const b = document.getElementById('pwdNew2').value;
+  if (a.length < 6) { pwdSay('Password कम से कम 6 अक्षर का हो।', false); return; }
+  if (a !== b)      { pwdSay('दोनों Password एक जैसे नहीं हैं।', false); return; }
   const tok = await authToken();
-  if (!tok) { authShowGate('Session खत्म हो गया — दोबारा login करें।'); throw new Error('login चाहिए'); }
-  const res = await fetch(SB_URL + '/rest/v1/' + path, {
-    method: o.method || 'GET',
-    headers: Object.assign({}, SB_HEAD, { Authorization: 'Bearer ' + tok }, o.headers || {}),
-    body: o.body
-  });
-  if (!res.ok) {
-    let msg = res.status + ' ' + res.statusText;
-    try { const e = await res.json(); if (e.message) msg = e.message; if (e.hint) msg += ' — ' + e.hint; } catch (x) {}
-    throw new Error(msg);
-  }
-  return res.status === 204 ? null : res.json();
-}
-
-async function connectDb() {
-  setSyncStatus('loading');
+  if (!tok) { pwdHide(); authShowGate('Session खत्म हो गया — दोबारा login करें।'); return; }
+  const btn = document.getElementById('pwdSave');
+  btn.disabled = true; btn.textContent = 'बदल रहे हैं...';
   try {
-    await sbFetch('books?select=code&limit=1');
-    setSyncStatus('synced', 'Database से जुड़ गए — entry शुरू करें।');
-    loadToday();
-    document.getElementById('entrySection').classList.remove('locked');
-    document.getElementById('bookCode').disabled = false;
+    const res = await fetch(SB_URL + '/auth/v1/user', {
+      method: 'PUT',
+      headers: { apikey: SB_KEY, Authorization: 'Bearer ' + tok, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: a })
+    });
+    const d = await res.json();
+    if (!res.ok) throw new Error(d.error_description || d.msg || d.message || 'नहीं बदला');
+    pwdSay('✅ Password बदल गया — अगली बार इसी से login करें।', true);
+    setTimeout(pwdHide, 1800);
   } catch (err) {
-    setSyncStatus('error', 'Database से नहीं जुड़ सके: ' + err.message);
+    pwdSay('⚠️ ' + err.message, false);
+  } finally {
+    btn.disabled = false; btn.textContent = 'बदलें';
   }
 }
 
-function getRadio(name) {
-  const el = document.querySelector('input[name="' + name + '"]:checked');
-  return el ? el.value : '';
+
+function authSignOut() {
+  if (session && session.access_token) {
+    fetch(SB_URL + '/auth/v1/logout', {
+      method: 'POST',
+      headers: { apikey: SB_KEY, Authorization: 'Bearer ' + session.access_token }
+    }).catch(function () {});
+  }
+  authSave(null);
+  // Logout के बाद Dashboard पर — वही site का मुख्य page है
+  location.href = 'index.html';
 }
-function clearRadio(name) {
-  document.querySelectorAll('input[name="' + name + '"]').forEach(function (r) { r.checked = false; });
+
+function say(kind, txt) {
+  const el = document.getElementById('status');
+  el.style.display = txt ? 'block' : 'none';
+  el.className = 'status2 ' + (kind === 'ok' ? 's-ok' : kind === 'err' ? 's-err' : 's-info');
+  el.textContent = txt || '';
 }
 function inr(v) { return (Number(v) || 0).toLocaleString('en-IN'); }
+function rs(v)  { return '₹' + (Number(v) || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function iso(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+function dmy(s) { if (!s) return '—'; const p = String(s).split('-'); return p.length === 3 ? (p[2] + '-' + p[1] + '-' + p[0]) : s; }
 
-// ── BOOK LOOKUP (database से) ─────────────────────────────────────
-let codeTimer = null, inflight = 0;
-function lookupBook() {
-  clearTimeout(codeTimer);
-  const code = document.getElementById('bookCode').value.trim();
-  const bar = document.getElementById('statusBar');
-  ['bookName','bookJuje','bookSize'].forEach(function (i) {
-    const el = document.getElementById(i); if (el) el.value = '';
-  });
-  if (!code) {
-    bar.className = 'status-bar status-empty';
-    bar.textContent = 'ℹ️ Enter a Book Code to begin';
-    return;
+// भारतीय गिनती — लाख / करोड़
+function inWords(n) {
+  n = Math.round(Number(n) * 100) / 100;
+  const rupees = Math.floor(n), paise = Math.round((n - rupees) * 100);
+  const ones = ['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven',
+    'Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
+  const tens = ['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+  function two(x) { return x < 20 ? ones[x] : (tens[Math.floor(x/10)] + (x%10 ? ' ' + ones[x%10] : '')); }
+  function three(x) { return (x >= 100 ? ones[Math.floor(x/100)] + ' Hundred' + (x%100 ? ' ' : '') : '') + (x%100 ? two(x%100) : ''); }
+  function conv(x) {
+    if (x === 0) return 'Zero';
+    let s = '';
+    const cr = Math.floor(x/10000000); x %= 10000000;
+    const la = Math.floor(x/100000);   x %= 100000;
+    const th = Math.floor(x/1000);     x %= 1000;
+    if (cr) s += conv(cr) + ' Crore ';
+    if (la) s += two(la) + ' Lakh ';
+    if (th) s += two(th) + ' Thousand ';
+    if (x)  s += three(x);
+    return s.trim();
   }
-  bar.className = 'status-bar status-empty';
-  bar.textContent = '📡 खोज रहे हैं...';
-  codeTimer = setTimeout(function () { fetchBook(code); }, 350);
+  let out = 'Rupees ' + conv(rupees);
+  if (paise) out += ' and ' + two(paise) + ' Paise';
+  return out + ' Only';
 }
 
-async function fetchBook(code) {
-  const bar = document.getElementById('statusBar');
-  const seq = ++inflight;
+function setRange(kind) {
+  const f = document.getElementById('fFrom'), t = document.getElementById('fTo');
+  const now = new Date();
+  if (kind === 'clear')      { f.value = ''; t.value = ''; }
+  else if (kind === '7' || kind === '30') {
+    const d = new Date(now); d.setDate(d.getDate() - (Number(kind) - 1));
+    f.value = iso(d); t.value = iso(now);
+  }
+  else if (kind === 'month') { f.value = iso(new Date(now.getFullYear(), now.getMonth(), 1)); t.value = iso(now); }
+  else if (kind === 'prevmonth') {
+    f.value = iso(new Date(now.getFullYear(), now.getMonth()-1, 1));
+    t.value = iso(new Date(now.getFullYear(), now.getMonth(), 0));
+  }
+}
+
+let rows = [], totals = {};
+
+async function loadGroups() {
   try {
-    const rows = await sbFetch('books?code=eq.' + encodeURIComponent(code) +
-                               '&select=code,name,juje,size&limit=1');
-    if (seq !== inflight) return;
-    if (document.getElementById('bookCode').value.trim() !== code) return;
-    const b = (rows || [])[0];
-    if (!b) {
-      bar.className = 'status-bar status-notfound';
-      bar.textContent = '⚠️ Book Code नहीं मिला।';
-      return;
-    }
-    document.getElementById('bookName').value = b.name || '';
-    document.getElementById('bookJuje').value = (b.juje == null ? '' : b.juje);
-    const sz = document.getElementById('bookSize');
-    if (sz) sz.value = b.size || '';
-    bar.className = 'status-bar status-found';
-    bar.textContent = '✅ Book मिली! ब्यौरा भरकर Save करें।';
-  } catch (err) {
-    if (seq !== inflight) return;
-    bar.className = 'status-bar status-notfound';
-    bar.textContent = '⚠️ ' + err.message;
-  }
+    const g = await sbFetch('v_contractor_groups?select=group_name,contractors');
+    document.getElementById('fGroup').innerHTML =
+      '<option value="">— समूह चुनें —</option>' +
+      (g || []).map(function (r) {
+        return '<option value="' + r.group_name + '">' + r.group_name + '  (' + r.contractors + ')</option>';
+      }).join('');
+  } catch (err) { say('err', 'समूहों की सूची नहीं आई: ' + err.message); }
 }
 
-// ── SAVE ─────────────────────────────────────────────────────────
-async function saveRecord() {
-  if (!requireOperator()) return;
-  const code = document.getElementById('bookCode').value.trim();
-  if (!code) { alert('Book Code डालें।'); return; }
-  if (!document.getElementById('bookName').value) { alert('Book Code नहीं मिला।'); return; }
+async function run() {
+  const grp   = document.getElementById('fGroup').value;
+  const billNo = document.getElementById('fBillNo').value.trim();
+  const issue = document.getElementById('fIssue').value;
+  const from  = document.getElementById('fFrom').value;
+  const to    = document.getElementById('fTo').value;
+  if (!grp)    { say('err', '⚠️ ठेकेदार का समूह चुनें।'); return; }
+  if (!billNo) { say('err', '⚠️ Bill No. भरें।'); return; }
+  if (!issue)  { say('err', '⚠️ Issue Date चुनें।'); return; }
+  if ((from && !to) || (!from && to)) { say('err', '⚠️ दोनों तारीख़ें भरें, या दोनों खाली छोड़ें।'); return; }
 
-  const nz = function (id) {
-    const el = document.getElementById(id);
-    return (!el || el.value === '') ? null : Number(el.value);
-  };
-  const payload = {
-    exit_date:  document.getElementById('fExitDate').value || null,
-    book_code:  code,
-    name:       document.getElementById('bookName').value,
-    juje:       document.getElementById('bookJuje').value || null,
-    size:       (document.getElementById('bookSize') || {}).value || null,
-    edition:    document.getElementById('fEdition').value.trim() || null,
-    contractor: document.getElementById('fContractor').value || null,
-    rate:       nz('fRate'),
-    total_qty:  nz('fTotalQty'),
-    entered_by: operatorName()
-  };
+  say('info', '📡 पढ़ रहे हैं...');
+  let q = 'v_process_report?select=exit_date,contractor,group_name,book_code,name,edition,juje,' +
+          'process,quantity,rate,net_rate,total_amount&order=contractor,exit_date,book_code' +
+          '&group_name=eq.' + encodeURIComponent(grp);
+  if (from) q += '&exit_date=gte.' + from + '&exit_date=lte.' + to;
+  try { rows = await sbFetch(q); }
+  catch (err) { say('err', '⚠️ ' + err.message); return; }
 
-  setSyncStatus('saving');
-  let saved;
-  try {
-    const out = await sbFetch('stm', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Prefer: 'return=representation' },
-      body: JSON.stringify(payload)
-    });
-    saved = (out || [])[0];
-  } catch (err) {
-    setSyncStatus('error', 'Save नहीं हुआ: ' + err.message);
+  if (!rows.length) {
+    document.getElementById('billSheet').style.display = 'none';
+    say('err', '⚠️ इस समूह और अवधि में कोई entry नहीं मिली — बिल नहीं बनेगा।');
     return;
   }
-
-  records.push({
-    sn: saved.id, exitDate: saved.exit_date, code: saved.book_code, name: saved.name,
-    juje: saved.juje, size: saved.size, edition: saved.edition,
-    contractor: saved.contractor, rate: saved.rate, totalQty: saved.total_qty,
-    enteredBy: saved.entered_by, entryDate: saved.entry_date
-  });
-  renderTable();
-  loadToday();
-  setSyncStatus('synced', 'Save हुआ — S.N. ' + saved.id);
-  const bar = document.getElementById('statusBar');
-  bar.className = 'status-bar status-saved';
-  bar.textContent = '✅ Saved! Book Code ' + code + ' — S.N. ' + saved.id;
-  clearForm();
+  document.getElementById('bGroup').textContent  = grp;
+  document.getElementById('bNo').textContent     = billNo;
+  document.getElementById('bIssue').textContent  = dmy(issue);
+  document.getElementById('bPeriod').textContent = (from && to) ? (dmy(from) + '  से  ' + dmy(to)) : 'पूरा समय';
+  render();
+  document.getElementById('billSheet').style.display = 'block';
+  say('ok', '✅ बिल बन गया — ' + rows.length + ' entries, Final ' + rs(totals.final));
 }
 
-function renderTable() {
-  document.getElementById('recordCount').textContent = records.length + ' record(s) saved';
-  const tb = document.getElementById('recordsBody');
-  if (!records.length) {
-    tb.innerHTML = '<tr><td colspan="11" style="text-align:center;color:#aaa;padding:20px;">No records yet.</td></tr>';
-    return;
+function render() {
+  const tb = document.getElementById('tbody');
+  const out = [];
+  let cur = null, sc = 0, sa = 0, gc = 0, ga = 0, sn = 0;
+  function subtotal() {
+    if (cur === null) return;
+    out.push('<tr class="sub"><td colspan="8">उप-जोड़ — ' + cur + '</td>' +
+             '<td class="num">' + inr(sc) + '</td><td></td>' +
+             '<td class="num">' + rs(sa) + '</td></tr>');
   }
-  tb.innerHTML = records.map(function (r, i) {
-    return '<tr onclick="editRecord(' + i + ')" title="Click to reuse">' +
-      '<td>' + r.sn + '</td>' +
-      '<td><strong>' + r.code + '</strong></td>' +
-      '<td title="' + r.name + '">' + String(r.name).substring(0, 20) + (String(r.name).length > 20 ? '…' : '') + '</td>' +
-      '<td>' + (r.juje || '—') + '</td>' +
-      '<td>' + (r.size || '—') + '</td>' +
-      '<td>' + (r.exitDate || '—') + '</td>' +
+  rows.forEach(function (r) {
+    if (r.contractor !== cur) { subtotal(); cur = r.contractor; sc = 0; sa = 0; }
+    const q = Number(r.quantity) || 0, a = Number(r.total_amount) || 0;
+    sc += q; sa += a; gc += q; ga += a; sn++;
+    out.push('<tr>' +
+      '<td>' + sn + '</td>' +
+      '<td>' + dmy(r.exit_date) + '</td>' +
+      '<td>' + String(r.contractor || '—').substring(0, 24) + '</td>' +
+      '<td><strong>' + r.book_code + '</strong></td>' +
+      '<td>' + String(r.name || '—').substring(0, 30) + '</td>' +
       '<td>' + (r.edition || '—') + '</td>' +
-      '<td>' + String(r.contractor || '—').substring(0, 14) + '</td>' +
-      '<td>' + (r.rate == null ? '—' : r.rate) + '</td>' +
-      '<td>' + (r.totalQty == null ? '—' : inr(r.totalQty)) + '</td>' +
-      '<td>' + (r.entryDate || '—') + '</td></tr>';
-  }).join('');
+      '<td class="num">' + (r.juje || '—') + '</td>' +
+      '<td>' + String(r.process).substring(0, 22) + '</td>' +
+      '<td class="num">' + inr(q) + '</td>' +
+      '<td class="num">' + (r.net_rate == null ? r.rate : r.net_rate) + '</td>' +
+      '<td class="num">' + rs(a) + '</td></tr>');
+  });
+  subtotal();
+  tb.innerHTML = out.join('');
+
+  // Grand Total पर 16% जोड़कर Final Amount
+  const pct   = Math.round(ga * EXTRA_PCT) / 100;
+  const final = Math.round((ga + pct) * 100) / 100;
+  totals = { copies: gc, grand: ga, pct: pct, final: final };
+  document.getElementById('tCopies').textContent   = inr(gc);
+  document.getElementById('tGrand').textContent    = rs(ga);
+  document.getElementById('tPctLabel').textContent = EXTRA_PCT + '% अतिरिक्त';
+  document.getElementById('tPct').textContent      = rs(pct);
+  document.getElementById('tFinal').textContent    = rs(final);
+  document.getElementById('bWords').textContent    = 'अक्षरे: ' + inWords(final);
 }
 
-// Saved rows live in the database and RLS allows no UPDATE, so this only
-// re-fills the form for another entry of the same book.
-function editRecord(i) {
-  const r = records[i];
-  document.getElementById('bookCode').value = r.code;
-  lookupBook();
-  document.getElementById('fExitDate').value = r.exitDate || '';
-  document.getElementById('fEdition').value = r.edition || '';
-  document.getElementById('fContractor').value = r.contractor || '';
-  const bar = document.getElementById('statusBar');
-  bar.className = 'status-bar status-saved';
-  bar.textContent = 'ℹ️ S.N. ' + r.sn + ' पहले से दर्ज है — form उसी book के लिए भर दिया, नई entry करें';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function clearForm() {
-  ['bookCode','bookName','bookJuje','fExitDate','fEdition','fRate','fTotalQty']
-    .forEach(function (id) { const el = document.getElementById(id); if (el) el.value = ''; });
-  const sz = document.getElementById('bookSize'); if (sz) sz.value = '';
-  document.getElementById('fContractor').value = '';
-  clearRadio('size');
-  const bar = document.getElementById('statusBar');
-  bar.className = 'status-bar status-empty';
-  bar.textContent = 'ℹ️ Form cleared. नया Book Code डालें।';
-  document.getElementById('bookCode').focus();
-}
-
-// ── आज की मेरी entries + रद्द करना ────────────────────────────────
-// रद्द करने पर row मिटती नहीं — cancelled का झंडा लगता है, कारण और
-// किसने-कब दर्ज होता है। Reconcile और dashboard उसे गिनना छोड़ देते हैं।
-const CANCEL_TABLES = ['stm'];
-const QTY_COL = 'total_qty';
-const EDN_COL = 'edition';
-let todayRows = [];
-
-async function loadToday() {
-  const body = document.getElementById('todayBody');
-  const cnt  = document.getElementById('todayCount');
-  if (!session || !session.user) return;
-  cnt.textContent = 'पढ़ रहे हैं...';
-  const uid = session.user.id;
-  const today = new Date();
-  const iso = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') +
-              '-' + String(today.getDate()).padStart(2, '0');
-  todayRows = [];
-  try {
-    for (const t of CANCEL_TABLES) {
-      const sel = 'id,book_code,name,' + EDN_COL + ',' + QTY_COL;
-      const rows = await sbFetch(t + '?select=' + sel +
-        '&user_id=eq.' + uid + '&entry_date=eq.' + iso +
-        '&cancelled=is.false&order=id.desc');
-      (rows || []).forEach(function (r) {
-        todayRows.push({ table: t, id: r.id, code: r.book_code, name: r.name || '',
-                         edition: r[EDN_COL], qty: r[QTY_COL] });
-      });
-    }
-  } catch (err) {
-    cnt.textContent = '⚠️ ' + err.message;
-    return;
-  }
-  todayRows.sort(function (a, b) { return b.id - a.id; });
-  cnt.textContent = todayRows.length + ' entry आज की (रद्द नहीं हुई)';
-  if (!todayRows.length) {
-    body.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#aaa;padding:18px;">आज अभी कोई entry नहीं</td></tr>';
-    return;
-  }
-  body.innerHTML = todayRows.map(function (r, i) {
-    return '<tr><td>' + r.id + '</td>' +
-      '<td><strong>' + r.code + '</strong></td>' +
-      '<td title="' + r.name + '">' + String(r.name).substring(0, 22) + (String(r.name).length > 22 ? '…' : '') + '</td>' +
-      '<td>' + (r.edition == null || r.edition === '' ? '—' : r.edition) + '</td>' +
-      '<td class="num">' + (r.qty == null ? '—' : inr(r.qty)) + '</td>' +
-      '<td><button onclick="cancelRow(' + i + ')" style="padding:4px 11px;background:#b3372c;' +
-      'color:#fff;border:none;border-radius:5px;font-size:.74rem;font-weight:700;cursor:pointer;">' +
-      'रद्द</button></td></tr>';
-  }).join('');
-}
-
-async function cancelRow(i) {
-  const r = todayRows[i];
-  if (!r) return;
-  const reason = prompt('S.N. ' + r.id + ' (Book ' + r.code + ') रद्द करने का कारण लिखें —\n' +
-                        'यह हमेशा दर्ज रहेगा:');
-  if (reason === null) return;
-  if (!reason.trim()) { alert('कारण लिखना ज़रूरी है।'); return; }
-  setSyncStatus('saving');
-  try {
-    await sbFetch(r.table + '?id=eq.' + r.id, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', Prefer: 'return=minimal' },
-      body: JSON.stringify({
-        cancelled: true,
-        cancelled_at: new Date().toISOString(),
-        cancelled_by: session.user.id,
-        cancel_reason: reason.trim()
-      })
-    });
-  } catch (err) {
-    setSyncStatus('error', 'रद्द नहीं हुआ: ' + err.message);
-    return;
-  }
-  setSyncStatus('synced', 'S.N. ' + r.id + ' रद्द हो गई — हिसाब में अब नहीं गिनी जाएगी');
-  await loadToday();
-}
-
-async function exportToExcel() {
-  if (!records.length) { alert('No records to export.'); return; }
-  const headers = ['S.N.','Exit Date','Book Code','Name','Juje','Size','Edition',
-                   'Contractor','Rate','Total Qty','Entered By','Entry Date'];
-  const widths = [6,14,14,38,8,14,12,22,10,12,20,14];
-  const num = function (v) { return v == null ? '' : Number(v); };
+async function exportXlsx() {
+  if (!rows.length) { alert('पहले बिल बनाएँ।'); return; }
+  const grp = document.getElementById('fGroup').value;
+  const billNo = document.getElementById('fBillNo').value.trim();
+  const issue = document.getElementById('fIssue').value;
+  const from = document.getElementById('fFrom').value, to = document.getElementById('fTo').value;
   const wb = new ExcelJS.Workbook();
-  const ws = wb.addWorksheet('STM', { views: [{ state: 'frozen', ySplit: 1 }] });
-  ws.columns = headers.map(function (h, i) { return { header: h, key: h, width: widths[i] }; });
-  const hr = ws.getRow(1); hr.height = 22;
+  const ws = wb.addWorksheet('Bill');
+  const B = function (label, val) {
+    const r = ws.addRow([label, val]);
+    r.getCell(1).font = { name: 'Arial', size: 10, color: { argb: 'FF6A6A6A' } };
+    r.getCell(2).font = { name: 'Arial', size: 11, bold: true };
+  };
+  const t = ws.addRow(['गीता प्रेस, गोरखपुर — बिल']);
+  t.getCell(1).font = { name: 'Arial', size: 14, bold: true, color: { argb: 'FF6B2338' } };
+  ws.addRow([]);
+  B('ठेकेदार समूह', grp);
+  B('Bill No.', billNo);
+  B('Issue Date', issue);
+  B('कार्य अवधि', (from && to) ? (from + ' से ' + to) : 'पूरा समय');
+  ws.addRow([]);
+
+  const headers = ['क्र.','Exit Date','Contractor','Book Code','Name','Edition','Juje',
+                   'Process','Copies','Rate','Amount'];
+  const widths = [6,14,26,12,34,12,8,24,12,10,14];
+  const hr = ws.addRow(headers); hr.height = 22;
   hr.eachCell(function (c) {
     c.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 10, name: 'Arial' };
-    c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F6F4A' } };
+    c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF6B2338' } };
     c.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
   });
-  records.forEach(function (r, i) {
-    const row = ws.addRow([r.sn, r.exitDate, r.code, r.name, r.juje, r.size, r.edition,
-      r.contractor, num(r.rate), num(r.totalQty), r.enteredBy, r.entryDate]);
-    row.height = 16;
-    if (i % 2 === 0) row.eachCell({ includeEmpty: true }, function (c) {
-      c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE6F4EC' } };
-      c.font = { name: 'Arial', size: 9 };
+  widths.forEach(function (w, i) { ws.getColumn(i+1).width = w; });
+
+  let cur = null, sc = 0, sa = 0, sn = 0;
+  function sub() {
+    if (cur === null) return;
+    const r = ws.addRow(['', 'उप-जोड़ — ' + cur, '', '', '', '', '', '', sc, '', sa]);
+    r.eachCell({ includeEmpty: true }, function (c) {
+      c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF7EDF0' } };
+      c.font = { name: 'Arial', size: 9, bold: true };
     });
+  }
+  rows.forEach(function (r) {
+    if (r.contractor !== cur) { sub(); cur = r.contractor; sc = 0; sa = 0; }
+    const q = Number(r.quantity) || 0, a = Number(r.total_amount) || 0;
+    sc += q; sa += a; sn++;
+    const row = ws.addRow([sn, r.exit_date, r.contractor, r.book_code, r.name, r.edition,
+      r.juje, r.process, q, Number(r.net_rate == null ? r.rate : r.net_rate), a]);
+    row.eachCell({ includeEmpty: true }, function (c) { c.font = { name: 'Arial', size: 9 }; });
   });
-  ws.autoFilter = { from: 'A1', to: 'L1' };
+  sub();
+  ws.addRow([]);
+  const T = function (label, val, big) {
+    const r = ws.addRow(['', '', '', '', '', '', '', label, '', '', val]);
+    [8, 11].forEach(function (n) {
+      r.getCell(n).font = { name: 'Arial', size: big ? 12 : 10, bold: true,
+                            color: { argb: big ? 'FF6B2338' : 'FF1F1F1F' } };
+      if (big) r.getCell(n).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF7EDF0' } };
+    });
+  };
+  T('कुल प्रतियाँ', totals.copies);
+  T('Grand Total', totals.grand);
+  T(EXTRA_PCT + '% अतिरिक्त', totals.pct);
+  T('Final Amount', totals.final, true);
+  ws.addRow([]);
+  const w = ws.addRow(['अक्षरे: ' + inWords(totals.final)]);
+  w.getCell(1).font = { name: 'Arial', size: 10, italic: true };
+  ['I','J','K'].forEach(function (col) { ws.getColumn(col).numFmt = '#,##0.00'; });
+
   const buf = await wb.xlsx.writeBuffer();
   const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url; a.download = 'STM_' + new Date().toISOString().slice(0, 10) + '.xlsx';
+  a.href = url;
+  a.download = 'Bill_' + billNo.replace(/[^\w\u0900-\u097F]+/g, '_') + '.xlsx';
   a.click(); URL.revokeObjectURL(url);
 }
 
@@ -954,7 +901,12 @@ window.addEventListener('load', async function () {
   authLoad(); authWireGate(); pwdWire();
   if (!session) { authShowGate(); return; }
   if (!(await authToken())) { authShowGate('Session खत्म हो गया — दोबारा login करें।'); return; }
-  authPaintUser(); connectDb(); });
+  authPaintUser();
+  setSyncStatus('synced', 'जुड़ गए।');
+  document.getElementById('fIssue').value = iso(new Date());
+  setRange('prevmonth');
+  await loadGroups();
+});
 </script>
 </body>
 </html>
