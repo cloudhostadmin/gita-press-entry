@@ -215,6 +215,35 @@ tr.grand td { background:#e8dcc6 !important; font-weight:800; color:#5c3809;
 .btn-row2 .b-xl:hover { background:#163a5a; }
 .quick button { background:#faf6ef; color:#8a6a34; border:1.5px solid #ece0cd; }
 .quick button:hover { background:#f2e9da; border-color:#dbc9a8; color:#7a4b12; }
+
+/* ── कई processes चुनने वाला dropdown ── */
+.ms { position:relative; }
+.ms-btn { width:100%; text-align:left; padding:9px 12px; border:1.5px solid #dde5ee;
+  border-radius:9px; background:#fff; font-size:.92rem; font-family:Arial;
+  cursor:pointer; display:flex; align-items:center; justify-content:space-between;
+  gap:8px; color:#1f2d3d; }
+.ms-btn:hover { border-color:#c3d0de; }
+.ms-btn .cnt { font-size:.74rem; font-weight:700; padding:2px 9px; border-radius:20px;
+  background:#faf6ef; color:#7a4b12; white-space:nowrap; }
+.ms-panel { display:none; position:absolute; z-index:60; left:0; right:0; top:calc(100% + 5px);
+  background:#fff; border:1.5px solid #dde5ee; border-radius:10px;
+  box-shadow:0 8px 24px rgba(0,0,0,.14); overflow:hidden; }
+.ms-panel.open { display:block; }
+.ms-top { display:flex; gap:6px; padding:9px; border-bottom:1px solid #eef2f6; }
+.ms-top input { flex:1; padding:6px 10px; border:1.5px solid #dde5ee; border-radius:7px;
+  font-size:.85rem; min-width:0; }
+.ms-top button { padding:6px 10px; border:1.5px solid #dde5ee; background:#f7f9fb;
+  border-radius:7px; font-size:.75rem; font-weight:700; cursor:pointer;
+  color:#7a4b12; display:inline-flex; width:auto; }
+.ms-top button:hover { background:#eef3f7; }
+.ms-list { max-height:260px; overflow-y:auto; }
+.ms-list label { display:flex; align-items:center; gap:9px; padding:7px 12px;
+  font-size:.85rem; font-weight:500; cursor:pointer; margin:0; text-align:left;
+  border-bottom:1px solid #f5f7f9; color:#2b3a4a; }
+.ms-list label:hover { background:#faf6ef; }
+.ms-list input { width:16px; height:16px; accent-color:#7a4b12; cursor:pointer; flex:none; }
+.ms-list .per { margin-left:auto; font-size:.72rem; opacity:.6; white-space:nowrap; }
+.ms-list .none { padding:14px 12px; font-size:.83rem; color:#999; text-align:center; }
 </style>
 </head>
 <body>
@@ -335,7 +364,20 @@ tr.grand td { background:#e8dcc6 !important; font-weight:800; color:#5c3809;
         </div>
         <div class="fg">
           <label>Process</label>
-          <select id="fProcess"><option value="">— सभी processes —</option></select>
+          <div class="ms" id="msProcess">
+            <button type="button" class="ms-btn" onclick="msToggle(event)">
+              <span id="msLabel">सभी processes</span>
+              <span class="cnt" id="msCount">सब</span>
+            </button>
+            <div class="ms-panel" id="msPanel">
+              <div class="ms-top">
+                <input type="text" id="msSearch" placeholder="खोजें..." oninput="msFilter()">
+                <button type="button" onclick="msAll(true)">सब</button>
+                <button type="button" onclick="msAll(false)">कोई नहीं</button>
+              </div>
+              <div class="ms-list" id="msList"></div>
+            </div>
+          </div>
         </div>
         <div class="fg">
           <label>Exit Date — से</label>
@@ -377,13 +419,13 @@ tr.grand td { background:#e8dcc6 !important; font-weight:800; color:#5c3809;
     <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Exit Date</th><th>Contractor</th>
+          <th>S.N.</th><th>Exit Date</th><th>Contractor</th>
           <th>Book Code</th><th>Name</th><th>Edition</th><th class="num">Juje</th>
           <th>Process</th><th class="num">Copies</th><th class="num">Rate</th>
           <th class="num">Amount</th>
         </tr></thead>
         <tbody id="tbody">
-          <tr><td colspan="10" style="text-align:center;color:#aaa;padding:24px;">
+          <tr><td colspan="11" style="text-align:center;color:#aaa;padding:24px;">
             समूह चुनकर "रिपोर्ट बनाएँ" दबाएँ</td></tr>
         </tbody>
       </table>
@@ -715,17 +757,68 @@ function setRange(kind) {
 
 let rows = [];
 
-// processes की सूची — सिर्फ़ वे जिनका rate master में rate है
+// ── कई processes चुनने वाला dropdown ─────────────────────────────
+// कुछ न चुनें = सब — यही सबसे स्वाभाविक व्यवहार है
+let PROCESSES = [];
+
 async function loadProcesses() {
   try {
-    const p = await sbFetch('v_processes?select=process,per_count,uses_juje');
-    document.getElementById('fProcess').innerHTML =
-      '<option value="">— सभी processes —</option>' +
-      (p || []).map(function (r) {
-        return '<option value="' + r.process + '">' + r.process +
-               '  (प्रति ' + r.per_count + (r.uses_juje ? ' · जुजे गुणक' : '') + ')</option>';
-      }).join('');
+    PROCESSES = await sbFetch('v_processes?select=process,per_count,uses_juje');
+    document.getElementById('msList').innerHTML = (PROCESSES || []).map(function (r, i) {
+      return '<label data-nm="' + r.process.toLowerCase() + '">' +
+        '<input type="checkbox" class="msChk" value="' + r.process + '" onchange="msSync()">' +
+        '<span>' + r.process + '</span>' +
+        '<span class="per">प्रति ' + r.per_count + (r.uses_juje ? ' · जुजे' : '') + '</span>' +
+        '</label>';
+    }).join('');
+    msSync();
   } catch (err) { say('err', 'processes की सूची नहीं आई: ' + err.message); }
+}
+
+function msToggle(ev) {
+  ev.stopPropagation();
+  document.getElementById('msPanel').classList.toggle('open');
+}
+document.addEventListener('click', function (ev) {
+  const ms = document.getElementById('msProcess');
+  if (ms && !ms.contains(ev.target)) document.getElementById('msPanel').classList.remove('open');
+});
+
+function msPicked() {
+  return Array.prototype.slice.call(document.querySelectorAll('.msChk'))
+    .filter(function (x) { return x.checked; })
+    .map(function (x) { return x.value; });
+}
+function msAll(on) {
+  document.querySelectorAll('.msChk').forEach(function (x) {
+    const row = x.closest('label');
+    if (row && row.style.display !== 'none') x.checked = on;
+  });
+  msSync();
+}
+function msFilter() {
+  const q = document.getElementById('msSearch').value.trim().toLowerCase();
+  document.querySelectorAll('#msList label').forEach(function (l) {
+    l.style.display = (!q || l.dataset.nm.indexOf(q) !== -1) ? 'flex' : 'none';
+  });
+}
+function msSync() {
+  const p = msPicked();
+  const lbl = document.getElementById('msLabel'), cnt = document.getElementById('msCount');
+  if (!p.length)      { lbl.textContent = 'सभी processes'; cnt.textContent = 'सब'; }
+  else if (p.length === 1) { lbl.textContent = p[0]; cnt.textContent = '1'; }
+  else                { lbl.textContent = p.length + ' processes चुने'; cnt.textContent = p.length; }
+}
+
+// PostgREST का in.() — नामों में कोष्ठक और space हैं, इसलिए हर मान
+// दोहरे उद्धरण में और उसके भीतर percent-encoded
+function msQuery() {
+  const p = msPicked();
+  if (!p.length) return '';
+  const enc = function (v) {
+    return encodeURIComponent(v).replace(/\(/g, '%28').replace(/\)/g, '%29');
+  };
+  return '&process=in.(' + p.map(function (v) { return '"' + enc(v) + '"'; }).join(',') + ')';
 }
 
 async function loadGroups() {
@@ -750,8 +843,7 @@ async function run() {
   let q = 'v_process_report?select=exit_date,contractor,group_name,book_code,name,edition,juje,' +
           'process,quantity,rate,net_rate,total_amount&order=contractor,exit_date,book_code';
   if (grp)  q += '&group_name=eq.' + encodeURIComponent(grp);
-  const proc = document.getElementById('fProcess').value;
-  if (proc) q += '&process=eq.' + encodeURIComponent(proc);
+  q += msQuery();
   if (from) q += '&exit_date=gte.' + from + '&exit_date=lte.' + to;
   try { rows = await sbFetch(q); }
   catch (err) { say('err', '⚠️ ' + err.message); return; }
@@ -774,22 +866,23 @@ async function run() {
 function render() {
   const tb = document.getElementById('tbody');
   if (!rows.length) {
-    tb.innerHTML = '<tr><td colspan="10" style="text-align:center;color:#aaa;padding:24px;">कोई entry नहीं</td></tr>';
+    tb.innerHTML = '<tr><td colspan="11" style="text-align:center;color:#aaa;padding:24px;">कोई entry नहीं</td></tr>';
     return;
   }
   const out = [];
-  let cur = null, sc = 0, sa = 0, gc = 0, ga = 0;
+  let cur = null, sc = 0, sa = 0, gc = 0, ga = 0, sn = 0;
   function subtotal() {
     if (cur === null) return;
-    out.push('<tr class="sub"><td colspan="7">उप-जोड़ — ' + cur + '</td>' +
+    out.push('<tr class="sub"><td colspan="8">उप-जोड़ — ' + cur + '</td>' +
              '<td class="num">' + inr(sc) + '</td><td></td>' +
              '<td class="num">' + rs(sa) + '</td></tr>');
   }
   rows.forEach(function (r) {
     if (r.contractor !== cur) { subtotal(); cur = r.contractor; sc = 0; sa = 0; }
     const q = Number(r.quantity) || 0, a = Number(r.total_amount) || 0;
-    sc += q; sa += a; gc += q; ga += a;
+    sc += q; sa += a; gc += q; ga += a; sn++;
     out.push('<tr>' +
+      '<td>' + sn + '</td>' +
       '<td>' + (r.exit_date || '—') + '</td>' +
       '<td title="' + (r.group_name || '') + '">' + String(r.contractor || '—').substring(0, 22) + '</td>' +
       '<td><strong>' + r.book_code + '</strong></td>' +
@@ -802,7 +895,7 @@ function render() {
       '<td class="num">' + rs(a) + '</td></tr>');
   });
   subtotal();
-  out.push('<tr class="grand"><td colspan="7">कुल जोड़</td>' +
+  out.push('<tr class="grand"><td colspan="8">कुल जोड़</td>' +
            '<td class="num">' + inr(gc) + '</td><td></td>' +
            '<td class="num">' + rs(ga) + '</td></tr>');
   tb.innerHTML = out.join('');
@@ -812,9 +905,9 @@ async function exportXlsx() {
   if (!rows.length) { alert('पहले रिपोर्ट बनाएँ।'); return; }
   const grp  = document.getElementById('fGroup').value || 'सभी समूह';
   const from = document.getElementById('fFrom').value, to = document.getElementById('fTo').value;
-  const headers = ['Exit Date','Contractor','समूह','Book Code','Name','Edition','Juje',
+  const headers = ['S.N.','Exit Date','Contractor','समूह','Book Code','Name','Edition','Juje',
                    'Process','Copies','Rate','Amount'];
-  const widths = [14,26,28,12,36,12,8,24,12,10,14];
+  const widths = [6,14,26,28,12,36,12,8,24,12,10,14];
   const wb = new ExcelJS.Workbook();
   const ws = wb.addWorksheet('Report', { views: [{ state: 'frozen', ySplit: 1 }] });
   ws.columns = headers.map(function (h, i) { return { header: h, key: h, width: widths[i] }; });
@@ -824,10 +917,10 @@ async function exportXlsx() {
     c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF7A4B12' } };
     c.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
   });
-  let cur = null, sc = 0, sa = 0, gc = 0, ga = 0;
+  let cur = null, sc = 0, sa = 0, gc = 0, ga = 0, sn = 0;
   function sub() {
     if (cur === null) return;
-    const r = ws.addRow(['', 'उप-जोड़ — ' + cur, '', '', '', '', '', '', sc, '', sa]);
+    const r = ws.addRow(['', '', 'उप-जोड़ — ' + cur, '', '', '', '', '', '', sc, '', sa]);
     r.eachCell({ includeEmpty: true }, function (c) {
       c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF7F0E2' } };
       c.font = { name: 'Arial', size: 9, bold: true };
@@ -836,27 +929,30 @@ async function exportXlsx() {
   rows.forEach(function (r) {
     if (r.contractor !== cur) { sub(); cur = r.contractor; sc = 0; sa = 0; }
     const q = Number(r.quantity) || 0, a = Number(r.total_amount) || 0;
-    sc += q; sa += a; gc += q; ga += a;
-    const row = ws.addRow([r.exit_date, r.contractor, r.group_name, r.book_code, r.name,
+    sc += q; sa += a; gc += q; ga += a; sn++;
+    const row = ws.addRow([sn, r.exit_date, r.contractor, r.group_name, r.book_code, r.name,
       r.edition, r.juje, r.process, q,
       Number(r.net_rate == null ? r.rate : r.net_rate), a]);
     row.height = 16;
     row.eachCell({ includeEmpty: true }, function (c) { c.font = { name: 'Arial', size: 9 }; });
   });
   sub();
-  const g = ws.addRow(['', 'कुल जोड़', '', '', '', '', '', '', gc, '', ga]);
+  const g = ws.addRow(['', '', 'कुल जोड़', '', '', '', '', '', '', gc, '', ga]);
   g.eachCell({ includeEmpty: true }, function (c) {
     c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE8DCC6' } };
     c.font = { name: 'Arial', size: 10, bold: true };
   });
-  ['I','J','K'].forEach(function (col) { ws.getColumn(col).numFmt = '#,##0.00'; });
-  ws.autoFilter = { from: 'A1', to: 'K1' };
+  ['J','K','L'].forEach(function (col) { ws.getColumn(col).numFmt = '#,##0.00'; });
+  ws.autoFilter = { from: 'A1', to: 'L1' };
   const buf = await wb.xlsx.writeBuffer();
   const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'Report_' + grp.replace(/[^\w\u0900-\u097F]+/g, '_') + '_' +
+  const pk = msPicked();
+  a.download = 'Report_' + grp.replace(/[^\w\u0900-\u097F]+/g, '_') +
+               (pk.length === 1 ? '_' + pk[0].replace(/[^\w\u0900-\u097F]+/g, '_')
+                : pk.length ? '_' + pk.length + 'proc' : '') + '_' +
                ((from && to) ? (from + '_to_' + to) : 'all') + '.xlsx';
   a.click(); URL.revokeObjectURL(url);
 }

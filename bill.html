@@ -255,6 +255,35 @@ tr.sub td { background:#f7edf0 !important; font-weight:700; color:#6b2338; }
 .bill-head { text-align:center; padding:26px 30px 20px; }
 .bill-org { letter-spacing:.5px; }
 .bill-title { margin-top:12px; }
+
+/* ── कई processes चुनने वाला dropdown ── */
+.ms { position:relative; }
+.ms-btn { width:100%; text-align:left; padding:9px 12px; border:1.5px solid #dde5ee;
+  border-radius:9px; background:#fff; font-size:.92rem; font-family:Arial;
+  cursor:pointer; display:flex; align-items:center; justify-content:space-between;
+  gap:8px; color:#1f2d3d; }
+.ms-btn:hover { border-color:#c3d0de; }
+.ms-btn .cnt { font-size:.74rem; font-weight:700; padding:2px 9px; border-radius:20px;
+  background:#faf5f6; color:#6b2338; white-space:nowrap; }
+.ms-panel { display:none; position:absolute; z-index:60; left:0; right:0; top:calc(100% + 5px);
+  background:#fff; border:1.5px solid #dde5ee; border-radius:10px;
+  box-shadow:0 8px 24px rgba(0,0,0,.14); overflow:hidden; }
+.ms-panel.open { display:block; }
+.ms-top { display:flex; gap:6px; padding:9px; border-bottom:1px solid #eef2f6; }
+.ms-top input { flex:1; padding:6px 10px; border:1.5px solid #dde5ee; border-radius:7px;
+  font-size:.85rem; min-width:0; }
+.ms-top button { padding:6px 10px; border:1.5px solid #dde5ee; background:#f7f9fb;
+  border-radius:7px; font-size:.75rem; font-weight:700; cursor:pointer;
+  color:#6b2338; display:inline-flex; width:auto; }
+.ms-top button:hover { background:#eef3f7; }
+.ms-list { max-height:260px; overflow-y:auto; }
+.ms-list label { display:flex; align-items:center; gap:9px; padding:7px 12px;
+  font-size:.85rem; font-weight:500; cursor:pointer; margin:0; text-align:left;
+  border-bottom:1px solid #f5f7f9; color:#2b3a4a; }
+.ms-list label:hover { background:#faf5f6; }
+.ms-list input { width:16px; height:16px; accent-color:#6b2338; cursor:pointer; flex:none; }
+.ms-list .per { margin-left:auto; font-size:.72rem; opacity:.6; white-space:nowrap; }
+.ms-list .none { padding:14px 12px; font-size:.83rem; color:#999; text-align:center; }
 </style>
 </head>
 <body>
@@ -385,7 +414,20 @@ tr.sub td { background:#f7edf0 !important; font-weight:700; color:#6b2338; }
         </div>
         <div class="fg">
           <label>Process</label>
-          <select id="fProcess"><option value="">— सभी processes —</option></select>
+          <div class="ms" id="msProcess">
+            <button type="button" class="ms-btn" onclick="msToggle(event)">
+              <span id="msLabel">सभी processes</span>
+              <span class="cnt" id="msCount">सब</span>
+            </button>
+            <div class="ms-panel" id="msPanel">
+              <div class="ms-top">
+                <input type="text" id="msSearch" placeholder="खोजें..." oninput="msFilter()">
+                <button type="button" onclick="msAll(true)">सब</button>
+                <button type="button" onclick="msAll(false)">कोई नहीं</button>
+              </div>
+              <div class="ms-list" id="msList"></div>
+            </div>
+          </div>
         </div>
         <div class="fg">
           <label>Exit Date — से</label>
@@ -809,17 +851,68 @@ function setRange(kind) {
 
 let rows = [], totals = {};
 
-// processes की सूची — सिर्फ़ वे जिनका rate master में rate है
+// ── कई processes चुनने वाला dropdown ─────────────────────────────
+// कुछ न चुनें = सब — यही सबसे स्वाभाविक व्यवहार है
+let PROCESSES = [];
+
 async function loadProcesses() {
   try {
-    const p = await sbFetch('v_processes?select=process,per_count,uses_juje');
-    document.getElementById('fProcess').innerHTML =
-      '<option value="">— सभी processes —</option>' +
-      (p || []).map(function (r) {
-        return '<option value="' + r.process + '">' + r.process +
-               '  (प्रति ' + r.per_count + (r.uses_juje ? ' · जुजे गुणक' : '') + ')</option>';
-      }).join('');
+    PROCESSES = await sbFetch('v_processes?select=process,per_count,uses_juje');
+    document.getElementById('msList').innerHTML = (PROCESSES || []).map(function (r, i) {
+      return '<label data-nm="' + r.process.toLowerCase() + '">' +
+        '<input type="checkbox" class="msChk" value="' + r.process + '" onchange="msSync()">' +
+        '<span>' + r.process + '</span>' +
+        '<span class="per">प्रति ' + r.per_count + (r.uses_juje ? ' · जुजे' : '') + '</span>' +
+        '</label>';
+    }).join('');
+    msSync();
   } catch (err) { say('err', 'processes की सूची नहीं आई: ' + err.message); }
+}
+
+function msToggle(ev) {
+  ev.stopPropagation();
+  document.getElementById('msPanel').classList.toggle('open');
+}
+document.addEventListener('click', function (ev) {
+  const ms = document.getElementById('msProcess');
+  if (ms && !ms.contains(ev.target)) document.getElementById('msPanel').classList.remove('open');
+});
+
+function msPicked() {
+  return Array.prototype.slice.call(document.querySelectorAll('.msChk'))
+    .filter(function (x) { return x.checked; })
+    .map(function (x) { return x.value; });
+}
+function msAll(on) {
+  document.querySelectorAll('.msChk').forEach(function (x) {
+    const row = x.closest('label');
+    if (row && row.style.display !== 'none') x.checked = on;
+  });
+  msSync();
+}
+function msFilter() {
+  const q = document.getElementById('msSearch').value.trim().toLowerCase();
+  document.querySelectorAll('#msList label').forEach(function (l) {
+    l.style.display = (!q || l.dataset.nm.indexOf(q) !== -1) ? 'flex' : 'none';
+  });
+}
+function msSync() {
+  const p = msPicked();
+  const lbl = document.getElementById('msLabel'), cnt = document.getElementById('msCount');
+  if (!p.length)      { lbl.textContent = 'सभी processes'; cnt.textContent = 'सब'; }
+  else if (p.length === 1) { lbl.textContent = p[0]; cnt.textContent = '1'; }
+  else                { lbl.textContent = p.length + ' processes चुने'; cnt.textContent = p.length; }
+}
+
+// PostgREST का in.() — नामों में कोष्ठक और space हैं, इसलिए हर मान
+// दोहरे उद्धरण में और उसके भीतर percent-encoded
+function msQuery() {
+  const p = msPicked();
+  if (!p.length) return '';
+  const enc = function (v) {
+    return encodeURIComponent(v).replace(/\(/g, '%28').replace(/\)/g, '%29');
+  };
+  return '&process=in.(' + p.map(function (v) { return '"' + enc(v) + '"'; }).join(',') + ')';
 }
 
 async function loadGroups() {
@@ -848,8 +941,7 @@ async function run() {
   let q = 'v_process_report?select=exit_date,contractor,group_name,book_code,name,edition,juje,' +
           'process,quantity,rate,net_rate,total_amount&order=contractor,exit_date,book_code' +
           '&group_name=eq.' + encodeURIComponent(grp);
-  const proc = document.getElementById('fProcess').value;
-  if (proc) q += '&process=eq.' + encodeURIComponent(proc);
+  q += msQuery();
   if (from) q += '&exit_date=gte.' + from + '&exit_date=lte.' + to;
   try { rows = await sbFetch(q); }
   catch (err) { say('err', '⚠️ ' + err.message); return; }
@@ -863,9 +955,9 @@ async function run() {
   document.getElementById('bNo').textContent     = billNo;
   document.getElementById('bIssue').textContent  = dmy(issue);
   document.getElementById('bPeriod').textContent = (from && to) ? (dmy(from) + '  से  ' + dmy(to)) : 'पूरा समय';
-  const proc2 = document.getElementById('fProcess').value;
-  document.getElementById('rProcess').style.display = proc2 ? 'flex' : 'none';
-  document.getElementById('bProcess').textContent = proc2 || '—';
+  const picked = msPicked();
+  document.getElementById('rProcess').style.display = picked.length ? 'flex' : 'none';
+  document.getElementById('bProcess').textContent = picked.join(', ');
   render();
   document.getElementById('billSheet').style.display = 'block';
   say('ok', '✅ बिल बन गया — ' + rows.length + ' entries, Final ' + rs(totals.final));
@@ -933,8 +1025,8 @@ async function exportXlsx() {
   B('Bill No.', billNo);
   B('Issue Date', issue);
   B('कार्य अवधि', (from && to) ? (from + ' से ' + to) : 'पूरा समय');
-  const proc3 = document.getElementById('fProcess').value;
-  if (proc3) B('Process', proc3);
+  const picked3 = msPicked();
+  if (picked3.length) B('Process', picked3.join(', '));
   ws.addRow([]);
 
   const headers = ['क्र.','Exit Date','Contractor','Book Code','Name','Edition','Juje',
@@ -990,7 +1082,8 @@ async function exportXlsx() {
   const a = document.createElement('a');
   a.href = url;
   a.download = 'Bill_' + billNo.replace(/[^\w\u0900-\u097F]+/g, '_') +
-               (proc3 ? '_' + proc3.replace(/[^\w\u0900-\u097F]+/g, '_') : '') + '.xlsx';
+               (picked3.length === 1 ? '_' + picked3[0].replace(/[^\w\u0900-\u097F]+/g, '_')
+                : picked3.length ? '_' + picked3.length + 'proc' : '') + '.xlsx';
   a.click(); URL.revokeObjectURL(url);
 }
 
