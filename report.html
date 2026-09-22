@@ -244,6 +244,25 @@ tr.grand td { background:#e8dcc6 !important; font-weight:800; color:#5c3809;
 .ms-list input { width:16px; height:16px; accent-color:#7a4b12; cursor:pointer; flex:none; }
 .ms-list .per { margin-left:auto; font-size:.72rem; opacity:.6; white-space:nowrap; }
 .ms-list .none { padding:14px 12px; font-size:.83rem; color:#999; text-align:center; }
+
+/* ── dropdown कटने की समस्या ──
+   .card में overflow:hidden है (गोल किनारों के लिए), जिससे panel
+   card की सीमा पर कट जाता था. जिस card में filters हैं उसी में
+   overflow खोला है, और किनारे अलग से गोल किए हैं. */
+.card.filter-card { overflow:visible; position:relative; z-index:30; }
+.card.filter-card .section-title { border-radius:12px 12px 0 0; }
+.card.filter-card .form-body { border-radius:0 0 12px 12px; }
+
+.ms-panel { min-width:340px; max-width:460px; width:max-content; }
+.ms-panel.right { left:auto; right:0; }
+.ms-list { max-height:340px; }
+.ms-list label { line-height:1.35; }
+.ms-list .per { padding-left:10px; }
+
+/* filters का बँटवारा — तारीख़ के दोनों खाने साथ रहें, अकेले न गिरें */
+.filters { grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); }
+@media (min-width:1100px) { .filters { grid-template-columns:repeat(3,1fr); } }
+@media (min-width:1400px) { .filters { grid-template-columns:repeat(4,1fr); } }
 </style>
 </head>
 <body>
@@ -354,7 +373,7 @@ tr.grand td { background:#e8dcc6 !important; font-weight:800; color:#5c3809;
 
 <div class="container" style="max-width:1220px;">
 
-  <div class="card">
+  <div class="card filter-card">
     <div class="section-title" style="background:#7a4b12;">⚙️ छाँटें</div>
     <div class="form-body">
       <div class="filters">
@@ -777,7 +796,13 @@ async function loadProcesses() {
 
 function msToggle(ev) {
   ev.stopPropagation();
-  document.getElementById('msPanel').classList.toggle('open');
+  const panel = document.getElementById('msPanel');
+  panel.classList.toggle('open');
+  if (!panel.classList.contains('open')) return;
+  // दाएँ किनारे से बाहर जा रहा हो तो दाईं ओर से टिका दो
+  panel.classList.remove('right');
+  const r = panel.getBoundingClientRect();
+  if (r.right > window.innerWidth - 12) panel.classList.add('right');
 }
 document.addEventListener('click', function (ev) {
   const ms = document.getElementById('msProcess');
