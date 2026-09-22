@@ -334,6 +334,10 @@ tr.grand td { background:#e8dcc6 !important; font-weight:800; color:#5c3809;
           <select id="fGroup"><option value="">— पढ़ रहे हैं... —</option></select>
         </div>
         <div class="fg">
+          <label>Process</label>
+          <select id="fProcess"><option value="">— सभी processes —</option></select>
+        </div>
+        <div class="fg">
           <label>Exit Date — से</label>
           <input type="date" id="fFrom">
         </div>
@@ -711,6 +715,19 @@ function setRange(kind) {
 
 let rows = [];
 
+// processes की सूची — सिर्फ़ वे जिनका rate master में rate है
+async function loadProcesses() {
+  try {
+    const p = await sbFetch('v_processes?select=process,per_count,uses_juje');
+    document.getElementById('fProcess').innerHTML =
+      '<option value="">— सभी processes —</option>' +
+      (p || []).map(function (r) {
+        return '<option value="' + r.process + '">' + r.process +
+               '  (प्रति ' + r.per_count + (r.uses_juje ? ' · जुजे गुणक' : '') + ')</option>';
+      }).join('');
+  } catch (err) { say('err', 'processes की सूची नहीं आई: ' + err.message); }
+}
+
 async function loadGroups() {
   try {
     const g = await sbFetch('v_contractor_groups?select=group_name,contractors');
@@ -733,6 +750,8 @@ async function run() {
   let q = 'v_process_report?select=exit_date,contractor,group_name,book_code,name,edition,juje,' +
           'process,quantity,rate,net_rate,total_amount&order=contractor,exit_date,book_code';
   if (grp)  q += '&group_name=eq.' + encodeURIComponent(grp);
+  const proc = document.getElementById('fProcess').value;
+  if (proc) q += '&process=eq.' + encodeURIComponent(proc);
   if (from) q += '&exit_date=gte.' + from + '&exit_date=lte.' + to;
   try { rows = await sbFetch(q); }
   catch (err) { say('err', '⚠️ ' + err.message); return; }
@@ -850,6 +869,7 @@ window.addEventListener('load', async function () {
   setSyncStatus('synced', 'जुड़ गए।');
   setRange('month');
   await loadGroups();
+  await loadProcesses();
 });
 </script>
 </body>
