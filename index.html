@@ -118,6 +118,78 @@ button.big {
   .btn-row { flex-direction: column; }
   button.big { width: 100%; justify-content: center; }
 }
+
+/* ── नेविगेशन — एक ही पंक्ति, रंग की पहचान छोटे बिंदु से ── */
+.topnav { background:#16293d; border-bottom:1px solid #24405c;
+  display:flex; align-items:stretch; overflow-x:auto;
+  scrollbar-width:thin; scrollbar-color:#3a5570 transparent; }
+.topnav::-webkit-scrollbar { height:4px; }
+.topnav::-webkit-scrollbar-thumb { background:#3a5570; border-radius:4px; }
+.topnav a { text-decoration:none; flex:none; }
+.topnav .nv { display:flex; align-items:center; gap:8px; padding:12px 16px;
+  font-size:.83rem; font-weight:600; color:#9db4cc; white-space:nowrap;
+  border:none; background:none; cursor:pointer; font-family:Arial;
+  border-bottom:2px solid transparent; transition:color .15s, background .15s; }
+.topnav .nv:hover { color:#e8f0f7; background:#1d3752; }
+.topnav .dot { width:7px; height:7px; border-radius:50%; flex:none; }
+.topnav .nv.on { color:#fff; background:#1f3752; cursor:default; }
+
+/* ── शीर्ष पट्टी — gradient हटाकर सपाट, login उसी पंक्ति में ── */
+.header { background:#0f2033; border-bottom:1px solid #24405c;
+  padding:14px 24px; gap:14px; box-shadow:none; align-items:center; }
+.header > div:first-child { font-size:1.5rem !important; opacity:.9; }
+.header h1 { font-size:1.12rem; font-weight:700; letter-spacing:.2px; }
+.header p { font-size:.78rem; opacity:.62; margin-top:1px; }
+.header .who { margin-left:auto; display:flex; align-items:center; gap:9px; }
+.header .who .nm { font-size:.82rem; font-weight:700; color:#cfe0ee;
+  background:#182f47; padding:6px 13px; border-radius:7px; border:1px solid #2c4a6b; }
+.header .who button { padding:6px 13px; background:transparent; color:#9db4cc;
+  border:1px solid #2c4a6b; border-radius:7px; font-size:.76rem; font-weight:600;
+  cursor:pointer; display:inline-flex; width:auto; transition:all .15s; }
+.header .who button:hover { background:#182f47; color:#e8f0f7; border-color:#3f6287; }
+
+/* ── Dashboard ── */
+.container { max-width:1100px; }
+.card { border:1px solid #e4eaf0; box-shadow:0 1px 3px rgba(16,36,60,.07); }
+.section-title { background:#f5f8fb; color:#2d4a68; border-bottom:1px solid #e4eaf0;
+  font-size:.76rem; letter-spacing:.7px; padding:11px 20px; }
+.dash-dates { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:14px 18px; }
+.dash-dates .fld { display:flex; flex-direction:column; gap:5px; }
+.dash-dates label { font-size:.73rem; font-weight:700; color:#5b7c99;
+  text-transform:uppercase; letter-spacing:.4px; text-align:left; margin:0; padding:0; }
+.dash-dates input { width:100%; padding:9px 12px; border:1.5px solid #dde5ee;
+  border-radius:9px; font-size:.92rem; background:#fff; }
+.dash-dates input:focus { outline:none; border-color:#1f6f4a;
+  box-shadow:0 0 0 3px rgba(31,111,74,.12); }
+.quick { display:flex; gap:7px; flex-wrap:wrap; align-items:center; margin-top:16px; }
+.quick .qlbl { font-size:.73rem; font-weight:700; color:#8798a8;
+  text-transform:uppercase; letter-spacing:.3px; margin-right:3px; }
+.quick button { display:inline-flex; width:auto; padding:5px 13px; border-radius:20px;
+  font-size:.78rem; font-weight:600; background:#f2f6fa; color:#44617f;
+  border:1.5px solid #e2eaf2; cursor:pointer; transition:all .15s; }
+.quick button:hover { background:#e7eff7; border-color:#cbdae7; color:#1f3752; }
+.dash-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:11px; }
+.sheet-card { display:flex; align-items:center; gap:10px; padding:12px 14px;
+  border:1.5px solid #e4eaf0; border-radius:11px; background:#fff; cursor:pointer;
+  transition:border-color .15s, box-shadow .15s, background .15s; margin:0; }
+.sheet-card:hover { border-color:#bcd0e2; box-shadow:0 2px 8px rgba(16,36,60,.08); }
+.sheet-card:has(input:checked) { background:#f7fbf9; border-color:#9ed4bb; }
+.sheet-card input { width:17px; height:17px; accent-color:#1f6f4a; flex:none; cursor:pointer; }
+.sheet-card .dot { width:9px; height:9px; border-radius:50%; flex:none; }
+.sheet-card .nm { flex:1; font-size:.87rem; font-weight:600; color:#24364a;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sheet-card .cnt { font-size:.73rem; font-weight:700; color:#5b7c99;
+  background:#eef4f9; padding:3px 9px; border-radius:20px; white-space:nowrap; }
+.sheet-card .mini { padding:5px 11px; font-size:.74rem; font-weight:700;
+  background:#1f6f4a; color:#fff; border:none; border-radius:7px; cursor:pointer;
+  display:inline-flex; width:auto; }
+.sheet-card .mini:hover { background:#17563a; }
+.btn-row { border-top:1px solid #eef2f6; gap:10px; }
+.btn-row button { display:inline-flex; width:auto; padding:10px 20px; border-radius:9px;
+  font-size:.89rem; font-weight:700; transition:transform .12s, box-shadow .12s; }
+.btn-row button:hover { transform:translateY(-1px); box-shadow:0 3px 10px rgba(0,0,0,.12); }
+.hint { font-size:.76rem; color:#8798a8; margin-top:8px; }
 </style>
 </head>
 <body>
@@ -130,7 +202,6 @@ button.big {
     <div style="background:linear-gradient(135deg,#1f6f4a,#2f9d69);color:#fff;padding:18px 22px;">
       <div style="font-size:1.15rem;font-weight:700;">गीता प्रेस — Login</div>
       <div style="font-size:.8rem;opacity:.85;margin-top:2px;">अपना खाता इस्तेमाल करें</div>
-    </div>
     <div style="padding:20px 22px;">
       <label style="display:block;font-size:.8rem;font-weight:700;color:#1f6f4a;
                     text-align:left;margin-bottom:4px;">Email</label>
@@ -196,34 +267,33 @@ button.big {
     <h1>Dashboard — Gita Press</h1>
     <p>किसी भी table का data date-wise Excel में download करें — सीधे database से</p>
   </div>
-</div>
-
-<div style="background:#1a3a5c;padding:8px 24px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-  <span style="color:#aac;font-size:0.78rem;font-weight:600;margin-right:4px;">GO TO →</span>
-  <button style="padding:7px 16px;background:#1f6f4a;color:white;border:2px solid #4dbf90;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:default;box-shadow:0 0 0 2px white,0 0 0 4px #4dbf90;">📊 Dashboard ✓</button>
-  <a href="report.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#7a4b12;color:white;border:2px solid #d49a3f;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📑 रिपोर्ट</button></a>
-  <a href="bill.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#6b2338;color:white;border:2px solid #c06a83;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">🧾 बिल</button></a>
-  <a href="reconcile.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#3f3d8f;color:white;border:2px solid #8785d6;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">🔍 Reconcile</button></a>
-  <a href="print_order.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#7b2d5e;color:white;border:2px solid #c470a0;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">🖨️ Print Order</button></a>
-  <a href="stm.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#843c0c;color:white;border:2px solid #e07a3a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📋 STM Entry</button></a>
-  <a href="process_entry.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#0f6e56;color:white;border:2px solid #3fb99a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">⚙️ Process Entry</button></a>
-  <a href="main_entry.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#1F4E79;color:white;border:2px solid #4a90c4;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📚 Main Entry</button></a>
-  <a href="soft_bound.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#375623;color:white;border:2px solid #6aaa3a;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📗 Soft Bound</button></a>
-  <a href="laghu_ati_laghu.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#6a3d9a;color:white;border:2px solid #b07edd;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📒 Laghu &amp; Ati Laghu</button></a>
-  <a href="add_book.html" style="text-decoration:none;"><button style="padding:7px 16px;background:#8a5a12;color:white;border:2px solid #d9a441;border-radius:7px;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">📖 नई किताब</button></a>
-</div>
-<div style="background:#233b55;padding:7px 24px;display:flex;gap:9px;align-items:center;flex-wrap:wrap;">
-  <span style="color:#cfe0ee;font-size:0.78rem;font-weight:700;">LOGGED IN →</span>
-  <input type="text" id="opName" readonly
+  <div class="who">
+    <input type="text" class="nm" id="opName" readonly
          style="padding:5px 11px;border:2px solid #4a6c8c;border-radius:6px;font-size:0.82rem;
                 font-weight:600;background:#eaf3ee;color:#1a3a5c;width:200px;cursor:default;">
-  <span id="opWarn" style="display:none;"></span>
-  <button id="pwdBtn" onclick="pwdShow()" style="display:none;margin-left:auto;padding:5px 12px;
+    <span id="opWarn" style="display:none;"></span>
+    <button id="pwdBtn" onclick="pwdShow()" style="display:none;margin-left:auto;padding:5px 12px;
           background:#2c4360;color:#dce7f0;border:1.5px solid #4a6c8c;border-radius:6px;
           font-size:0.76rem;font-weight:700;cursor:pointer;">Password</button>
-  <button id="authOut" onclick="authSignOut()" style="display:none;padding:5px 12px;
+    <button id="authOut" onclick="authSignOut()" style="display:none;padding:5px 12px;
           background:#3a5570;color:#dce7f0;border:1.5px solid #56728d;border-radius:6px;
           font-size:0.76rem;font-weight:700;cursor:pointer;">Logout</button>
+  </div>
+
+</div>
+
+<div class="topnav">
+  <button class="nv on" style="border-bottom-color:#4dbf90"><span class="dot" style="background:#4dbf90"></span>Dashboard</button>
+  <a href="report.html"><button class="nv"><span class="dot" style="background:#d49a3f"></span>रिपोर्ट</button></a>
+  <a href="bill.html"><button class="nv"><span class="dot" style="background:#c06a83"></span>बिल</button></a>
+  <a href="reconcile.html"><button class="nv"><span class="dot" style="background:#8785d6"></span>Reconcile</button></a>
+  <a href="print_order.html"><button class="nv"><span class="dot" style="background:#c470a0"></span>Print Order</button></a>
+  <a href="stm.html"><button class="nv"><span class="dot" style="background:#e07a3a"></span>STM Entry</button></a>
+  <a href="process_entry.html"><button class="nv"><span class="dot" style="background:#3fb99a"></span>Process Entry</button></a>
+  <a href="main_entry.html"><button class="nv"><span class="dot" style="background:#4a90c4"></span>Main Entry</button></a>
+  <a href="soft_bound.html"><button class="nv"><span class="dot" style="background:#6aaa3a"></span>Soft Bound</button></a>
+  <a href="laghu_ati_laghu.html"><button class="nv"><span class="dot" style="background:#b07edd"></span>Laghu &amp; Ati Laghu</button></a>
+  <a href="add_book.html"><button class="nv"><span class="dot" style="background:#d9a441"></span>नई किताब</button></a>
 </div>
 <div class="container">
 
@@ -231,22 +301,13 @@ button.big {
   <div class="card">
     <div class="section-title">🗓️ Date Range</div>
     <div class="form-body">
-      <div class="field-row">
-        <label class="lbl">From Date</label>
-        <div>
-          <input type="date" id="dlFrom">
+      <div class="dash-dates">
+          <div class="fld"><label>From Date</label><input type="date" id="dlFrom"></div>
+          <div class="fld"><label>To Date</label><input type="date" id="dlTo"></div>
         </div>
       </div>
-      <div class="field-row">
-        <label class="lbl">To Date</label>
-        <div>
-          <input type="date" id="dlTo">
-          <div class="hint">दोनों dates खाली छोड़ें तो पूरी sheet download होगी (Entry Date पर filter लगता है)</div>
-        </div>
-      </div>
-      <div class="field-row">
-        <label class="lbl">Quick Select</label>
-        <div class="quick">
+      <div class="quick">
+        <span class="qlbl">Quick Select</span>
           <button onclick="setRange('today')">आज</button>
           <button onclick="setRange('7')">पिछले 7 दिन</button>
           <button onclick="setRange('30')">पिछले 30 दिन</button>
@@ -254,7 +315,6 @@ button.big {
           <button onclick="setRange('prevmonth')">पिछला महीना</button>
           <button onclick="setRange('clear')">सब (Clear)</button>
         </div>
-      </div>
     </div>
   </div>
 
@@ -262,7 +322,8 @@ button.big {
   <div class="card">
     <div class="section-title">📄 Sheets</div>
     <div class="form-body">
-      <label class="sheet-card" data-sheet="main_entry">
+      <div class="dash-grid">
+        <label class="sheet-card" data-sheet="main_entry">
         <input type="checkbox" class="sheetChk" value="main_entry" checked>
         <span class="dot" style="background:#1F4E79"></span>
         <span class="nm">📚 Main</span>
@@ -318,6 +379,8 @@ button.big {
         <span class="cnt" id="cnt-print_order">—</span>
         <button class="mini" onclick="event.preventDefault();downloadOne('print_order')">Excel</button>
       </label>
+      </div>
+      
       <div class="quick" style="margin-top:12px;">
         <button onclick="selectAll(true)">सब चुनें</button>
         <button onclick="selectAll(false)">सब हटाएँ</button>
