@@ -257,7 +257,8 @@ tr:hover td { background: #eaf5e9; cursor: pointer; }
 .header > div:first-child { font-size:1.5rem !important; opacity:.9; }
 .header h1 { font-size:1.12rem; font-weight:700; letter-spacing:.2px; }
 .header p { font-size:.78rem; opacity:.62; margin-top:1px; }
-.header .who { margin-left:auto; display:flex; align-items:center; gap:9px; }
+.header .who { margin-left:auto; display:none; align-items:center; gap:9px; }
+.header .who.on { display:flex; }
 .header .who .nm { font-size:.82rem; font-weight:700; color:#cfe0ee;
   background:#182f47; padding:6px 13px; border-radius:7px; border:1px solid #2c4a6b; }
 .header .who button { padding:6px 13px; background:transparent; color:#9db4cc;
@@ -897,6 +898,8 @@ function authPaintUser() {
   }
   const w = document.getElementById('opWarn');
   if (w) w.style.display = 'none';
+  const who = document.querySelector('.header .who');
+  if (who) who.classList.add('on');
   const out = document.getElementById('authOut');
   if (out) out.style.display = 'inline-block';
   const pb = document.getElementById('pwdBtn');
