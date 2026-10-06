@@ -161,13 +161,6 @@ td {
 tr:nth-child(even) td { background: #f7f9fc; }
 tr:hover td { background: #e8f4fd; cursor: pointer; }
 
-.file-input-area {
-  border: 2px dashed #b0cfe8; border-radius: 8px; padding: 14px;
-  text-align: center; color: #2e75b6; font-size: 0.87rem;
-  cursor: pointer; transition: background 0.2s; margin: 12px 0;
-}
-.file-input-area:hover { background: #e8f4fd; }
-#fileInput { display: none; }
 optgroup { font-weight: 700; color: #1F4E79; }
 option   { font-weight: 400; color: #333; }
 
@@ -321,18 +314,6 @@ option   { font-weight: 400; color: #333; }
   <!-- sync status bar (hidden, auto-shown on connect) -->
   <div id="syncStatus" style="display:none;font-size:0.85rem;font-weight:600;
        padding:10px 18px;border-radius:8px;margin-bottom:12px;"></div>
-
-  <!-- LOAD FILE -->
-  <div class="card">
-    <div class="section-title orange">📂 Load Existing Excel File (Optional)</div>
-    <div class="form-body">
-      <div class="file-input-area" onclick="document.getElementById('fileInput').click()">
-        📎 Click to select new_format.xlsm / .xlsx
-      </div>
-      <input type="file" id="fileInput" accept=".xlsx,.xlsm,.xls" onchange="loadExcelFile(event)">
-      <div id="fileStatus" style="font-size:0.82rem;color:#375623;margin-top:4px;"></div>
-    </div>
-  </div>
 
   <!-- BOOK CODE LOOKUP + MANUAL ENTRY (locked until Google Sheet connected) -->
   <div id="entrySection" class="locked">
